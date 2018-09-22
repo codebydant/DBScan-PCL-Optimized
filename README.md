@@ -15,4 +15,20 @@ News:
 
 file.txt: x y z
 
+-------------------
+## Compile
+* Create a "build" folder
+
+in the main folder:
+
+	  - cd build  
+	  - cmake ../src/
+    - make
+       
+        	 
+### Test
+
+    ./dbscan <txt file> <eps> <min Pts> <max Pts>
+
+
 
