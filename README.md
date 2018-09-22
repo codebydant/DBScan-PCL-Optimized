@@ -14,7 +14,10 @@ News:
 
 ## Input file structure
 
-file.txt: x y z
+* PCD
+* PLY
+* TXT: x y z
+* XYZ
 
 -------------------
 ## Compile
