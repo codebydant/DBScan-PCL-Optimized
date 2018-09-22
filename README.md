@@ -4,7 +4,7 @@ This project is taken from: Navarro-Hinojosa, Octavio, y Moisés Alencastre-Mira
 Research in Computing Science, Vol. 114: Advances in Image Processing and Computer Vision, pp. 173–186, 2016.
 
 News:
-* Added CMakeList for cmake compile with PCL 1.8.1
+* Added CMakeList.txt for cmake compile with PCL 1.8.1
 * Added arguments param option
 * Added pcl visualizer
 * Deleted Glut visualizer
