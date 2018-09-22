@@ -21,9 +21,9 @@ file.txt: x y z
 
 in the main folder:
 
-	  - cd build  
-	  - cmake ../src/
-    - make
+	- cd build  
+	- cmake ../src/
+    	- make
        
         	 
 ### Test
