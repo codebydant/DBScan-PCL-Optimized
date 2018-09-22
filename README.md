@@ -30,6 +30,10 @@ in the main folder:
 ### Test
 
     ./dbscan <txt file> <eps> <min Pts> <max Pts>
+    eps = 40
+    min Pts = 10
+    max Pts = 1000
+    txt file = path to data: worldCloud15.txt
 
 
 
