@@ -7,8 +7,20 @@
 #include <stdio.h>
 #include <chrono>
 #include <fstream>
+#include <pcl/common/common_headers.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_io.h>
+#include <pcl/io/io.h>
+#include <pcl/io/vtk_lib_io.h>
+#include <pcl/io/file_io.h>
+#include <pcl/io/ply/ply_parser.h>
+#include <pcl/io/ply/ply.h>
+#include <pcl/console/print.h>
 #include <pcl/console/parse.h>
 #include <pcl/console/time.h>
+#include <pcl/range_image/range_image.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/common/transforms.h>
 #include <pcl/common/geometry.h>
@@ -40,41 +52,123 @@ void calculateCentroid(vector<htr::Point3D>& points)
     centroid.z /= points.size();
 }
 
-void readCloudFromFile(const char* filename, std::vector<htr::Point3D>& points){
+void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points){
 
-    pcl::console::TicToc tt;
-    std::cout << "Reading cloud from file...";
- 
-    double x, y, z; 
-    std::ifstream file(filename);
-      
-    if(!file.is_open()){    
-      std::cerr << "Error: Could not find " << filename << std::endl;        
-      return std::exit(-1);    
-    }  
-         
-    while(file >> x >> y >> z){
-       htr::Point3D aux;
-       aux.x = x;
-       aux.y = y;
-       aux.z = z;
-       points.push_back(aux);
-       
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>());
+  pcl::PolygonMesh cl;
+  std::vector<int> filenames;
+  bool file_is_pcd = false;
+  bool file_is_ply = false;
+  bool file_is_txt = false;
+  bool file_is_xyz = false;
+
+  pcl::console::TicToc tt;
+  pcl::console::print_highlight ("Loading ");
+
+  filenames = pcl::console::parse_file_extension_argument(argc, argv, ".ply");
+  if(filenames.size()<=0){
+      filenames = pcl::console::parse_file_extension_argument(argc, argv, ".pcd");
+      if(filenames.size()<=0){
+          filenames = pcl::console::parse_file_extension_argument(argc, argv, ".txt");
+          if(filenames.size()<=0){
+              filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
+              if(filenames.size()<=0){
+                  std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+                  return std::exit(-1);
+              }else if(filenames.size() == 1){
+                  file_is_xyz = true;
+              }
+          }else if(filenames.size() == 1){
+             file_is_txt = true;
+        }
+    }else if(filenames.size() == 1){
+          file_is_pcd = true;
     }
-    
-    pcl::console::print_info ("[done, ");
-    pcl::console::print_value ("%g", tt.toc ());
-    pcl::console::print_info (" ms : ");
-    pcl::console::print_value ("%d", points.size());
-    pcl::console::print_info (" points]\n\n");
+  }
+  else if(filenames.size() == 1){
+      file_is_ply = true;
+  }else{
+      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+      return std::exit(-1);
+  }
+
+  if(file_is_pcd){ 
+      if(pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0){
+          std::cout << "Error loading point cloud " << argv[filenames[0]]  << "\n";
+          std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+          return std::exit(-1);
+      }
+      pcl::console::print_info("\nFound pcd file.\n");
+      pcl::console::print_info ("[done, ");
+      pcl::console::print_value ("%g", tt.toc ());
+      pcl::console::print_info (" ms : ");
+      pcl::console::print_value ("%d", cloud->size ());
+      pcl::console::print_info (" points]\n");
+    }else if(file_is_ply){
+      pcl::io::loadPLYFile(argv[filenames[0]],*cloud);
+      if(cloud->points.size()<=0){
+          pcl::console::print_warn("\nloadPLYFile could not read the cloud, attempting to loadPolygonFile...\n");
+          pcl::io::loadPolygonFile(argv[filenames[0]], cl);
+          pcl::fromPCLPointCloud2(cl.cloud, *cloud);
+          if(cloud->points.size()<=0){
+              pcl::console::print_warn("\nloadPolygonFile could not read the cloud, attempting to PLYReader...\n");
+              pcl::PLYReader plyRead;
+              plyRead.read(argv[filenames[0]],*cloud);
+              if(cloud->points.size()<=0){
+                  pcl::console::print_error("\nError. ply file is not compatible.\n");
+                  return std::exit(-1);
+              }
+          }
+       }
+
+      pcl::console::print_info("\nFound ply file.\n");
+      pcl::console::print_info ("[done, ");
+      pcl::console::print_value ("%g", tt.toc ());
+      pcl::console::print_info (" ms : ");
+      pcl::console::print_value ("%d", cloud->size ());
+      pcl::console::print_info (" points]\n");
+
+    }else if(file_is_txt or file_is_xyz){
+      std::ifstream file(argv[filenames[0]]);
+      if(!file.is_open()){
+          std::cout << "Error: Could not find "<< argv[filenames[0]] << std::endl;
+          return std::exit(-1);
+      }
+      double x_,y_,z_;
+      while(file >> x_ >> y_ >> z_){
+          pcl::PointXYZ pt;
+          pt.x = x_;
+          pt.y = y_;
+          pt.z= z_;
+          cloud->points.push_back(pt);
+      }
+
+      pcl::console::print_info("\nFound txt file.\n");
+      pcl::console::print_info ("[done, ");
+      pcl::console::print_value ("%g", tt.toc ());
+      pcl::console::print_info (" ms : ");
+      pcl::console::print_value ("%d", cloud->size ());
+      pcl::console::print_info (" points]\n");
+  }
+
+  cloud->width = (int) cloud->points.size();
+  cloud->height = 1;
+  cloud->is_dense = true;  
   
-    file.close();   
-    calculateCentroid(points);
+  for(int i =0; i<cloud->points.size();i++){
+       htr::Point3D aux;
+       aux.x = cloud->points[i].x;
+       aux.y = cloud->points[i].y;;
+       aux.z = cloud->points[i].z;
+       points.push_back(aux);  
+  }
+
+  calculateCentroid(points);
 }
 
-void init(char** argv,bool show){
+void init(int argc, char** argv,bool show){
 
-    readCloudFromFile(argv[1], groupA);
+    readCloudFromFile(argc, argv, groupA);
 
 	float eps = std::atof(argv[2]); //40.0f
 	int minPts = std::atof(argv[3]); //10
@@ -195,7 +289,7 @@ int main(int argc, char** argv){
    
    bool showClusters = true;
 
-   init(argv,showClusters);
+   init(argc,argv,showClusters);
 
    return 0;
 }
