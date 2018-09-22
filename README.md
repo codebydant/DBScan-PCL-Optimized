@@ -23,7 +23,7 @@ file.txt: x y z
 in the main folder:
 
     - cd build  
-    - cmake ../src/
+    - cmake ../
     - make
        
         	 
