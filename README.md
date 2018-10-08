@@ -20,7 +20,7 @@ News:
 * XYZ
 
 ## Example
-<img src="./example/scan.png" align="center" height="500" width="640"><br>
+<img src="./example/scan.png" align="center" height="400" width="540"><br>
 
 -------------------
 ## Compile
