@@ -19,6 +19,9 @@ News:
 * TXT: x y z
 * XYZ
 
+## Example
+<img src="./example/scan.png" align="center" height="500" width="640"><br>
+
 -------------------
 ## Compile
 * Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build
@@ -33,7 +36,7 @@ in the main folder:
         	 
 ### Test
 
-    ./dbscan <txt file> <eps> <min Pts> <max Pts>
+    ./dbscan <txt file> <eps> <min Pts> <max Pts> <output dir>
     eps = 40
     min Pts = 10
     max Pts = 1000
