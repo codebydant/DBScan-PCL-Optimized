@@ -47,13 +47,13 @@ else()
     message(FATAL_ERROR "    ERROR: PCL not found")
 endif()
 find_package(OpenGL)
-find_package(GLUT)
+
 
 ##############################################################################
 # HEADERS
 ##############################################################################
 include_directories(${PCL_INCLUDE_DIRS})
-include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
+include_directories( ${OPENGL_INCLUDE_DIRS})
 include(CheckFunctionExists)
 
 # Use the compile definitions defined in PCL
@@ -73,12 +73,12 @@ set(MAIN_SOURCE "dbScanMain.cpp")
 ##############################################################################
 # EXECUTABLES
 ##############################################################################
-add_executable(${PROJECT_NAME} ${MAIN_SOURCE} "dbScan.cpp" "OctreeGenerator.cpp" "cluster.cpp")
+add_executable(${PROJECT_NAME} ${MAIN_SOURCE} "dbScan.cpp" "OctreeGenerator.cpp" "cluster.cpp" "dbScan.h" "OctreeGenerator.h" "cluster.h" "mouseUtils.h" "HTRBasicDataStructures.h")
 
 ##############################################################################
 # TARGET LIBRARIES
 ##############################################################################
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${OPENGL_LIBRARIES} )
 
 message("=========================================")
 message("Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})

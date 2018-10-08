@@ -52,9 +52,10 @@ void calculateCentroid(vector<htr::Point3D>& points)
     centroid.z /= points.size();
 }
 
-void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points){
+void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
+                       pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud){
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>());
+
   pcl::PolygonMesh cl;
   std::vector<int> filenames;
   bool file_is_pcd = false;
@@ -73,7 +74,7 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points)
           if(filenames.size()<=0){
               filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
               if(filenames.size()<=0){
-                  std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+                  std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts> <output dir>" << std::endl;
                   return std::exit(-1);
               }else if(filenames.size() == 1){
                   file_is_xyz = true;
@@ -88,14 +89,14 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points)
   else if(filenames.size() == 1){
       file_is_ply = true;
   }else{
-      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts> <output dir>" << std::endl;
       return std::exit(-1);
   }
 
   if(file_is_pcd){ 
       if(pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0){
           std::cout << "Error loading point cloud " << argv[filenames[0]]  << "\n";
-          std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+          std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts> <output dir>" << std::endl;
           return std::exit(-1);
       }
       pcl::console::print_info("\nFound pcd file.\n");
@@ -168,11 +169,13 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points)
 
 void init(int argc, char** argv,bool show){
 
-    readCloudFromFile(argc, argv, groupA);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>());
+    readCloudFromFile(argc, argv, groupA,cloud);
 
 	float eps = std::atof(argv[2]); //40.0f
 	int minPts = std::atof(argv[3]); //10
 	int maxPts = std::atof(argv[4]); //1000
+	std::string output_dir = argv[5];
     dbscan2.init(groupA, eps, eps, minPts, maxPts);
     
     /*
@@ -195,8 +198,8 @@ void init(int argc, char** argv,bool show){
 		
         std::cout << "cluster " << cont << " size " << cluster.clusterPoints.size() << endl;
 		    
-        std::string str1 = "cloud";
-        str1 += "_cluster_";
+        std::string str1 = output_dir;
+        str1 += "/cloud_cluster_";
         str1 += to_string(cont);
         str1 += ".xyz";
 
@@ -212,7 +215,8 @@ void init(int argc, char** argv,bool show){
      }	
       
      ofstream fout2;      
-     std::string str2 = "clusters_number.txt";   
+     std::string str2 = output_dir; 
+     str2 += "/clusters_number.txt";   
      fout2.open(str2.c_str());  
      fout2 << cont << std::endl;
      fout2.close();   
@@ -228,10 +232,21 @@ void init(int argc, char** argv,bool show){
          
          boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("DBSCAN CLUSTERS"));
 
+         int PORT1 = 0;
+         viewer->createViewPort(0.0, 0.0, 0.5, 1.0, PORT1);
+         viewer->setBackgroundColor (0, 0, 0, PORT1);
+         viewer->addText("ORIGINAL", 10, 10, "PORT1", PORT1);
+
+         int PORT2 = 0;
+         viewer->createViewPort(0.5, 0.0, 1.0, 1.0, PORT2);
+         viewer->setBackgroundColor (0, 0, 0, PORT2);
+         viewer->addText("SEGMENTATION", 10, 10, "PORT2", PORT2);
+
          viewer->setPosition(0,0);
          viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0); // Setting background to a dark 
          
          int numClust = 0;
+         viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
          
          for(auto& cluster : dbscan2.getClusters()){       
          
@@ -258,9 +273,18 @@ void init(int argc, char** argv,bool show){
             nameId += std::to_string(numClust);
             
             std::cout << "Adding: " << nameId << " to pcl visualizer" << std::endl;        
-            viewer->addPointCloud(cluster_rgb,nameId.c_str());        
+            viewer->addPointCloud(cluster_rgb,nameId.c_str(),PORT2);
             numClust += 1;                                             
         }  
+
+        pcl::PointXYZ p11, p22, p33;
+        p11.getArray3fMap() << 1, 0, 0;
+        p22.getArray3fMap() << 0, 1, 0;
+        p33.getArray3fMap() << 0,0.1,1;
+
+        viewer->addText3D("x", p11, 0.2, 1, 0, 0, "x_");
+        viewer->addText3D("y", p22, 0.2, 0, 1, 0, "y_");
+        viewer->addText3D ("z", p33, 0.2, 0, 0, 1, "z_");
 
         viewer->initCameraParameters();
         viewer->resetCamera();
@@ -277,9 +301,9 @@ void init(int argc, char** argv,bool show){
 
 int main(int argc, char** argv){
 
-   if(argc < 5 or argc > 5){
+   if(argc < 6 or argc > 6){
    
-      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts>" << std::endl;
+      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts> <output dir>" << std::endl;
       return -1;
    }
    
