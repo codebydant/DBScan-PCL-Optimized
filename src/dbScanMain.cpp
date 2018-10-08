@@ -107,15 +107,15 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
       pcl::console::print_info (" points]\n");
     }else if(file_is_ply){
       pcl::io::loadPLYFile(argv[filenames[0]],*cloud);
-      if(cloud->points.size()<=0){
+      if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
           pcl::console::print_warn("\nloadPLYFile could not read the cloud, attempting to loadPolygonFile...\n");
           pcl::io::loadPolygonFile(argv[filenames[0]], cl);
           pcl::fromPCLPointCloud2(cl.cloud, *cloud);
-          if(cloud->points.size()<=0){
+          if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
               pcl::console::print_warn("\nloadPolygonFile could not read the cloud, attempting to PLYReader...\n");
               pcl::PLYReader plyRead;
               plyRead.read(argv[filenames[0]],*cloud);
-              if(cloud->points.size()<=0){
+              if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
                   pcl::console::print_error("\nError. ply file is not compatible.\n");
                   return std::exit(-1);
               }
