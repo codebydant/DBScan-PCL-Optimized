@@ -36,7 +36,7 @@ in the main folder:
         	 
 ### Test
 
-    ./dbscan <txt file> <eps> <min Pts> <max Pts> <output dir>
+    ./dbscan <txt file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
     eps = 40
     min Pts = 10
     max Pts = 1000
