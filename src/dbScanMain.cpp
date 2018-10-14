@@ -25,6 +25,9 @@
 #include <pcl/common/transforms.h>
 #include <pcl/common/geometry.h>
 #include <pcl/common/common.h>
+#include <pcl/features/statistical_multiscale_interest_region_extraction.h>
+#include <pcl/visualization/histogram_visualizer.h>
+#include<pcl/visualization/pcl_plotter.h>
 
 #include "OctreeGenerator.h"
 #include "mouseUtils.h"
@@ -41,8 +44,7 @@ dbScanSpace::dbscan *dbscan, dbscan2;
 
 void calculateCentroid(vector<htr::Point3D>& points)
 {
-    for(htr::Point3D point:points)
-    {
+    for(htr::Point3D point:points){
         centroid.x += point.x;
         centroid.y += point.y;
         centroid.z += point.z;
@@ -170,67 +172,69 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
 void init(int argc, char** argv,bool show){
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>());
-    readCloudFromFile(argc, argv, groupA,cloud);
+  readCloudFromFile(argc, argv, groupA,cloud);
 
-	float eps = std::atof(argv[2]); //40.0f
-	int minPts = std::atof(argv[3]); //10
-	int maxPts = std::atof(argv[4]); //1000
-	std::string output_dir = argv[5];
-    dbscan2.init(groupA, eps, eps, minPts, maxPts);
-    
-    /*
-    DBSCAN algorithm requires 2 parameters - epsilon , which specifies how close points should be to each other to be considered
-    a part of a cluster; and minPts , which specifies how many neighbors a point should have to be included into a cluster. 
-    However, you may not know these values in advance.
-    */    
+  int octreeResolution = std::atoi(argv[2]);
+  float eps = std::atof(argv[3]); //40.0f
+  int minPtsAux_ = std::atof(argv[4]); //>=3
+  int minPts = std::atof(argv[5]); //10
+  std::string output_dir = argv[6];
 
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
+  dbscan2.init(groupA, octreeResolution, eps, minPtsAux_, minPts);
 
-	dbscan2.generateClusters();
+  /*
+    DBSCAN algorithm requires 2 parameters - epsilon , which specifies how close points should be to each other to
+    be considered a part of a cluster; and minPts >=3 , which specifies how many neighbors a point should have to be
+    included into a cluster.
+  */
+
+  std::chrono::time_point<std::chrono::system_clock> start, end;
+  start = std::chrono::system_clock::now();
+
+  dbscan2.generateClusters();
     //dbscan2.generateClusters_fast();
-	//dbscan2.generateClusters_one_step();
-	
-	ofstream fout;
-    int cont = 0;   
+    //dbscan2.generateClusters_one_step();
 
-	for(auto& cluster : dbscan2.getClusters()){
-		
-        std::cout << "cluster " << cont << " size " << cluster.clusterPoints.size() << endl;
-		    
+    ofstream fout;
+    int cont = 0;
+
+    for(auto& cluster : dbscan2.getClusters()){
+
+        //std::cout << "cluster " << cont << " size " << cluster.clusterPoints.size() << endl;
+
         std::string str1 = output_dir;
         str1 += "/cloud_cluster_";
         str1 += to_string(cont);
         str1 += ".xyz";
 
-        fout.open(str1.c_str());            
-            
+        fout.open(str1.c_str());
+
         for(auto& point:cluster.clusterPoints){
-           
-            fout << point.x << " " << point.y << " "<< point.z << endl;            
+
+            fout << point.x << " " << point.y << " "<< point.z << endl;
         }
         
         fout.close();
-        cont +=1;   
-     }	
-      
-     ofstream fout2;      
-     std::string str2 = output_dir; 
-     str2 += "/clusters_number.txt";   
-     fout2.open(str2.c_str());  
-     fout2 << cont << std::endl;
-     fout2.close();   
+        cont +=1;
+    }
 
-     end = std::chrono::system_clock::now();
+    ofstream fout2;
+    std::string str2 = output_dir;
+    str2 += "/clusters_number.txt";
+    fout2.open(str2.c_str());
+    fout2 << cont << std::endl;
+    fout2.close();
 
-     std::chrono::duration<double> elapsed_seconds = end-start;
-     std::cout << "\nelapsed time: " << elapsed_seconds.count() << "s\n";
-     
-     if(show){
-     
-         std::cout << "\nPrinting clusters..." << std::endl;
-         
-         boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("DBSCAN CLUSTERS"));
+    end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "\nelapsed time: " << elapsed_seconds.count() << "s\n";
+
+    if(show){
+
+        //std::cout << "\nPrinting clusters..." << std::endl;
+
+        boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("DBSCAN CLUSTERS"));
 
          int PORT1 = 0;
          viewer->createViewPort(0.0, 0.0, 0.5, 1.0, PORT1);
@@ -272,7 +276,7 @@ void init(int argc, char** argv,bool show){
             std::string nameId = "cluster_";
             nameId += std::to_string(numClust);
             
-            std::cout << "Adding: " << nameId << " to pcl visualizer" << std::endl;        
+            //std::cout << "Adding: " << nameId << " to pcl visualizer" << std::endl;        
             viewer->addPointCloud(cluster_rgb,nameId.c_str(),PORT2);
             numClust += 1;                                             
         }  
@@ -295,16 +299,23 @@ void init(int argc, char** argv,bool show){
            viewer->spin();
         } 
              
-     }           	 
+     }
+
 }
 
 
 int main(int argc, char** argv){
 
-   if(argc < 6 or argc > 6){
+   if(argc < 7 or argc > 7){
    
-      std::cerr << "Usage: ./dbscan <file.txt> <eps> <minPts> <maxPts> <output dir>" << std::endl;
+      std::cerr << "Usage: ./dbscan <file.ply> <octree resolution> <eps> <minPts aux> <minPts> <output dir>" << std::endl;
+      std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
       return -1;
+   }
+
+   if(std::atoi(argv[3]) < 3){
+       std::cerr << "minPts must be >= 3!" << std::endl;
+       return -1;
    }
    
    std::cout << "\n*************************************" << std::endl;
