@@ -5,6 +5,28 @@
 #include <algorithm>
 #include <omp.h>
 #include <cmath>
+#include <random>
+#include <stdio.h>
+#include <chrono>
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_io.h>
+#include <pcl/io/io.h>
+#include <pcl/io/vtk_lib_io.h>
+#include <pcl/io/file_io.h>
+#include <pcl/io/ply/ply_parser.h>
+#include <pcl/io/ply/ply.h>
+
+#include <pcl/console/print.h>
+#include <pcl/console/parse.h>
+#include <pcl/console/time.h>
+
+#include <pcl/common/transforms.h>
+#include <pcl/common/geometry.h>
+#include <pcl/common/common.h>
+
+#include <pcl/visualization/pcl_visualizer.h>
 
 #include "OctreeGenerator.h"
 #include "HTRBasicDataStructures.h"
