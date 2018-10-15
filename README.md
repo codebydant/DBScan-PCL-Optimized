@@ -24,7 +24,7 @@ News:
 
 -------------------
 ## Compile
-* Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build
+* Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and saved.
 * Create a "build" folder
 
 in the main folder:
@@ -36,6 +36,7 @@ in the main folder:
         	 
 ### Test
 
+    cd /build/bin
     ./dbscan <txt file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
     txt file = path to data: point_cloud.txt
     octree resolution = 124
