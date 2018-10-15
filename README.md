@@ -37,10 +37,13 @@ in the main folder:
 ### Test
 
     ./dbscan <txt file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
+    txt file = path to data: point_cloud.txt
+    octree resolution = 124
     eps = 40
-    min Pts = 10
-    max Pts = 1000
-    txt file = path to data: worldCloud15.txt
+    min Pts = 4
+    max Pts = 5
+    output dir
+    
 
 
 
