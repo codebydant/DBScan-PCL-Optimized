@@ -37,6 +37,7 @@ in the main folder:
 
     cd /build/bin
     ./dbscan <txt file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
+    
     txt file = path to data: point_cloud.txt
     octree resolution = 124
     eps = 40
