@@ -3,8 +3,8 @@
 This project is taken from: Navarro-Hinojosa, Octavio, y Moisés Alencastre-Miranda. "DBSCAN modificado con Octrees para agrupar nubes de puntos en tiempo real." Research in Computing Science, Vol. 114: Advances in Image Processing and Computer Vision, pp. 173–186, 2016. https://github.com/Hagen23/DBScan_Octrees and modified with:
 
 News:
-* Added CMakeList.txt for cmake compile with PCL 1.8.1
-* Added arguments param option
+* Added CMakeList.txt for cmake compilation with PCL 1.8.1 (support 1.9.1)
+* Added arguments param options
 * Added pcl visualizer
 * Deleted Glut visualizer
 * Added cluster saving method
