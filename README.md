@@ -36,9 +36,9 @@ in the main folder:
 ### Test
 
     cd /build/bin
-    ./dbscan <txt file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
+    ./dbscan <pcd file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
     
-    txt file = path to data: point_cloud.txt
+    pcd file = path to data: point_cloud.pcd
     octree resolution = 124
     eps = 40
     min Pts = 4
