@@ -23,7 +23,7 @@ News:
 
 -------------------
 ## Compile
-* Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and saved.
+* Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and save it.
 * Create a "build" folder
 
 in the main folder:
