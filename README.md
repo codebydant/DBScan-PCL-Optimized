@@ -1,22 +1,23 @@
 # DBScan-PCL-Optimized
 
-This project is taken from: **Navarro-Hinojosa, Octavio, y Moisés Alencastre-Miranda. "DBSCAN modificado con Octrees para agrupar nubes de puntos en tiempo real." Research in Computing Science, Vol. 114: Advances in Image Processing and Computer Vision, pp. 173–186, 2016**. https://github.com/Hagen23/DBScan_Octrees and it was modified with:
+This project is taken from: **Navarro-Hinojosa, Octavio, y Moisés Alencastre-Miranda. "DBSCAN modificado con Octrees para agrupar nubes de puntos en tiempo real." Research in Computing Science, Vol. 114: Advances in Image Processing and Computer Vision, pp. 173–186, 2016.** Github: https://github.com/Hagen23/DBScan_Octrees
 
-News:
-* Added CMakeList.txt for cmake compilation with PCL 1.8.1 (support 1.9.1)
-* Added arguments param options
-* Added pcl visualizer
-* Deleted Glut visualizer
-* Added cluster saving method
-* Added cluster coloring method
-* Replaced the input file from csv to txt
+It was modified with:
 
-## Input file structure
+* It was added a CMakeList.txt for cmake compilation with PCL 1.8.1 (support 1.9.1)
+* It was added an argument param options
+* It was added a pcl visualizer
+* It was deleted the Glut visualizer
+* It was added a cluster saving method
+* It was added a cluster coloring method
+* It was replaced the input file from CSV to PCD 
 
-* PCD
-* PLY
-* TXT: x y z
-* XYZ
+## Input file structure support
+
+* .PCD 
+* .PLY
+* .TXT
+* .XYZ
 
 ## Example
 <img src="./example/scan.png" align="center" height="400" width="540"><br>
