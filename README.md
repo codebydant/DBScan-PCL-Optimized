@@ -47,6 +47,7 @@ in the main folder:
     output dir = path to save
     
     ¡You can modify the parameters to obtain better results!
+    I recommend modifying only the eps value, with 40 - 60 you can get better clusters.
     
 
 
