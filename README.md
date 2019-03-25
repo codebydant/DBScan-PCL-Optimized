@@ -23,8 +23,8 @@ It was modified with:
 <img src="./example/scan.png" align="center" height="400" width="700"><br>
 
 -------------------
-## Compile
-* Set "YOUR" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and save it.
+## Compilation
+* Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and save it.
 * Create a "build" folder
 
 in the main folder:
@@ -39,12 +39,14 @@ in the main folder:
     cd /build/bin
     ./dbscan <pcd file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
     
-    pcd file = path to data: point_cloud.pcd
+    pcd file = path to point_cloud.pcd
     octree resolution = 124
     eps = 40
     min Pts = 4
     max Pts = 5
-    output dir
+    output dir = path to save
+    
+    ¡You can modify the parameters to obtain better results!
     
 
 
