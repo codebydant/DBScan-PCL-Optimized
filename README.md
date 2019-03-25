@@ -24,7 +24,7 @@ It was modified with:
 
 -------------------
 ## Compilation
-* Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: /opt/pcl-1.8.1/build and save it.
+* Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: **/opt/pcl-1.8.1/build** and save it.
 * Create a "build" folder
 
 in the main folder:
