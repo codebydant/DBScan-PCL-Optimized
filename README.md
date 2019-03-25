@@ -20,7 +20,7 @@ It was modified with:
 * .XYZ
 
 ## Example
-<img src="./example/scan.png" align="center" height="400" width="540"><br>
+<img src="./example/scan.png" align="center" height="400" width="700"><br>
 
 -------------------
 ## Compile
