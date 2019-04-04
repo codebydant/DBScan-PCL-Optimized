@@ -22,6 +22,7 @@ It was modified with:
 
 ## Example
 <img src="./example/scan1.png" align="center" height="400" width="720"><br>
+<img src="./example/example2.png" align="center" height="400" width="720"><br>
 
 -------------------
 ## Compilation
