@@ -11,6 +11,7 @@ It was modified with:
 * It was added a cluster saving method
 * It was added a cluster coloring method
 * It was replaced the input file from CSV to PCD 
+* It was added a cluster coloring method for original color of the point cloud
 
 ## Input file structure support
 
