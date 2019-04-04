@@ -10,23 +10,27 @@
 #define HTR_BASIC_DATA_STRUCTURES_H
 
 /// Modified pcl point to include an id.
-namespace pcl
-{
-	class mod_pointXYZ : public PointXYZ
-	{
+namespace pcl{
+
+	class mod_pointXYZ : public PointXYZRGB{
+	
 	public:
-		mod_pointXYZ()
-		{
+		mod_pointXYZ(){
 			x = y = z = 0;
+			r = g = b = 0;
 			id = 0;
 		}
 
-		mod_pointXYZ(float x, float y, float z) : PointXYZ(x, y, z)
-		{
+		mod_pointXYZ(float x, float y, float z) : PointXYZRGB(x, y, z){
 			id = 0;
 		}
-
+		/*
+	    mod_pointXYZ(unsigned int r, unsigned int g, unsigned int b) : PointXYZRGB(r,g,b){
+			id = 0;
+		}
+         */
 		int id;
+		
 	};
 }
 
@@ -41,6 +45,10 @@ namespace htr{
 		float x;
 		float y;
 		float z;
+		
+		unsigned int r;
+		unsigned int g;
+		unsigned int b;
 
 		void initRandom()
         {

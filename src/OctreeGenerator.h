@@ -109,6 +109,16 @@ namespace htr{
 			cloud->points[i].x = points[i].x;
 			cloud->points[i].y = points[i].y;
 			cloud->points[i].z = points[i].z;
+			
+			
+			uint8_t r_, g_, b_; 
+            r_ = uint8_t(points[i].r); 
+            g_ = uint8_t(points[i].g); 
+            b_ = uint8_t(points[i].b); 
+
+            uint32_t rgb_ = ((uint32_t)r_ << 16 | (uint32_t)g_ << 8 | (uint32_t)b_); 
+            cloud->points[i].rgb = *reinterpret_cast<float*>(&rgb_);                
+
 		}
 		calculateCloudCentroid();
 	}
