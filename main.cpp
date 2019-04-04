@@ -17,7 +17,7 @@ void calculateCentroid(vector<htr::Point3D>& points){
 }
 
 void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
-                       pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud){
+                       pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud){
 
   pcl::PolygonMesh cl;
   std::vector<int> filenames;
@@ -92,28 +92,72 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
       pcl::console::print_value ("%d", cloud->size ());
       pcl::console::print_info (" points]\n");
 
-    }else if(file_is_txt or file_is_xyz){
+    }else if(file_is_txt){
       std::ifstream file(argv[filenames[0]]);
       if(!file.is_open()){
           std::cout << "Error: Could not find "<< argv[filenames[0]] << std::endl;
           return std::exit(-1);
       }
+      
+      std::cout << "file opened." << std::endl;
       double x_,y_,z_;
-      while(file >> x_ >> y_ >> z_){
-          pcl::PointXYZ pt;
+      unsigned int r, g, b; 
+
+      while(file >> x_ >> y_ >> z_ >> r >> g >> b){
+          pcl::PointXYZRGB pt;
           pt.x = x_;
           pt.y = y_;
-          pt.z= z_;
-          cloud->points.push_back(pt);
-      }
+          pt.z= z_;            
+          
+          uint8_t r_, g_, b_; 
+          r_ = uint8_t(r); 
+          g_ = uint8_t(g); 
+          b_ = uint8_t(b); 
 
+          uint32_t rgb_ = ((uint32_t)r_ << 16 | (uint32_t)g_ << 8 | (uint32_t)b_); 
+          pt.rgb = *reinterpret_cast<float*>(&rgb_);               
+              
+          cloud->points.push_back(pt);
+          //std::cout << "pointXYZRGB:" <<  pt << std::endl;
+      }      
+     
       pcl::console::print_info("\nFound txt file.\n");
       pcl::console::print_info ("[done, ");
       pcl::console::print_value ("%g", tt.toc ());
       pcl::console::print_info (" ms : ");
-      pcl::console::print_value ("%d", cloud->size ());
+      pcl::console::print_value ("%d", cloud->points.size ());
+      pcl::console::print_info (" points]\n");
+      
+  }else if(file_is_xyz){
+  
+      std::ifstream file(argv[filenames[0]]);
+      if(!file.is_open()){
+          std::cout << "Error: Could not find "<< argv[filenames[0]] << std::endl;
+          return std::exit(-1);
+      }
+      
+      std::cout << "file opened." << std::endl;
+      double x_,y_,z_;
+
+      while(file >> x_ >> y_ >> z_){
+          
+          pcl::PointXYZRGB pt;
+          pt.x = x_;
+          pt.y = y_;
+          pt.z= z_;            
+          
+          cloud->points.push_back(pt);
+          //std::cout << "pointXYZRGB:" <<  pt << std::endl;
+      }      
+     
+      pcl::console::print_info("\nFound xyz file.\n");
+      pcl::console::print_info ("[done, ");
+      pcl::console::print_value ("%g", tt.toc ());
+      pcl::console::print_info (" ms : ");
+      pcl::console::print_value ("%d", cloud->points.size ());
       pcl::console::print_info (" points]\n");
   }
+
 
   cloud->width = (int) cloud->points.size();
   cloud->height = 1;
@@ -122,12 +166,30 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
   for(int i =0; i<cloud->points.size();i++){
        htr::Point3D aux;
        aux.x = cloud->points[i].x;
-       aux.y = cloud->points[i].y;;
+       aux.y = cloud->points[i].y;
        aux.z = cloud->points[i].z;
+       
+       uint32_t rgb_ = *reinterpret_cast<int*>(&cloud->points[i].rgb); 
+       uint8_t r_, g_, b_; 
+
+       r_ = (rgb_ >> 16) & 0x0000ff; 
+       g_ = (rgb_ >> 8)  & 0x0000ff; 
+       b_ = (rgb_)       & 0x0000ff; 
+
+       unsigned int r, g, b; 
+       r = *((uint8_t *) &r_); 
+       g = *((uint8_t *) &g_); 
+       b = *((uint8_t *) &b_);   
+       
+       aux.r = r;
+       aux.g = g;
+       aux.b = b;          
+
        points.push_back(aux);  
+       
   }
 
-  calculateCentroid(points);
+  //calculateCentroid(points);
 }
 
 void init(int argc, char** argv,bool show){
@@ -135,7 +197,7 @@ void init(int argc, char** argv,bool show){
   std::vector<htr::Point3D> groupA;
   dbScanSpace::dbscan dbscan;
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>());
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>());
   readCloudFromFile(argc, argv, groupA,cloud);
 
   //----------------------------------------------------------------
@@ -160,8 +222,8 @@ void init(int argc, char** argv,bool show){
   std::chrono::time_point<std::chrono::system_clock> start, end;
   start = std::chrono::system_clock::now();
 
-  dbscan.generateClusters();
-  //dbscan.generateClusters_fast();
+  //dbscan.generateClusters();
+  dbscan.generateClusters_fast();
   //dbscan.generateClusters_one_step();
 
   ofstream fout;
@@ -174,18 +236,61 @@ void init(int argc, char** argv,bool show){
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
-      str1 += ".xyz";
+      str1 += ".txt";
 
       fout.open(str1.c_str());
 
       for(auto& point:cluster.clusterPoints){
+      
+        //fout << point.x << " " << point.y << " "<< point.z << " " << point.r << " " << point.g << " " << point.b << std::endl;
+        
+                uint32_t rgb_ = *reinterpret_cast<int*>(&point.rgb); 
+                uint8_t r_, g_, b_; 
 
-          fout << point.x << " " << point.y << " "<< point.z << std::endl;
+                r_ = (rgb_ >> 16) & 0x0000ff; 
+                g_ = (rgb_ >> 8)  & 0x0000ff; 
+                b_ = (rgb_)       & 0x0000ff; 
+
+                unsigned int r, g, b; 
+                r = *((uint8_t *) &r_); 
+                g = *((uint8_t *) &g_); 
+                b = *((uint8_t *) &b_);      
+               
+                fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;                    
+      /*
+      
+        for(size_t i=0;i<cloud->points.size();i++){
+        
+           pcl::PointXYZRGB pt = cloud->points.at(i);
+           
+           if(pt.x == point.x and pt.y == point.y and pt.z == point.z){
+           
+                uint32_t rgb_ = *reinterpret_cast<int*>(&pt.rgb); 
+                uint8_t r_, g_, b_; 
+
+                r_ = (rgb_ >> 16) & 0x0000ff; 
+                g_ = (rgb_ >> 8)  & 0x0000ff; 
+                b_ = (rgb_)       & 0x0000ff; 
+
+                unsigned int r, g, b; 
+                r = *((uint8_t *) &r_); 
+                g = *((uint8_t *) &g_); 
+                b = *((uint8_t *) &b_);      
+               
+                fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;             
+              
+           }else{
+             continue;
+           }               
+      
         }
+        */
+          
+     }
 
       fout.close();
       cont +=1;
-    }
+  }
 
   ofstream fout2;
   std::string str2 = output_dir;
