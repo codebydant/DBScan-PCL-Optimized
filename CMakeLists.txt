@@ -36,7 +36,7 @@ message("***********************")
 message("PCL PACKAGE")
 message("***********************")
 
-find_package(PCL 1.8 PATHS ${PCL_DIR})
+find_package(PCL 1.8 PATHS ${PCL_DIR} REQUIRED COMPONENTS common io visualization)
 if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
@@ -80,7 +80,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE} "src/dbScan.cpp" "src/OctreeGenera
 ##############################################################################
 # TARGET LIBRARIES
 ##############################################################################
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_VISUALIZATION_LIBRARY})
 
 message("=========================================")
 message("Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
