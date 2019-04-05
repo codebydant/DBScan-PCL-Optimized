@@ -324,7 +324,7 @@ void init(int argc, char** argv,bool show){
       viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0); // Setting background to a dark
 
       int numClust = 0;
-      viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
+      //viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
 
       std::random_device seeder;
       std::ranlux48 gen(seeder());
@@ -358,7 +358,10 @@ void init(int argc, char** argv,bool show){
           viewer->addPointCloud(cluster_rgb,nameId.c_str(),PORT2);
           numClust += 1;
       }
-
+      
+      double scale = 1;
+      
+      viewer->addCoordinateSystem(scale);
       pcl::PointXYZ p11, p22, p33;
       p11.getArray3fMap() << 1, 0, 0;
       p22.getArray3fMap() << 0, 1, 0;
@@ -367,6 +370,14 @@ void init(int argc, char** argv,bool show){
       viewer->addText3D("x", p11, 0.2, 1, 0, 0, "x_");
       viewer->addText3D("y", p22, 0.2, 0, 1, 0, "y_");
       viewer->addText3D ("z", p33, 0.2, 0, 0, 1, "z_");
+      
+      if(cloud->points[0].r <= 0 and cloud->points[0].g <= 0 and cloud->points[0].b<= 0 ){
+         pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> color_handler(cloud,255,255,0);
+         viewer->addPointCloud(cloud,color_handler,"Original_Cloud",PORT1);
+      }else{
+         viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
+      }
+  
 
       viewer->initCameraParameters();
       viewer->resetCamera();
@@ -375,8 +386,8 @@ void init(int argc, char** argv,bool show){
 
       while(!viewer->wasStopped()){
           viewer->spin();
-        }
-    }
+      }
+   }
 }
 
 
