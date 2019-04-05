@@ -21,10 +21,9 @@ It was modified with:
 * .XYZ
 
 ## Output file structure 
-
 * cloud_cluster.txt: 
 
-        - x y z r g b
+        x y z r g b
 
 ## Example
 <img src="./example/scan1.png" align="center" height="400" width="720"><br>
