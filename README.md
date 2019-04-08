@@ -15,10 +15,10 @@ It was modified with:
 
 ## Input file structure support
 
-* .PCD 
-* .PLY
-* .TXT
-* .XYZ
+* .pcd 
+* .ply
+* .txt
+* .xyz
 
 ## Output file structure 
 * cloud_cluster.txt: 
