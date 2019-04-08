@@ -4,17 +4,18 @@
 #include "src/dbScan.h"
 #include "src/HTRBasicDataStructures.h"
 
-void calculateCentroid(vector<htr::Point3D>& points){
-  pcl::PointXYZ centroid;
-    for(htr::Point3D point:points){
-        centroid.x += point.x;
-        centroid.y += point.y;
-        centroid.z += point.z;
-    }
-    centroid.x /= points.size();
-    centroid.y /= points.size();
-    centroid.z /= points.size();
-}
+
+// Colors to display the generated clusters
+float colors[] = {  255,0,0,
+                    0,255,0,
+                    0,0,255,
+                    255,255,0,
+                    0,255,255,
+                    255,0,255,
+                    0,0,255,
+                    0,255,255,
+                    255,255,255
+                    };
 
 void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
                        pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud){
@@ -329,42 +330,32 @@ void init(int argc, char** argv,bool show){
       std::random_device seeder;
       std::ranlux48 gen(seeder());
       std::uniform_int_distribution<int>  uniform_0_255(0, 255);
+      
+      int j = 0;
 
       for(auto& cluster : dbscan.getClusters()){
 
           pcl::PointCloud<pcl::PointXYZRGB>::Ptr cluster_rgb (new pcl::PointCloud<pcl::PointXYZRGB>());
-          //uint8_t r(255), g(15), b(15);
-          uint8_t r = (uint8_t) uniform_0_255(gen);
-          uint8_t g = (uint8_t) uniform_0_255(gen);
-          uint8_t b = (uint8_t) uniform_0_255(gen);
-        /*
-        
-        // Colors to display the generated clusters
-float colors[] = {  1,0,0,
-                    0,1,0,
-                    0,0,1,
-                    0.5,0,0,
-                    0,0.5,0,
-                    0,0,0.5,
-                    1,1,0,
-                    0,1,1,
-                    1,0,1,
-                    0,0,1,
-                    0,1,1,
-                    1,1,1
-                    };
-
-
-        int j = 0;
-    for(dbScanSpace::cluster cluster:dbscan2.getClusters()){
-        for(auto& point:cluster.clusterPoints){
-            glColor3f(colors[j], colors[j+1], colors[j+2]);
-        }
-
-        j+=3;
-        if(j > 36) j = 0;
-     }
-     */
+          //uint8_t r(255), g(15), b(15); 
+          
+          uint8_t r;
+          uint8_t g;
+          uint8_t b; 
+          
+          if(j < 27){
+          
+            r = (uint8_t) colors[j];
+            g = (uint8_t) colors[j+1];
+            b = (uint8_t) colors[j+2];
+                    
+          }else{
+            
+            r = (uint8_t) uniform_0_255(gen);
+            g = (uint8_t) uniform_0_255(gen);
+            b = (uint8_t) uniform_0_255(gen);  
+          
+          }       
+   
 
           for(auto& pointCluster:cluster.clusterPoints){
 
@@ -373,11 +364,20 @@ float colors[] = {  1,0,0,
               point.y = pointCluster.y;
               point.z = pointCluster.z;
 
+              //uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
+                //              static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+              //point.rgb = *reinterpret_cast<float*>(&rgb);
+              
               uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
                               static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
               point.rgb = *reinterpret_cast<float*>(&rgb);
+              //point.r = 255;
+              //point.g = 255;
+              //point.b = (uint8_t)colors[j+2];
               cluster_rgb->points.push_back(point);
           }
+          
+          j+=3;
 
           std::string nameId = "cluster_";
           nameId += std::to_string(numClust);
@@ -409,6 +409,11 @@ float colors[] = {  1,0,0,
 
       viewer->initCameraParameters();
       viewer->resetCamera();
+      
+      //std::cout << "\nGenerated: " << numClust << " clusters" << std::endl;
+      pcl::console::print_info("\nGenerated: ");
+      pcl::console::print_value ("%d", numClust);
+      pcl::console::print_info (" clusters\n");
 
       pcl::console::print_info ("\npress [q] to exit!\n");
 
