@@ -214,7 +214,7 @@ void init(int argc, char** argv,bool show){
   cluster; minPtsAux and minPts >=3 , which specifies how many neighbors a point should have to be included into a
   cluster.
   */
-
+  //groupA.size()*0.001 -> eps
   //----------------------------------------------------------------
   dbscan.init(groupA, octreeResolution, eps, minPtsAux_, minPts); /*RUN DBSCAN*/
   //----------------------------------------------------------------
@@ -337,6 +337,34 @@ void init(int argc, char** argv,bool show){
           uint8_t r = (uint8_t) uniform_0_255(gen);
           uint8_t g = (uint8_t) uniform_0_255(gen);
           uint8_t b = (uint8_t) uniform_0_255(gen);
+        /*
+        
+        // Colors to display the generated clusters
+float colors[] = {  1,0,0,
+                    0,1,0,
+                    0,0,1,
+                    0.5,0,0,
+                    0,0.5,0,
+                    0,0,0.5,
+                    1,1,0,
+                    0,1,1,
+                    1,0,1,
+                    0,0,1,
+                    0,1,1,
+                    1,1,1
+                    };
+
+
+        int j = 0;
+    for(dbScanSpace::cluster cluster:dbscan2.getClusters()){
+        for(auto& point:cluster.clusterPoints){
+            glColor3f(colors[j], colors[j+1], colors[j+2]);
+        }
+
+        j+=3;
+        if(j > 36) j = 0;
+     }
+     */
 
           for(auto& pointCluster:cluster.clusterPoints){
 
