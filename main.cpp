@@ -3,6 +3,9 @@
 #include "src/OctreeGenerator.h"
 #include "src/dbScan.h"
 #include "src/HTRBasicDataStructures.h"
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/thread/thread.hpp>
 
 
 // Colors to display the generated clusters
@@ -28,6 +31,17 @@ float colors[] = {  255,0,0,  //red 		1
                     204,255,153,//			20
 
                  }; //20x3=60 color elements
+
+bool is_number(const std::string& s){
+
+  std::string::const_iterator it = s.begin();
+      while (it != s.end() && std::isdigit(*it)) ++it;
+      return !s.empty() && it == s.end();
+  /*
+    return !s.empty() && std::find_if(s.begin(),
+        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+        */
+}                 
 
 void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
                        pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud){
@@ -214,12 +228,48 @@ void init(int argc, char** argv,bool show){
   readCloudFromFile(argc, argv, groupA,cloud);
 
   //----------------------------------------------------------------
-  int octreeResolution = std::atoi(argv[2]);
-  float eps = std::atof(argv[3]); //40.0f
-  int minPtsAux_ = std::atof(argv[4]); //>=3     /*INPUT PARAMETERS*/
-  int minPts = std::atof(argv[5]); //10
-  std::string output_dir = argv[6];
+  std::string octreeResolution_str = argv[2];
+  std::string eps_str = argv[3];//40.0f 
+  std::string minPtsAux_str = argv[4];//>=3    /*INPUT PARAMETERS*/    
+  std::string minPts_str = argv[5];//>=3 
+  std::string output_dir = argv[6];//10
   //----------------------------------------------------------------
+
+  //----------------------------------------------------------------
+
+  if(not is_number(octreeResolution_str)){
+       PCL_ERROR("\nError: enter a valid octree resolution\n");
+       std::exit(-1);
+  }else if(not is_number(eps_str)){
+       PCL_ERROR("\nError: enter a valid epsilon\n");
+       std::exit(-1);													/*VALIDATION*/	
+  }else if(not is_number(minPtsAux_str)){
+       PCL_ERROR("\nError: enter a valid min points aux\n");
+       std::exit(-1);
+  }else if(not is_number(minPts_str)){
+       PCL_ERROR("\nError: enter a valid min points\n");
+       std::exit(-1);
+  }
+
+  boost::filesystem::path dirPath(output_dir);			
+
+  if(not boost::filesystem::exists(dirPath) or not boost::filesystem::is_directory(dirPath)){
+	    pcl::console::print_error("\nError. does not exist or it's not valid: ");
+	    std::cout << output_dir << std::endl;
+  	    std::exit(-1);
+  }
+
+  //----------------------------------------------------------------
+
+  int octreeResolution = std::atoi(octreeResolution_str.c_str());
+  float eps = std::atof(eps_str.c_str());
+  int minPtsAux_ = std::atof(minPtsAux_str.c_str());
+  int minPts = std::atof(minPts_str.c_str()); 
+
+  if(minPts < 3){
+  	pcl::console::print_error("\nminPts must be >= 3! \n");
+    std::exit(-1);
+  }
 
   /*
   DBSCAN algorithm requires 5 parameters - octreeResoluion, describes the length of the smallest voxels at lowest
@@ -242,9 +292,16 @@ void init(int argc, char** argv,bool show){
   ofstream fout;
   int cont = 0;
 
-  for(auto& cluster : dbscan.getClusters()){
+  if(dbscan.getClusters().size()<=0){
 
-      //std::cout << "cluster " << cont << " size " << cluster.clusterPoints.size() << std::endl;
+  	  pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
+  	  std::exit(-1);
+
+  }
+
+  //Save cloud_cluster_#.txt:
+
+  for(auto& cluster : dbscan.getClusters()){
 
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
@@ -253,57 +310,27 @@ void init(int argc, char** argv,bool show){
 
       fout.open(str1.c_str());
 
-      for(auto& point:cluster.clusterPoints){
-      
-        //fout << point.x << " " << point.y << " "<< point.z << " " << point.r << " " << point.g << " " << point.b << std::endl;
-        
-                uint32_t rgb_ = *reinterpret_cast<int*>(&point.rgb); 
-                uint8_t r_, g_, b_; 
+      for(auto& point:cluster.clusterPoints){    
 
-                r_ = (rgb_ >> 16) & 0x0000ff; 
-                g_ = (rgb_ >> 8)  & 0x0000ff; 
-                b_ = (rgb_)       & 0x0000ff; 
+        uint32_t rgb_ = *reinterpret_cast<int*>(&point.rgb); 
+        uint8_t r_, g_, b_; 
 
-                unsigned int r, g, b; 
-                r = *((uint8_t *) &r_); 
-                g = *((uint8_t *) &g_); 
-                b = *((uint8_t *) &b_);      
-               
-                fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;                    
-      /*
-      
-        for(size_t i=0;i<cloud->points.size();i++){
-        
-           pcl::PointXYZRGB pt = cloud->points.at(i);
-           
-           if(pt.x == point.x and pt.y == point.y and pt.z == point.z){
-           
-                uint32_t rgb_ = *reinterpret_cast<int*>(&pt.rgb); 
-                uint8_t r_, g_, b_; 
+        r_ = (rgb_ >> 16) & 0x0000ff; 
+        g_ = (rgb_ >> 8)  & 0x0000ff; 
+        b_ = (rgb_)       & 0x0000ff; 
 
-                r_ = (rgb_ >> 16) & 0x0000ff; 
-                g_ = (rgb_ >> 8)  & 0x0000ff; 
-                b_ = (rgb_)       & 0x0000ff; 
-
-                unsigned int r, g, b; 
-                r = *((uint8_t *) &r_); 
-                g = *((uint8_t *) &g_); 
-                b = *((uint8_t *) &b_);      
-               
-                fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;             
-              
-           }else{
-             continue;
-           }               
-      
-        }
-        */
-          
-     }
+        unsigned int r, g, b; 
+        r = *((uint8_t *) &r_); 
+        g = *((uint8_t *) &g_); 
+        b = *((uint8_t *) &b_);      
+       
+        fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;               
+  
+      }
 
       fout.close();
       cont +=1;
-  }
+    }
 
   ofstream fout2;
   std::string str2 = output_dir;
@@ -365,28 +392,22 @@ void init(int argc, char** argv,bool show){
             r = (uint8_t) uniform_0_255(gen);
             g = (uint8_t) uniform_0_255(gen);
             b = (uint8_t) uniform_0_255(gen); 
+                     
+          }  
 
-                      
-          }       
+          //Adding different color to each cluster    
    
-
           for(auto& pointCluster:cluster.clusterPoints){
 
               pcl::PointXYZRGB point;
               point.x = pointCluster.x;
               point.y = pointCluster.y;
               point.z = pointCluster.z;
-
-              //uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
-                //              static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
-              //point.rgb = *reinterpret_cast<float*>(&rgb);
               
               uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
                               static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
               point.rgb = *reinterpret_cast<float*>(&rgb);
-              //point.r = 255;
-              //point.g = 255;
-              //point.b = (uint8_t)colors[j+2];
+
               cluster_rgb->points.push_back(point);
           }
           
@@ -445,12 +466,7 @@ int main(int argc, char** argv){
       std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
       return -1;
    }
-
-   if(std::atoi(argv[5]) < 3){
-       std::cerr << "minPts must be >= 3!" << std::endl;
-       return -1;
-   }
-   
+     
    std::cout << "\n*************************************" << std::endl;
    std::cout << "*** DBSCAN Cluster Segmentation *** " << std::endl;
    std::cout << "*************************************" << std::endl;
