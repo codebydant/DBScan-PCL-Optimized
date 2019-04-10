@@ -64,7 +64,7 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
           if(filenames.size()<=0){
               filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
               if(filenames.size()<=0){
-                  std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir>" << std::endl;
+                  std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
                   return std::exit(-1);
               }else if(filenames.size() == 1){
                   file_is_xyz = true;
@@ -79,14 +79,14 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
   else if(filenames.size() == 1){
       file_is_ply = true;
   }else{
-      std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir>" << std::endl;
+      std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
       return std::exit(-1);
   }
 
   if(file_is_pcd){ 
       if(pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0){
           std::cout << "Error loading point cloud " << argv[filenames[0]]  << "\n";
-          std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir>" << std::endl;
+          std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
           return std::exit(-1);
       }
       pcl::console::print_info("\nFound pcd file.\n");
@@ -219,7 +219,7 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
   //calculateCentroid(points);
 }
 
-void init(int argc, char** argv,bool show){
+void init(int argc, char** argv,bool show,std::string extension){
 
   std::vector<htr::Point3D> groupA;
   dbScanSpace::dbscan dbscan;
@@ -236,11 +236,12 @@ void init(int argc, char** argv,bool show){
   //----------------------------------------------------------------
 
   //----------------------------------------------------------------
+  double a;
 
   if(not is_number(octreeResolution_str)){
        PCL_ERROR("\nError: enter a valid octree resolution\n");
        std::exit(-1);
-  }else if(not is_number(eps_str)){
+  }else if(not is_number(eps_str) and not(std::fmod(std::atof(eps_str.c_str()), 1.0))){  
        PCL_ERROR("\nError: enter a valid epsilon\n");
        std::exit(-1);													/*VALIDATION*/	
   }else if(not is_number(minPtsAux_str)){
@@ -300,50 +301,139 @@ void init(int argc, char** argv,bool show){
 
   }
 
-  //Save cloud_cluster_#.txt:
+  //-----------------Save cloud_cluster_#.txt:-------------------------//
 
-  for(auto& cluster : dbscan.getClusters()){
+  if(extension == "txt"){
 
-      std::string str1 = output_dir;
-      str1 += "/cloud_cluster_";
-      str1 += std::to_string(cont);
-      str1 += ".txt";
+	  for(auto& cluster : dbscan.getClusters()){
 
-      fout.open(str1.c_str());
+	      std::string str1 = output_dir;
+	      str1 += "/cloud_cluster_";
+	      str1 += std::to_string(cont);
+	      str1 += ".txt";
 
-      for(auto& point:cluster.clusterPoints){    
+	      fout.open(str1.c_str());
 
-        uint32_t rgb_ = *reinterpret_cast<int*>(&point.rgb); 
-        uint8_t r_, g_, b_; 
+	      for(auto& point:cluster.clusterPoints){    
 
-        r_ = (rgb_ >> 16) & 0x0000ff; 
-        g_ = (rgb_ >> 8)  & 0x0000ff; 
-        b_ = (rgb_)       & 0x0000ff; 
+	        uint32_t rgb_ = *reinterpret_cast<int*>(&point.rgb); 
+	        uint8_t r_, g_, b_; 
 
-        unsigned int r, g, b; 
-        r = *((uint8_t *) &r_); 
-        g = *((uint8_t *) &g_); 
-        b = *((uint8_t *) &b_);      
-       
-        fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;               
-  
-      }
+	        r_ = (rgb_ >> 16) & 0x0000ff; 
+	        g_ = (rgb_ >> 8)  & 0x0000ff; 
+	        b_ = (rgb_)       & 0x0000ff; 
 
-      fout.close();
-      cont +=1;
-    }
+	        unsigned int r, g, b; 
+	        r = *((uint8_t *) &r_); 
+	        g = *((uint8_t *) &g_); 
+	        b = *((uint8_t *) &b_);      
+	       
+	        fout << point.x << " " << point.y << " "<< point.z << " " << r << " " << g << " " << b << std::endl;               
+	  
+	      }
 
-  ofstream fout2;
+	      fout.close();
+	      cont +=1;
+	    }
+
+  /*ofstream fout2;
   std::string str2 = output_dir;
   str2 += "/clusters_number.txt";
   fout2.open(str2.c_str());
   fout2 << cont << std::endl;
-  fout2.close();
+  fout2.close();*/
+
+  }else if(extension == "pcd"){
+
+  	 for(auto& cluster : dbscan.getClusters()){
+
+	      std::string str1 = output_dir;
+	      str1 += "/cloud_cluster_";
+	      str1 += std::to_string(cont);
+	      str1 += ".pcd";
+
+	      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_pcd (new pcl::PointCloud<pcl::PointXYZRGB>());
+
+	      for(auto& point:cluster.clusterPoints){   
+
+		        pcl::PointXYZRGB pt;
+
+		        pt.x = point.x;
+		        pt.y = point.y;
+		        pt.z = point.z; 
+
+		        pt.r = point.r;
+		        pt.g = point.g;
+		        pt.b = point.b; 
+
+		      	cloud_cluster_pcd->points.push_back(pt);        	  
+	      }
+
+	      pcl::io::savePCDFileBinary(str1.c_str(), *cloud_cluster_pcd);  
+	      cont +=1;
+	 }
+
+  }else if(extension == "ply"){
+
+  	 for(auto& cluster : dbscan.getClusters()){
+
+	      std::string str1 = output_dir;
+	      str1 += "/cloud_cluster_";
+	      str1 += std::to_string(cont);
+	      str1 += ".ply";
+
+	      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_ply (new pcl::PointCloud<pcl::PointXYZRGB>());
+
+	      for(auto& point:cluster.clusterPoints){   
+
+		        pcl::PointXYZRGB pt;
+
+		        pt.x = point.x;
+		        pt.y = point.y;
+		        pt.z = point.z; 
+
+		        pt.r = point.r;
+		        pt.g = point.g;
+		        pt.b = point.b; 
+
+		      	cloud_cluster_ply->points.push_back(pt);        	  
+	      }
+
+	      pcl::PLYWriter writer;
+ 		  writer.write(str1.c_str(), *cloud_cluster_ply, false, false);
+	      cont +=1;
+	 }
+
+  }else if(extension == "xyz"){
+
+	  for(auto& cluster : dbscan.getClusters()){
+
+	      std::string str1 = output_dir;
+	      str1 += "/cloud_cluster_";
+	      str1 += std::to_string(cont);
+	      str1 += ".xyz";
+
+	      fout.open(str1.c_str());
+
+	      for(auto& point:cluster.clusterPoints){    
+	       
+	        fout << point.x << " " << point.y << " "<< point.z << std::endl;               
+	  
+	      }
+
+	      fout.close();
+	      cont +=1;
+	    }
+  }
+
+  //-------------------------------------------------------------------//
 
   end = std::chrono::system_clock::now();
 
   std::chrono::duration<double> elapsed_seconds = end-start;
   std::cout << "\nelapsed time: " << elapsed_seconds.count() << "s\n";
+
+  //-----------------Visualize clusters pcl-visualizer-----------------//
 
   if(show){
 
@@ -461,20 +551,41 @@ void init(int argc, char** argv,bool show){
 
 int main(int argc, char** argv){
 
-   if(argc < 7 or argc > 7){
+   if(argc < 7 or argc > 8){
    
-      std::cerr << "Usage: ./dbscan <file.ply> <octree resolution> <eps> <minPts aux> <minPts> <output dir>" << std::endl;
+      std::cerr << "Usage: ./dbscan <file.ply> <octree resolution> <eps> <minPts aux> <minPts> <output dir> <output extension = pcd(default)>" << std::endl;
       std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
       return -1;
    }
-     
-   std::cout << "\n*************************************" << std::endl;
-   std::cout << "*** DBSCAN Cluster Segmentation *** " << std::endl;
-   std::cout << "*************************************" << std::endl;
-   
-   bool showClusters = true;
 
-   init(argc,argv,showClusters);
+   std::string extension;
 
-   return 0;
+   if(argc == 7){
+       extension = "pcd";
+   }else{
+
+	   	std::string temp = argv[7];
+	  
+	  	if(temp == "ply"){
+	  		extension = "ply";
+	    }else if(temp == "txt"){
+	    	extension = "txt";
+	    }else if(temp == "xyz"){
+	    	extension = "xyz";
+	    }else{
+	    	std::cout << "output extension must be: ply, txt or xyz (default=pcd)" << std::endl;
+	  		std::exit(-1);
+	    }	  		
+  	}
+
+std::cout << "\n*************************************" << std::endl;
+std::cout << "*** DBSCAN Cluster Segmentation *** " << std::endl;
+std::cout << "*************************************" << std::endl;
+
+bool showClusters = true;
+
+init(argc,argv,showClusters,extension);
+
+return 0;
+
 }
