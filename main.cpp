@@ -272,12 +272,13 @@ void init(int argc, char** argv,bool show){
   }
 
   /*
-  DBSCAN algorithm requires 5 parameters - octreeResoluion, describes the length of the smallest voxels at lowest
-  octree level. epsilon , which specifies how close points should be to each other to be considered a part of a
-  cluster; minPtsAux and minPts >=3 , which specifies how many neighbors a point should have to be included into a
-  cluster.
+  DBSCAN algorithm requires 3 parameters:
+   - octreeResolution, describes the length of the smallest voxels at lowest octree level.
+   - epsilon, which specifies how close points should be to each other to be considered a part of a cluster
+   - minPts, which specifies how many neighbors a point should have to be included into a cluster (must be >=3).
   */
-  //groupA.size()*0.001 -> eps
+
+  //groupA.size()*0.001 -> eps (you can set this param for epsilon)
   //----------------------------------------------------------------
   dbscan.init(groupA, octreeResolution, eps, minPtsAux_, minPts); /*RUN DBSCAN*/
   //----------------------------------------------------------------
