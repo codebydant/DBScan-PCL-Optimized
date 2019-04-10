@@ -20,8 +20,8 @@ It was modified with:
 * .txt
 * .xyz
 
-## Output file structure 
-* cloud_cluster.txt: 
+## Output file structure (default = .pcd)
+* cloud_cluster_#.txt: 
 
         x y z r g b
 
@@ -44,7 +44,7 @@ in the main folder:
 ### Test
 
     cd /build/bin
-    ./dbscan <pcd file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir>
+    ./dbscan <pcd file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir> <output extension (optional)>
     
     pcd file = path to point_cloud.pcd
     octree resolution = 124
@@ -52,6 +52,7 @@ in the main folder:
     min Pts = 4
     max Pts = 5
     output dir = path to save
+    output extension (optional) = pcd (default) --> you can set ply, txt or xyz
     
     ¡You can modify the parameters to obtain better results!
     I recommend modifying only the eps value, with 40 - 60 you can get better clusters.
