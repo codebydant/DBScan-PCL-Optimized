@@ -36,7 +36,7 @@ message("***********************")
 message("PCL PACKAGE")
 message("***********************")
 
-find_package(PCL 1.8 PATHS ${PCL_DIR}) ##REQUIRED COMPONENTS common io visualization)
+find_package(PCL 1.8 PATHS ${PCL_DIR} QUIET COMPONENTS common io visualization CONFIG) ##REQUIRED COMPONENTS common io visualization)
 if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
