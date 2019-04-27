@@ -82,7 +82,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE} "src/dbScan.cpp" "src/OctreeGenera
 # TARGET LIBRARIES
 ##############################################################################
 ##target_link_libraries(${PROJECT_NAME}  ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_VISUALIZATION_LIBRARY})
-target_link_libraries(${PROJECT_NAME}  ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES})
 
 message("=========================================")
 message("Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
