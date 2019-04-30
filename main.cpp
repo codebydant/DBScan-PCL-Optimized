@@ -264,8 +264,8 @@ void init(int argc, char** argv,bool show,std::string extension){
 
   int octreeResolution = std::atoi(octreeResolution_str.c_str());
   float eps = std::atof(eps_str.c_str());
-  int minPtsAux_ = std::atof(minPtsAux_str.c_str());
-  int minPts = std::atof(minPts_str.c_str()); 
+  int minPtsAux_ = std::atoi(minPtsAux_str.c_str());
+  int minPts = std::atoi(minPts_str.c_str()); 
 
   if(minPts < 3){
   	pcl::console::print_error("\nminPts must be >= 3! \n");
