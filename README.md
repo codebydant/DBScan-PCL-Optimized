@@ -54,6 +54,9 @@ in the main folder:
     output dir = path to save
     output extension (optional) = pcd (default) --> you can set ply, txt or xyz
     
+    Example:
+    **./dbscan /home/xXx/Downloads/point_cloud.pcd 124 40 5 5 /home/xXx/Downloads/clusters**     
+    
     ¡You can modify the parameters to obtain better results!
     I recommend modifying only the eps value, with 40 - 60 you can get better clusters.
     
