@@ -62,7 +62,7 @@ in the main folder:
     
 ## Note
 
-If you do not want to see the output clusters on PCL Viewer, set: <\br>
+If you do not want to see the output clusters on PCL Viewer, set: 
 
     bool showClusters = False; //Main function
     
