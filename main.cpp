@@ -64,7 +64,7 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
           if(filenames.size()<=0){
               filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
               if(filenames.size()<=0){
-                  std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
+                  std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
                   return std::exit(-1);
               }else if(filenames.size() == 1){
                   file_is_xyz = true;
@@ -79,14 +79,14 @@ void readCloudFromFile(int argc, char** argv, std::vector<htr::Point3D>& points,
   else if(filenames.size() == 1){
       file_is_ply = true;
   }else{
-      std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
+      std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
       return std::exit(-1);
   }
 
   if(file_is_pcd){ 
       if(pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0){
-          std::cout << "Error loading point cloud " << argv[filenames[0]]  << "\n";
-          std::cerr << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
+          std::cout << "Error loading point cloud " << argv[filenames[0]]  << std::endl;
+          std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> <output dir> output extension = pcd(default)" << std::endl;
           return std::exit(-1);
       }
       pcl::console::print_info("\nFound pcd file.\n");
