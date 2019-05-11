@@ -60,6 +60,12 @@ in the main folder:
     ¡You can modify the parameters to obtain better results!
     I recommend modifying only the eps value, with 40 - 60 you can get better clusters.
     
+## Note
+
+If you do not want to see the output clusters on PCL Viewer, set: <\br>
+
+    bool showClusters = False; //Main function
+    
 
 
 
