@@ -4,8 +4,8 @@ This project is taken from: **Navarro-Hinojosa, Octavio, y Moisés Alencastre-Mi
 
 It was modified with:
 
-* It was added a CMakeList.txt for cmake compilation with PCL 1.8.1 (support 1.9.1)
-* It was added an argument param options
+* It was added a CMakeList.txt for cmake compilation with PCL 1.9.0 (support 1.9.1)
+* It was added an argument param option
 * It was added a pcl visualizer
 * It was deleted the Glut visualizer
 * It was added a cluster saving method
