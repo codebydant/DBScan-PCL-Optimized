@@ -1,3 +1,29 @@
+/*
+DBSCAN, or Density-Based Spatial Clustering of Applications with Noise,
+is an unsupervised machine learning algorithm. Unsupervised machine learning
+algorithms are used to classify unlabeled data.
+
+DBSCAN is particularly well suited for problems which require:
+1. Minimal domain knowledge to determine the input parameters (i.e. K in k-means and Dmin in hierarchical clustering)
+2. Discovery of clusters with arbitrary shapes
+3. Good efficiency on large databases
+
+As is the case in most machine learning algorithms, the model’s behaviour is dictated by several parameters.
+
+1. eps: Two points are considered neighbors if the distance between the two points is below the threshold epsilon.
+2. min_samples: The minimum number of neighbors a given point should have in order to be classified as a core point.
+                It’s important to note that the point itself is included in the minimum number of samples.
+
+The algorithm works by computing the distance between every point and all other points. We then place the points into
+one of three categories.
+1. Core point: A point with at least min_samples points whose distance with respect to the point is below the threshold
+defined by epsilon.
+2. Border point: A point that isn’t in close proximity to at least min_samples points but is close enough to one or more
+core point. Border points are included in the cluster of the closest core point.
+3. Noise point: Points that aren’t close enough to core points to be considered border points. Noise points are ignored.
+That is to say, they aren’t part of any cluster.
+*/
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "include/HTRBasicDataStructures.h"
@@ -6,7 +32,9 @@
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread/thread.hpp>
-
+#include <math.h> /* log */
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/visualization/pcl_plotter.h>
 // Colors to display the generated clusters
 float colors[] = {
     255, 0,   0,   // red 		1
@@ -246,23 +274,89 @@ void init(int argc, char **argv, bool show, std::string extension) {
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   readCloudFromFile(argc, argv, cloud);
 
+  /*************************************************************************************************/
+  // K nearest neighbor search
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::copyPointCloud(*cloud, *cloud_xyz);
+  pcl::PointXYZ searchPoint;
+  // ... populate the cloud and the search point
+  // create a kd-tree instance
+  pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+  // assign a point cloud - this builds the tree
+  kdtree.setInputCloud(cloud_xyz);
+  // pre-allocate the neighbor index and
+  // distance vectors
+  int K = 10;
+  std::vector<int> pointsIdx(K);
+  std::vector<float> pointsSquaredDist(K);
+  // K nearest neighbor search
+  kdtree.nearestKSearch(searchPoint, K, pointsIdx, pointsSquaredDist);
+
+  std::cout << "K nearest neighbor search at (" << searchPoint.x << " " << searchPoint.y << " " << searchPoint.z
+            << ") with K=" << K << std::endl;
+
+  if (kdtree.nearestKSearch(searchPoint, K, pointsIdx, pointsSquaredDist) > 0) {
+    for (std::size_t i = 0; i < pointsIdx.size(); ++i)
+      std::cout << "    " << cloud->points[pointsIdx[i]].x << " " << cloud->points[pointsIdx[i]].y << " "
+                << cloud->points[pointsIdx[i]].z << " (squared distance: " << pointsSquaredDist[i] << ")" << std::endl;
+  }
+
+  std::vector<double> doubleVec(pointsSquaredDist.begin(), pointsSquaredDist.end());
+
+  double min_val = *std::min_element(doubleVec.begin(), doubleVec.end());
+  double max_val = *std::max_element(doubleVec.begin(), doubleVec.end());
+
+  std::vector<double> doubleVec_normalized;
+
+  for (double x : doubleVec) {
+    double norm = ((x - min_val) / (max_val - min_val));
+    doubleVec_normalized.push_back(norm);
+  }
+
+  std::partial_sort(doubleVec_normalized.begin(), doubleVec_normalized.begin() + 2, doubleVec_normalized.end());
+  std::cout << "Sorted squared distances: \n";
+
+  for (auto x : doubleVec_normalized)
+    std::cout << x << std::endl;
+
+  std::vector<double> doubleVec_X;
+  double cont_x = 0;
+
+  for (int x = 0; x < 300; x++) {
+    doubleVec_X.push_back(cont_x);
+    cont_x += 500;
+  }
+  // std::sort(doubleVec_X.begin(), doubleVec_X.end(), std::greater<int>());
+
+  // defining a plotter
+  pcl::visualization::PCLPlotter *plotter = new pcl::visualization::PCLPlotter;
+  // adding the polynomial func1 to the plotter with [-10, 10] as the range in X axis and "y = x^2" as title
+  plotter->addPlotData(doubleVec_normalized, doubleVec_X, "k square distance", vtkChart::LINE, std::vector<char>());
+
+  // display the plot, DONE!
+  // plotter->plot();
+  plotter->spinOnce(300);
+
+  // float mid_val = (float)(doubleVec.begin() + (doubleVec.size() / 2));
+
+  /************************************************************************************************/
   if (argc == 2) {
 
     boost::filesystem::path dirPath(boost::filesystem::current_path());
     output_dir = dirPath.string();
     output_dir += "/clusters";
     boost::filesystem::create_directory(output_dir);
-    std::cout << "Current directory: " << output_dir << std::endl;
+    // std::cout << "Current directory: " << output_dir << std::endl;
 
     pcl::console::print_info("\n- octree resolution: ");
-    pcl::console::print_value("%d\n", cloud->points.size() * 0.001);
+    pcl::console::print_value("%d", cloud->points.size() * 0.001);
     pcl::console::print_info("\n- epsilon: ");
-    pcl::console::print_value("%d\n", cloud->points.size() * 0.001);
+    pcl::console::print_value("%d", cloud->points.size() * 0.001);
     pcl::console::print_info("\n- min points: ");
-    pcl::console::print_value("%d\n", 10);
+    pcl::console::print_value("%d", 5);
     pcl::console::print_info("\n- max points: ");
-    pcl::console::print_value("%d\n", 100);
-    dbscan.init(groupA, cloud, cloud->points.size() * 0.001, cloud->points.size() * 0.001, 10, 100); /*RUN DBSCAN*/
+    pcl::console::print_value("%d", 100);
+    dbscan.init(groupA, cloud, cloud->points.size() * 0.001, doubleVec_normalized[2], 5, 100); /*RUN DBSCAN*/
   } else {
 
     //----------------------------------------------------------------
@@ -468,7 +562,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
   end = std::chrono::system_clock::now();
 
   std::chrono::duration<double> elapsed_seconds = end - start;
-  std::cout << "\nelapsed time: " << elapsed_seconds.count() << "s\n";
+  pcl::console::print_info("\n- elapsed time: ");
+  pcl::console::print_value("%d", elapsed_seconds.count());
 
   //-----------------Visualize clusters pcl-visualizer-----------------//
 
@@ -572,9 +667,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
     viewer->resetCamera();
 
     // std::cout << "\nGenerated: " << numClust << " clusters" << std::endl;
-    pcl::console::print_info("\nGenerated: ");
+    pcl::console::print_info("\n- clusters: ");
     pcl::console::print_value("%d", numClust);
-    pcl::console::print_info(" clusters\n");
 
     pcl::console::print_info("\npress [q] to exit!\n");
 

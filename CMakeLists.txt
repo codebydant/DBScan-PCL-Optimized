@@ -29,6 +29,20 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 # set turn off the output rule messages of cmake
 ##set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
 
+find_package(PkgConfig)
+pkg_check_modules(PC_FLANN flann)
+set(FLANN_DEFINITIONS ${PC_FLANN_CFLAGS_OTHER})
+
+find_path(FLANN_INCLUDE_DIR flann/flann.hpp
+    HINTS ${PC_FLANN_INCLUDEDIR} ${PC_FLANN_INCLUDE_DIRS})
+
+find_library(FLANN_LIBRARY flann
+    HINTS ${PC_FLANN_LIBDIR} ${PC_FLANN_LIBRARY_DIRS})
+
+set(FLANN_INCLUDE_DIRS ${FLANN_INCLUDE_DIR})
+set(FLANN_LIBRARIES ${FLANN_LIBRARY})
+
+
 ##############################################################################
 # PACKAGES
 ##############################################################################
@@ -94,7 +108,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 ##############################################################################
 # TARGET LIBRARIES
 ##############################################################################
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${FLANN_LIBRARY})
 
 message("=========================================")
 message("Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
