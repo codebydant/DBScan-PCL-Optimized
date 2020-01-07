@@ -351,7 +351,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
     pcl::console::print_info("\n- octree resolution: ");
     pcl::console::print_value("%d", cloud->points.size() * 0.001);
     pcl::console::print_info("\n- epsilon: ");
-    pcl::console::print_value("%d", cloud->points.size() * 0.001);
+    pcl::console::print_value("%lf", doubleVec_normalized[2]);
     pcl::console::print_info("\n- min points: ");
     pcl::console::print_value("%d", 5);
     pcl::console::print_info("\n- max points: ");
