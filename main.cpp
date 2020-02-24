@@ -96,6 +96,7 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
                        "<output dir> output extension = pcd(default)"
                        "or ./dbscan <input pointcloud>     <-- fast test"
                     << std::endl;
+          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
           return std::exit(-1);
         } else if (filenames.size() == 1) {
           file_is_xyz = true;
@@ -109,10 +110,11 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
   } else if (filenames.size() == 1) {
     file_is_ply = true;
   } else {
-   std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
+  std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
                        "<output dir> output extension = pcd(default)"
                        "or ./dbscan <input pointcloud>     <-- fast test"
                     << std::endl;
+          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
     return std::exit(-1);
   }
 
@@ -123,6 +125,7 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
                        "<output dir> output extension = pcd(default)"
                        "or ./dbscan <input pointcloud>     <-- fast test"
                     << std::endl;
+          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
       return std::exit(-1);
     }
     pcl::console::print_info("\nFound pcd file.\n");
@@ -708,10 +711,11 @@ int main(int argc, char **argv) {
 
   } else if (argc < 7 or argc > 8) {
 
-    std::cerr << "Usage: ./dbscan <file.ply> <octree resolution> <eps> <minPts aux> <minPts> "
-                 "<output dir> <output extension = pcd(default)>"
-              << std::endl;
-    std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
+    std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
+                       "<output dir> output extension = pcd(default)"
+                       "or ./dbscan <input pointcloud>     <-- fast test"
+                    << std::endl;
+          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
     return -1;
   } else {
     return 0;
