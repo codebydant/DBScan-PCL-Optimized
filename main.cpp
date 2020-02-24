@@ -92,8 +92,9 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
       if (filenames.size() <= 0) {
         filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
         if (filenames.size() <= 0) {
-          std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> "
+          std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
                        "<output dir> output extension = pcd(default)"
+                       "or ./dbscan <input pointcloud>     <-- fast test"
                     << std::endl;
           return std::exit(-1);
         } else if (filenames.size() == 1) {
@@ -108,18 +109,20 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
   } else if (filenames.size() == 1) {
     file_is_ply = true;
   } else {
-    std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> "
-                 "<output dir> output extension = pcd(default)"
-              << std::endl;
+   std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
+                       "<output dir> output extension = pcd(default)"
+                       "or ./dbscan <input pointcloud>     <-- fast test"
+                    << std::endl;
     return std::exit(-1);
   }
 
   if (file_is_pcd) {
     if (pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0) {
       std::cout << "Error loading point cloud " << argv[filenames[0]] << std::endl;
-      std::cout << "Usage: ./dbscan <file.txt> <octree resolution> <eps> <minPtsAux> <minPts> "
-                   "<output dir> output extension = pcd(default)"
-                << std::endl;
+      std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
+                       "<output dir> output extension = pcd(default)"
+                       "or ./dbscan <input pointcloud>     <-- fast test"
+                    << std::endl;
       return std::exit(-1);
     }
     pcl::console::print_info("\nFound pcd file.\n");
@@ -314,7 +317,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
   }
 
   std::partial_sort(doubleVec_normalized.begin(), doubleVec_normalized.begin() + 2, doubleVec_normalized.end());
-  std::cout << "Sorted squared distances: \n";
+  std::cout << "Sorted squared distances (normalized): \n";
 
   for (auto x : doubleVec_normalized)
     std::cout << x << std::endl;
