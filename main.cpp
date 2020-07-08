@@ -25,7 +25,7 @@ That is to say, they aren’t part of any cluster.
 */
 
 #define _CRT_SECURE_NO_WARNINGS
-
+#include <iostream>
 #include "include/HTRBasicDataStructures.h"
 #include "include/OctreeGenerator.h"
 #include "include/dbScan.h"
@@ -35,6 +35,16 @@ That is to say, they aren’t part of any cluster.
 #include <math.h> /* log */
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/visualization/pcl_plotter.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/radius_outlier_removal.h>
+
+//tryf ro filter
+#include "pcl/point_types.h"
+#include "pcl/point_cloud.h"
+#include <pcl/common/common.h>
+
+#include <cxxopts.hpp>
+
 // Colors to display the generated clusters
 float colors[] = {
     255, 0,   0,   // red 		1
@@ -280,6 +290,28 @@ void init(int argc, char **argv, bool show, std::string extension) {
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   readCloudFromFile(argc, argv, cloud);
 
+
+
+//do some filtering on the cloud to remove outliers
+  if(1){
+    // Create the filtering object for RadiusOutlierRemoval
+    //PointCloudT::Ptr cloud_ptr (new PointCloudT);
+    pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;
+        
+    //pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
+    //std::cerr << "setRadiusSearch: " <<test_double1<< std::endl;
+    //std::cerr << "setMinNeighborsInRadius: " <<test_double2<< std::endl;
+    outrem.setRadiusSearch(5.);//good 5 and r = 3//0.8
+    outrem.setMinNeighborsInRadius (4);//2
+    std::cerr << "Cloud after StatisticalOutlierRemoval: " <<cloud->size()<< std::endl;
+    outrem.setInputCloud(cloud);
+    outrem.filter (*cloud);
+    std::cerr << "Cloud after RadiusOutlierRemoval: " <<cloud->size()<< std::endl;
+    //cloud = *cloud_ptr;
+  }
+
+
+
   /*************************************************************************************************/
   // K nearest neighbor search
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -420,6 +452,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
     // groupA.size()*0.001 -> eps (you can set this param for epsilon)
     // dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
+	std::cerr << "octreeResolution: " <<octreeResolution<< std::endl;
+	std::cerr << "eps: " <<eps<< std::endl;
+	std::cerr << "minPtsAux_: " <<minPtsAux_<< std::endl;
+	std::cerr << "minPts: " <<minPts<< std::endl;
     //----------------------------------------------------------------
     dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux_, minPts); /*RUN DBSCAN*/
     //----------------------------------------------------------------
