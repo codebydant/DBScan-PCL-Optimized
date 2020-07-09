@@ -1,0 +1,8 @@
+//
+// Created by florian on 09/07/20.
+//
+
+#ifndef DBSCAN_KEYPOINTCLUSTER_H
+#define DBSCAN_KEYPOINTCLUSTER_H
+
+#endif //DBSCAN_KEYPOINTCLUSTER_H
