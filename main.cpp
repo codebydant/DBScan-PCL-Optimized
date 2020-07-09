@@ -26,6 +26,7 @@ That is to say, they aren’t part of any cluster.
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+
 #include "include/HTRBasicDataStructures.h"
 #include "include/OctreeGenerator.h"
 #include "include/dbScan.h"
@@ -37,6 +38,7 @@ That is to say, they aren’t part of any cluster.
 #include <pcl/visualization/pcl_plotter.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/common/centroid.h>#include <pcl/common/centroid.h>
 
 //tryf ro filter
 #include "pcl/point_types.h"
@@ -44,6 +46,10 @@ That is to say, they aren’t part of any cluster.
 #include <pcl/common/common.h>
 
 #include <cxxopts.hpp>
+
+//for PCA of class
+#include <pcl/common/pca.h>
+#include "keypointcluster.h"
 
 // Colors to display the generated clusters
 float colors[] = {
@@ -475,13 +481,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
     pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
     std::exit(-1);
   }
+    std::cout << "num of clusters:"<<  dbscan.getClusters().size()  <<"\n";
+
 
   //-----------------Save cloud_cluster_#.txt:-------------------------//
 
   if (extension == "txt") {
 
     for (auto &cluster : dbscan.getClusters()) {
-
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
@@ -518,15 +525,21 @@ void init(int argc, char **argv, bool show, std::string extension) {
     fout2.close();*/
 
   } else if (extension == "pcd") {
-
+      int cluster_cnt =1;
     for (auto &cluster : dbscan.getClusters()) {
-
+      cluster_cnt++;
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
       str1 += ".pcd";
 
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_pcd(new pcl::PointCloud<pcl::PointXYZRGB>());
+
+      // std::cout << "\nPrinting clusters..." << std::endl;
+      std::cout << "cluster " << cluster_cnt << ":" << cluster.clusterPoints.size() << std::endl;
+      std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid << std::endl;
+
+
 
       for (auto &point : cluster.clusterPoints) {
 
@@ -542,6 +555,50 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
         cloud_cluster_pcd->points.push_back(pt);
       }
+      pcl::PointXYZRGB minPt, maxPt;
+      pcl::getMinMax3D (*cloud_cluster_pcd, minPt, maxPt);
+      std::cout << "Max x: " << maxPt.x << std::endl;
+      std::cout << "Max y: " << maxPt.y << std::endl;
+      std::cout << "Max z: " << maxPt.z << std::endl;
+      std::cout << "Min x: " << minPt.x << std::endl;
+      std::cout << "Min y: " << minPt.y << std::endl;
+      std::cout << "Min z: " << minPt.z << std::endl;
+
+      //Source: http://codextechnicanum.blogspot.com/2015/04/find-minimum-oriented-bounding-box-of.html
+      // Compute principal directions
+      Eigen::Vector4f pcaCentroid;
+      pcl::compute3DCentroid(*cloud_cluster_pcd, pcaCentroid);
+      Eigen::Matrix3f covariance;
+      computeCovarianceMatrixNormalized(*cloud_cluster_pcd, pcaCentroid, covariance);
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigen_solver(covariance, Eigen::ComputeEigenvectors);
+      Eigen::Matrix3f eigenVectorsPCA = eigen_solver.eigenvectors();
+      eigenVectorsPCA.col(2) = eigenVectorsPCA.col(0).cross(eigenVectorsPCA.col(1));  /// This line is necessary for proper orientation in some cases. The numbers come out the same without it, but
+        // Note that getting the eigenvectors can also be obtained via the PCL PCA interface with something like:
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudPCAprojection (new pcl::PointCloud<pcl::PointXYZRGB>);
+      pcl::PCA<pcl::PointXYZRGB> pca;
+      pca.setInputCloud(cloud_cluster_pcd);
+      pca.project(*cloud_cluster_pcd, *cloudPCAprojection);
+      std::cerr << std::endl << "EigenVectors: " << pca.getEigenVectors() << std::endl;
+      std::cerr << std::endl << "EigenValues: " << pca.getEigenValues() << std::endl;
+
+      //save the information in the ClusterDescriptor
+      KeypointCluster Cluster1;
+      //Cluster1.set_values(1,cloud_cluster_pcd->size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+      //std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
+      Cluster1.set_values(1,cloud_cluster_pcd->size(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+      //std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
+
+        // In this case, pca.getEigenVectors() gives similar eigenVectors to eigenVectorsPCA.
+      // Get the minimum and maximum points of the transformed cloud.
+      /*
+      pcl::PointXYZRGB minPoint, maxPoint;
+      pcl::getMinMax3D(*cloud_cluster_pcd, minPoint, maxPoint);
+      const Eigen::Vector3f meanDiagonal = 0.5f*(maxPoint.getVector3fMap() + minPoint.getVector3fMap());
+      // Final transform
+      const Eigen::Quaternionf bboxQuaternion(eigenVectorsPCA); //Quaternions are a way to do rotations https://www.youtube.com/watch?v=mHVwd8gYLnI
+      const Eigen::Vector3f bboxTransform = eigenVectorsPCA * meanDiagonal + pcaCentroid.head<3>();
+      visu->addCube(bboxTransform, bboxQuaternion, maxPoint.x - minPoint.x, maxPoint.y - minPoint.y, maxPoint.z - minPoint.z, "bbox", mesh_vp_3);
+      */
 
       pcl::io::savePCDFileBinary(str1.c_str(), *cloud_cluster_pcd);
       cont += 1;
