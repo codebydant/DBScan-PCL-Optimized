@@ -1,4 +1,0 @@
-./dbscan ../../../data/keypoints__visualize_temp_2.pcd 124 40 5 30 .. pcd
-
-
-./dbscan ../../../data/keypoints__visualize_temp_1.pcd 124 40 10 60 .. pcd

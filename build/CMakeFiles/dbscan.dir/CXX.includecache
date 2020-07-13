@@ -209,6 +209,10 @@ Eigen/Dense
 -
 pcl/common/pca.h
 -
+pcl/visualization/pcl_plotter.h
+-
+pcl/visualization/pcl_visualizer.h
+-
 
 /home/florian/Programme/PCL/feature_segmentation/DBScan-PCL-Optimized/include/HTRBasicDataStructures.h
 pcl/pcl_macros.h

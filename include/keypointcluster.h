@@ -22,6 +22,9 @@
 #include <Eigen/Dense>
 #include <pcl/common/pca.h>
 
+#include <pcl/visualization/pcl_plotter.h>
+#include <pcl/visualization/pcl_visualizer.h>
+
 using namespace std;
 using namespace Eigen;
 typedef std::vector<Eigen::MatrixXd, Eigen::aligned_allocator<Eigen::MatrixXd>> PointsT;
@@ -54,10 +57,14 @@ public:
     float maxY;
     float maxZ;
 
-    void set_cloud(int ClusterID, PointCloudRGBT& key_cloud);
-    void set_values(int,PointT,Eigen::Matrix3f, Eigen::Vector3f, float,float,float,float,float,float);
+    void set_cloud(int ClusterID, PointCloudRGBT& key_cloud,PointT);
+    void set_values(int,Eigen::Matrix3f, Eigen::Vector3f, float,float,float,float,float,float);
 
 };
 
 
 #endif //DBSCAN_KEYPOINTCLUSTER_H
+
+
+KeypointCluster calculate_cluster_descriptor(pcl::PointCloud<pcl::PointXYZRGB>::Ptr KeyCloud, KeypointCluster KeyCluster);
+void add_cluster_visu(pcl::visualization::PCLVisualizer::Ptr viewer,  KeypointCluster KeyCluster);
