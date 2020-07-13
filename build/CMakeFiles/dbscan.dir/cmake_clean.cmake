@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/dbscan.dir/src/dbScan.cpp.o"
   "CMakeFiles/dbscan.dir/src/OctreeGenerator.cpp.o"
   "CMakeFiles/dbscan.dir/src/cluster.cpp.o"
+  "CMakeFiles/dbscan.dir/src/keypointcluster.cpp.o"
   "bin/dbscan.pdb"
   "bin/dbscan"
 )

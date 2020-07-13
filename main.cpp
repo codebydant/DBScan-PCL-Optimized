@@ -38,7 +38,7 @@ That is to say, they aren’t part of any cluster.
 #include <pcl/visualization/pcl_plotter.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/radius_outlier_removal.h>
-#include <pcl/common/centroid.h>#include <pcl/common/centroid.h>
+#include <pcl/common/centroid.h>
 
 //tryf ro filter
 #include "pcl/point_types.h"
@@ -50,6 +50,25 @@ That is to say, they aren’t part of any cluster.
 //for PCA of class
 #include <pcl/common/pca.h>
 #include "keypointcluster.h"
+#include <queue>
+
+
+/*
+void calc_descriptor(KeypointCluster Cluster){
+
+    pcl::PointXYZRGB minPt, maxPt;
+    pcl::getMinMax3D (Cluster.key_cloud, minPt, maxPt);
+
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudPCAprojection (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PCA<pcl::PointXYZRGB> pca;
+    pca.setInputCloud(Cluster.*key_cloud);
+    pca.project(Cluster.key_cloud, *cloudPCAprojection);
+
+    std::cout << std::endl << "EigenVectors: " << pca.getEigenVectors() << std::endl;
+    std::cout << std::endl << "EigenValues: " << pca.getEigenValues() << std::endl;
+    Cluster.set_values(Cluster.key_cloud.size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+
+}*/
 
 // Colors to display the generated clusters
 float colors[] = {
@@ -288,7 +307,7 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
 }
 
 void init(int argc, char **argv, bool show, std::string extension) {
-
+  queue<KeypointCluster> Keypoint_Cluster_Queue;
   std::vector<htr::Point3D> groupA;
   dbScanSpace::dbscan dbscan;
   std::string output_dir;
@@ -525,7 +544,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
     fout2.close();*/
 
   } else if (extension == "pcd") {
-      int cluster_cnt =1;
+    int cluster_cnt =1;
+
     for (auto &cluster : dbscan.getClusters()) {
       cluster_cnt++;
       std::string str1 = output_dir;
@@ -537,11 +557,16 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
       // std::cout << "\nPrinting clusters..." << std::endl;
       std::cout << "cluster " << cluster_cnt << ":" << cluster.clusterPoints.size() << std::endl;
-      std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid << std::endl;
+      std::cout << "cluster clustersCentroids" << cluster_cnt << ":" << cluster.centroid << std::endl;
+      //std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid.x << std::endl;
+      pcl::PointXYZ centroit_point;
+        centroit_point.x=cluster.centroid.x;
+        centroit_point.y=cluster.centroid.y;
+        centroit_point.z=cluster.centroid.z;
+        //std::cout << "cluster clustersCentroids" << cluster_cnt << "point.x :" << point.x << std::endl;
 
 
-
-      for (auto &point : cluster.clusterPoints) {
+        for (auto &point : cluster.clusterPoints) {
 
         pcl::PointXYZRGB pt;
 
@@ -583,11 +608,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
       //save the information in the ClusterDescriptor
       KeypointCluster Cluster1;
-      //Cluster1.set_values(1,cloud_cluster_pcd->size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
-      //std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
-      Cluster1.set_values(1,cloud_cluster_pcd->size(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
-      //std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
 
+
+      Cluster1.set_values(cloud_cluster_pcd->size(),centroit_point,pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+      //std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
+      //Cluster1.set_values(1,cloud_cluster_pcd->size(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+      std::cout << "Cluster1 Eigenvalues: " << Cluster1.Eigenvalues << std::endl;
+      Cluster1.set_cloud(cluster_cnt, *cloud_cluster_pcd);
+      Keypoint_Cluster_Queue.push( Cluster1 );
         // In this case, pca.getEigenVectors() gives similar eigenVectors to eigenVectorsPCA.
       // Get the minimum and maximum points of the transformed cloud.
       /*
@@ -603,7 +631,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
       pcl::io::savePCDFileBinary(str1.c_str(), *cloud_cluster_pcd);
       cont += 1;
     }
-
+    cout << "Size of queue = " << Keypoint_Cluster_Queue.size() << endl;
   } else if (extension == "ply") {
 
     for (auto &cluster : dbscan.getClusters()) {
@@ -686,10 +714,60 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
     viewer->setPosition(0, 0);
     viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0); // Setting background to a dark
+    int tmp_thresh=Keypoint_Cluster_Queue.size();
+    for (int counter=0;counter < tmp_thresh;counter++){
+        string lineID = to_string(counter);
+        pcl::PointXYZ src_idx, tgt_idx;
+        src_idx= Keypoint_Cluster_Queue.front().Centroid;
+
+        std::cout <<"eigenvect:"<<Keypoint_Cluster_Queue.front().Eigenvectors(0,0)<< std::endl;
+        std::cout <<"eigenvect:"<<Keypoint_Cluster_Queue.front().Eigenvectors(1,0)<< std::endl;
+        std::cout <<"eigenvect:"<<Keypoint_Cluster_Queue.front().Eigenvectors(2,0)<< std::endl;
+        //std::cout <<"eigenvect:"<<Keypoint_Cluster_Queue.front().Eigenvectors(1,1)<< std::endl;
+
+        std::cout <<"eigenvalue:"<<Keypoint_Cluster_Queue.front().Eigenvalues[0]<< std::endl;
+        std::cout <<"eigenvalue:"<<Keypoint_Cluster_Queue.front().Eigenvalues[1]<< std::endl;
+        std::cout <<"eigenvalue:"<<Keypoint_Cluster_Queue.front().Eigenvalues[2]<< std::endl;
+        //std::cout <<"eigenvalue:"<<Keypoint_Cluster_Queue.front().Eigenvalues[3]<< std::endl;
+        float scaller, offset;
+        int visu_scale=50, vec_cnt=0;
+        scaller =(Keypoint_Cluster_Queue.front().Eigenvalues[0]+Keypoint_Cluster_Queue.front().Eigenvalues[1]+Keypoint_Cluster_Queue.front().Eigenvalues[2]);
+        tgt_idx=src_idx;
+        offset=visu_scale*(Keypoint_Cluster_Queue.front().Eigenvalues[vec_cnt]/scaller);
+        /*
+        tgt_idx.x=src_idx.x+offset*Keypoint_Cluster_Queue.front().Eigenvectors(0,vec_cnt);
+        tgt_idx.y=src_idx.y+offset*Keypoint_Cluster_Queue.front().Eigenvectors(1,vec_cnt);
+        tgt_idx.z=src_idx.z+offset*Keypoint_Cluster_Queue.front().Eigenvectors(2,vec_cnt);
+        */
+
+        tgt_idx.x=src_idx.x+offset*Keypoint_Cluster_Queue.front().Eigenvectors(vec_cnt,0);
+        tgt_idx.y=src_idx.y+offset*Keypoint_Cluster_Queue.front().Eigenvectors(vec_cnt,1);
+        tgt_idx.z=src_idx.z+offset*Keypoint_Cluster_Queue.front().Eigenvectors(vec_cnt,2);
+
+        viewer->addLine<pcl::PointXYZ, pcl::PointXYZ>(src_idx, tgt_idx, 125, 125, 125, "x"+lineID);
+
+        vec_cnt++;
+        tgt_idx=src_idx;
+        offset=visu_scale*(Keypoint_Cluster_Queue.front().Eigenvalues[vec_cnt]/scaller);
+
+        tgt_idx.x=src_idx.x+offset*Keypoint_Cluster_Queue.front().Eigenvectors(0,vec_cnt);
+        tgt_idx.y=src_idx.y+offset*Keypoint_Cluster_Queue.front().Eigenvectors(1,vec_cnt);
+        tgt_idx.z=src_idx.z+offset*Keypoint_Cluster_Queue.front().Eigenvectors(2,vec_cnt);
+        viewer->addLine<pcl::PointXYZ, pcl::PointXYZ>(src_idx, tgt_idx, 125, 125, 125, "y"+lineID);
+
+        vec_cnt++;
+        tgt_idx=src_idx;
+        offset=visu_scale*(Keypoint_Cluster_Queue.front().Eigenvalues[vec_cnt]/scaller);
+
+        tgt_idx.x=src_idx.x+offset*Keypoint_Cluster_Queue.front().Eigenvectors(0,vec_cnt);
+        tgt_idx.y=src_idx.y+offset*Keypoint_Cluster_Queue.front().Eigenvectors(1,vec_cnt);
+        tgt_idx.z=src_idx.z+offset*Keypoint_Cluster_Queue.front().Eigenvectors(2,vec_cnt);
+        viewer->addLine<pcl::PointXYZ, pcl::PointXYZ>(src_idx, tgt_idx, 125, 125, 125, "z"+lineID);
+
+        Keypoint_Cluster_Queue.pop();
+    }
 
     int numClust = 0;
-    // viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
-
     std::random_device seeder;
     std::ranlux48 gen(seeder());
     std::uniform_int_distribution<int> uniform_0_255(0, 255);

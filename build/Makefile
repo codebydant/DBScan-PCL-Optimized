@@ -231,6 +231,33 @@ src/dbScan.cpp.s:
 	$(MAKE) -f CMakeFiles/dbscan.dir/build.make CMakeFiles/dbscan.dir/src/dbScan.cpp.s
 .PHONY : src/dbScan.cpp.s
 
+src/keypointcluster.o: src/keypointcluster.cpp.o
+
+.PHONY : src/keypointcluster.o
+
+# target to build an object file
+src/keypointcluster.cpp.o:
+	$(MAKE) -f CMakeFiles/dbscan.dir/build.make CMakeFiles/dbscan.dir/src/keypointcluster.cpp.o
+.PHONY : src/keypointcluster.cpp.o
+
+src/keypointcluster.i: src/keypointcluster.cpp.i
+
+.PHONY : src/keypointcluster.i
+
+# target to preprocess a source file
+src/keypointcluster.cpp.i:
+	$(MAKE) -f CMakeFiles/dbscan.dir/build.make CMakeFiles/dbscan.dir/src/keypointcluster.cpp.i
+.PHONY : src/keypointcluster.cpp.i
+
+src/keypointcluster.s: src/keypointcluster.cpp.s
+
+.PHONY : src/keypointcluster.s
+
+# target to generate assembly for a file
+src/keypointcluster.cpp.s:
+	$(MAKE) -f CMakeFiles/dbscan.dir/build.make CMakeFiles/dbscan.dir/src/keypointcluster.cpp.s
+.PHONY : src/keypointcluster.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -252,6 +279,9 @@ help:
 	@echo "... src/dbScan.o"
 	@echo "... src/dbScan.i"
 	@echo "... src/dbScan.s"
+	@echo "... src/keypointcluster.o"
+	@echo "... src/keypointcluster.i"
+	@echo "... src/keypointcluster.s"
 .PHONY : help
 
 
