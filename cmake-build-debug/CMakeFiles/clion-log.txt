@@ -1,0 +1,39 @@
+/home/florian/Programme/cLion/clion-2020.1.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/florian/Programme/PCL/feature_segmentation/DBScan-PCL-Optimized
+
+=========================================
+Project: dbscan 
+=========================================
+***********************
+PCL PACKAGE
+***********************
+CMake Warning at CMakeLists.txt:60 (message):
+     PCL 1.9 not found, attempting 1.8...
+
+
+-- The imported target "vtkRenderingPythonTkWidgets" references the file
+   "/usr/lib/x86_64-linux-gnu/libvtkRenderingPythonTkWidgets.so"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.3/VTKTargets.cmake"
+but not all the files it references.
+
+-- The imported target "vtk" references the file
+   "/usr/bin/vtk"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.3/VTKTargets.cmake"
+but not all the files it references.
+
+-- PCL status:
+--     version: 1.8.1
+--     directory: /usr/lib/x86_64-linux-gnu/cmake/pcl
+=========================================
+Project: dbscan COMPILED WITH CMAKE 3.16.5
+=========================================
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/florian/Programme/PCL/feature_segmentation/DBScan-PCL-Optimized/cmake-build-debug

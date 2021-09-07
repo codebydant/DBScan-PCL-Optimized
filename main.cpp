@@ -25,6 +25,7 @@ That is to say, they aren’t part of any cluster.
 */
 
 #define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
 
 #include "include/HTRBasicDataStructures.h"
 #include "include/OctreeGenerator.h"
@@ -35,6 +36,40 @@ That is to say, they aren’t part of any cluster.
 #include <math.h> /* log */
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/visualization/pcl_plotter.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/common/centroid.h>
+
+//tryf ro filter
+#include "pcl/point_types.h"
+#include "pcl/point_cloud.h"
+#include <pcl/common/common.h>
+
+#include <cxxopts.hpp>
+
+//for PCA of class
+#include <pcl/common/pca.h>
+#include "keypointcluster.h"
+#include <queue>
+
+
+/*
+void calc_descriptor(KeypointCluster Cluster){
+
+    pcl::PointXYZRGB minPt, maxPt;
+    pcl::getMinMax3D (Cluster.key_cloud, minPt, maxPt);
+
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudPCAprojection (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PCA<pcl::PointXYZRGB> pca;
+    pca.setInputCloud(Cluster.*key_cloud);
+    pca.project(Cluster.key_cloud, *cloudPCAprojection);
+
+    std::cout << std::endl << "EigenVectors: " << pca.getEigenVectors() << std::endl;
+    std::cout << std::endl << "EigenValues: " << pca.getEigenValues() << std::endl;
+    Cluster.set_values(Cluster.key_cloud.size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+
+}*/
+
 // Colors to display the generated clusters
 float colors[] = {
     255, 0,   0,   // red 		1
@@ -272,13 +307,35 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
 }
 
 void init(int argc, char **argv, bool show, std::string extension) {
-
+  queue<KeypointCluster> Keypoint_Cluster_Queue;
   std::vector<htr::Point3D> groupA;
   dbScanSpace::dbscan dbscan;
   std::string output_dir;
 
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   readCloudFromFile(argc, argv, cloud);
+
+
+
+//do some filtering on the cloud to remove outliers
+  if(1){
+    // Create the filtering object for RadiusOutlierRemoval
+    //PointCloudT::Ptr cloud_ptr (new PointCloudT);
+    pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;
+        
+    //pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
+    //std::cerr << "setRadiusSearch: " <<test_double1<< std::endl;
+    //std::cerr << "setMinNeighborsInRadius: " <<test_double2<< std::endl;
+    outrem.setRadiusSearch(5.);//good 5 and r = 3//0.8
+    outrem.setMinNeighborsInRadius (4);//2
+    std::cerr << "Cloud after StatisticalOutlierRemoval: " <<cloud->size()<< std::endl;
+    outrem.setInputCloud(cloud);
+    outrem.filter (*cloud);
+    std::cerr << "Cloud after RadiusOutlierRemoval: " <<cloud->size()<< std::endl;
+    //cloud = *cloud_ptr;
+  }
+
+
 
   /*************************************************************************************************/
   // K nearest neighbor search
@@ -420,6 +477,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
     // groupA.size()*0.001 -> eps (you can set this param for epsilon)
     // dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
+	std::cerr << "octreeResolution: " <<octreeResolution<< std::endl;
+	std::cerr << "eps: " <<eps<< std::endl;
+	std::cerr << "minPtsAux_: " <<minPtsAux_<< std::endl;
+	std::cerr << "minPts: " <<minPts<< std::endl;
     //----------------------------------------------------------------
     dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux_, minPts); /*RUN DBSCAN*/
     //----------------------------------------------------------------
@@ -439,13 +500,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
     pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
     std::exit(-1);
   }
+    std::cout << "num of clusters:"<<  dbscan.getClusters().size()  <<"\n";
+
 
   //-----------------Save cloud_cluster_#.txt:-------------------------//
 
   if (extension == "txt") {
 
     for (auto &cluster : dbscan.getClusters()) {
-
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
@@ -482,9 +544,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
     fout2.close();*/
 
   } else if (extension == "pcd") {
+    int cluster_cnt =1;
 
     for (auto &cluster : dbscan.getClusters()) {
-
+      cluster_cnt++;
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
@@ -492,7 +555,18 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_pcd(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-      for (auto &point : cluster.clusterPoints) {
+      // std::cout << "\nPrinting clusters..." << std::endl;
+      std::cout << "cluster " << cluster_cnt << ":" << cluster.clusterPoints.size() << std::endl;
+      std::cout << "cluster clustersCentroids" << cluster_cnt << ":" << cluster.centroid << std::endl;
+      //std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid.x << std::endl;
+      pcl::PointXYZ centroit_point;
+        centroit_point.x=cluster.centroid.x;
+        centroit_point.y=cluster.centroid.y;
+        centroit_point.z=cluster.centroid.z;
+        //std::cout << "cluster clustersCentroids" << cluster_cnt << "point.x :" << point.x << std::endl;
+
+
+        for (auto &point : cluster.clusterPoints) {
 
         pcl::PointXYZRGB pt;
 
@@ -507,10 +581,17 @@ void init(int argc, char **argv, bool show, std::string extension) {
         cloud_cluster_pcd->points.push_back(pt);
       }
 
+      //save the information in the ClusterDescriptor
+      KeypointCluster Cluster1;
+      Cluster1=calculate_cluster_descriptor(cloud_cluster_pcd, Cluster1);
+      Cluster1.set_cloud(cluster_cnt, *cloud_cluster_pcd, centroit_point);
+      Keypoint_Cluster_Queue.push( Cluster1 );
+
+
       pcl::io::savePCDFileBinary(str1.c_str(), *cloud_cluster_pcd);
       cont += 1;
     }
-
+    cout << "Size of queue = " << Keypoint_Cluster_Queue.size() << endl;
   } else if (extension == "ply") {
 
     for (auto &cluster : dbscan.getClusters()) {
@@ -594,9 +675,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
     viewer->setPosition(0, 0);
     viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0); // Setting background to a dark
 
-    int numClust = 0;
-    // viewer->addPointCloud(cloud,"Original_Cloud",PORT1);
+    //add teh scalled center visualization for each cluster
+    int tmp_thresh=Keypoint_Cluster_Queue.size();
+    for (int counter=0;counter < tmp_thresh;counter++){
+        add_cluster_visu(viewer,  Keypoint_Cluster_Queue.front());
+        Keypoint_Cluster_Queue.pop();
+    }
 
+    int numClust = 0;
     std::random_device seeder;
     std::ranlux48 gen(seeder());
     std::uniform_int_distribution<int> uniform_0_255(0, 255);

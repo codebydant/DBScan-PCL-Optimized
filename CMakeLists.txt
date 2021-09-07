@@ -99,11 +99,11 @@ list(APPEND SOURCE_FILES "main.cpp"
 						 "src/OctreeGenerator.cpp"
 						 "src/cluster.cpp"
 )
-
+include_directories(include)
 ##############################################################################
 # EXECUTABLES
 ##############################################################################
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} include/keypointcluster.h src/keypointcluster.cpp)
 
 ##############################################################################
 # TARGET LIBRARIES
