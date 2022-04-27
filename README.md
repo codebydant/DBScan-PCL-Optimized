@@ -39,7 +39,7 @@ To use it you have to install [docker-engine](https://docs.docker.com/engine/ins
 Download the docker image
 
 ```
-docker push danieltobon43/dbscan-octrees:1.0-ubuntu-20-04
+docker pull danieltobon43/dbscan-octrees:1.0-ubuntu-20-04
 ```
 
 Check downloaded image
