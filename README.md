@@ -36,18 +36,18 @@ There is a docker image for this project stored in docker hub, [here](https://hu
 
 To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
 
-Download the docker image
+## Download the docker image
 
 ```
 docker pull danieltobon43/dbscan-octrees:1.0-ubuntu-20-04
 ```
 
-Check downloaded image
+## Check downloaded image
 ```
 docker images
 ```
 
-Run a docker container
+## Run a docker container
 ```
 docker run --rm -it \
            --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
@@ -61,7 +61,7 @@ docker run --rm -it \
            --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
            -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME]
 ```
-example:
+## example:
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
 ```
 /home/user/Downloads/pcd/Tree2.pcd
@@ -82,6 +82,9 @@ docker run --rm -it \
 ```
 
 The previous command will run a docker container with the `danieltobon43/dbscan-octrees:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
+
+## Note
+Be aware that mounted directory in the host machine will copy all the files in the target directory in the container. That's why I recommend to create a folder to store just .pcd/.ply/etc files that will be use with the container.
 
 More information about this docker image can be found in the docker hub repository.
 
