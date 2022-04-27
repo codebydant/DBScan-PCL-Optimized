@@ -30,6 +30,42 @@ It was modified with:
 <img src="./example/example2.png" align="center" height="400" width="720"><br>
 
 -------------------
+
+## Docker image
+There is a docker image for this project stored in docker hub, [here](https://hub.docker.com/repository/docker/danieltobon43/dbscan-octrees/). This image is compiled with [pcl-docker-1.9.1](https://hub.docker.com/repository/docker/danieltobon43/pcl-docker-1-9-1), Ubuntu 20.04 and the DBscan project (`5.85GB`aprox.).
+
+To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
+
+Download the docker image
+
+```
+docker push danieltobon43/dbscan-octrees:1.0-ubuntu-20-04
+```
+
+Check downloaded image
+```
+docker images
+```
+
+Run a docker container
+```
+docker run --rm -it \
+           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
+           --env="XAUTHORITY=/tmp/.docker.xauth" \
+           --env="DISPLAY" \
+           --name="dbscan" \
+           --cap-add sys_ptrace \
+           -p 127.0.0.1:2222:22 \
+           --user=pcl \
+           --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
+           -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME]
+```
+
+The previous command will run a docker container with the `danieltobon43/dbscan-octrees:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
+
+More information about this docker image can be found in the docker hub repository.
+
 ## Compilation
 * Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: **/opt/pcl-1.8.1/build** and save it.
 * Create a "build" folder
