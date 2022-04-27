@@ -61,6 +61,25 @@ docker run --rm -it \
            --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
            -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME]
 ```
+example:
+I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
+```
+/home/user/Downloads/pcd/Tree2.pcd
+```
+To run a docker container with the previous `.pcd` file I will use `pwd` from ubuntu to get my current directory path in the terminal and then:
+```
+docker run --rm -it \
+           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
+           --env="XAUTHORITY=/tmp/.docker.xauth" \
+           --env="DISPLAY" \
+           --name="dbscan" \
+           --cap-add sys_ptrace \
+           -p 127.0.0.1:2222:22 \
+           --user=pcl \
+           --volume=`pwd`/pcd:/home/pcl/project/pcd \
+           -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/Tree2.pcd
+```
 
 The previous command will run a docker container with the `danieltobon43/dbscan-octrees:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
 
