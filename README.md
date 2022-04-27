@@ -32,7 +32,7 @@ It was modified with:
 -------------------
 
 ## Docker image
-There is a docker image for this project stored in docker hub, [here](https://hub.docker.com/repository/docker/danieltobon43/dbscan-octrees/). This image is compiled with [pcl-docker-1.9.1](https://hub.docker.com/repository/docker/danieltobon43/pcl-docker-1-9-1), Ubuntu 20.04 and the DBscan project (`5.85GB`aprox.).
+There is a docker image for this project stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/dbscan-octrees). This image is compiled with [pcl-docker-1.9.1](https://hub.docker.com/r/danieltobon43/pcl-docker-1-9-1), Ubuntu 20.04 and the DBscan project (`5.85GB`aprox.).
 
 To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
 
