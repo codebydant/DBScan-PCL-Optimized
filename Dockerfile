@@ -3,7 +3,7 @@
 # https://discourse.vtk.org/t/two-questions-about-new-module-system/2864/16
 
 # Build stage
-FROM pcl-docker:1.0-alpine3.15 as build_dbscan
+FROM danieltobon43/dbscan-octrees:1.0-alpine3.15 as build_dbscan
 
 # ======== Compile dbscan project ========
 RUN apk --no-cache add cmake make g++
