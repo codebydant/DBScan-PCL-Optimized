@@ -36,6 +36,7 @@ There is a docker image for this project stored in docker hub, [here](https://hu
 
 To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
 
+Docker multi-stage graph generated with: [dockerfilegraph](https://github.com/patrickhoefler/dockerfilegraph)
 <img src="./example/Dockerfile.png" align="center"><br>
 
 ## Download the docker image
