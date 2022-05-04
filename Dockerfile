@@ -4,7 +4,7 @@
 
 # Build stage
 FROM danieltobon43/dbscan-octrees:1.0-alpine3.15 as build_dbscan
-
+ 
 # ======== Compile dbscan project ========
 RUN apk --no-cache add cmake make g++
 
@@ -18,7 +18,7 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/src/install \
 		  -S . -Bbuild && make -C /usr/src/build -Wno-cpp -j$(nproc) && make -C /usr/src/build install
 
 # Runtime
-FROM pcl-docker:1.0-alpine3.15 as runtime
+FROM danieltobon43/pcl-docker:1.12.1-alpine3.15 as runtime
 ENV MESA_LOADER_DRIVER_OVERRIDE i965
 RUN apk --no-cache add mesa-dri-swrast
 
