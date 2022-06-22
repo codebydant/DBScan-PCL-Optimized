@@ -4,54 +4,58 @@ is an unsupervised machine learning algorithm. Unsupervised machine learning
 algorithms are used to classify unlabeled data.
 
 DBSCAN is particularly well suited for problems which require:
-1. Minimal domain knowledge to determine the input parameters (i.e. K in k-means and Dmin in hierarchical clustering)
+1. Minimal domain knowledge to determine the input parameters (i.e. K in k-means and Dmin in hierarchical
+clustering)
 2. Discovery of clusters with arbitrary shapes
 3. Good efficiency on large databases
 
 As is the case in most machine learning algorithms, the model’s behaviour is dictated by several parameters.
 
 1. eps: Two points are considered neighbors if the distance between the two points is below the threshold epsilon.
-2. min_samples: The minimum number of neighbors a given point should have in order to be classified as a core point.
-                It’s important to note that the point itself is included in the minimum number of samples.
+2. min_samples: The minimum number of neighbors a given point should have in order to be classified as a core
+point. It’s important to note that the point itself is included in the minimum number of samples.
 
-The algorithm works by computing the distance between every point and all other points. We then place the points into
-one of three categories.
-1. Core point: A point with at least min_samples points whose distance with respect to the point is below the threshold
-defined by epsilon.
-2. Border point: A point that isn’t in close proximity to at least min_samples points but is close enough to one or more
-core point. Border points are included in the cluster of the closest core point.
-3. Noise point: Points that aren’t close enough to core points to be considered border points. Noise points are ignored.
-That is to say, they aren’t part of any cluster.
+The algorithm works by computing the distance between every point and all other points. We then place the points
+into one of three categories.
+1. Core point: A point with at least min_samples points whose distance with respect to the point is below the
+threshold defined by epsilon.
+2. Border point: A point that isn’t in close proximity to at least min_samples points but is close enough to one or
+more core point. Border points are included in the cluster of the closest core point.
+3. Noise point: Points that aren’t close enough to core points to be considered border points. Noise points are
+ignored. That is to say, they aren’t part of any cluster.
 */
 
 #define _CRT_SECURE_NO_WARNINGS
+#include <math.h> /* log */
+#include <pcl/common/centroid.h>
+#include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/visualization/pcl_plotter.h>
+
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/thread/thread.hpp>
 #include <iostream>
 
 #include "include/HTRBasicDataStructures.h"
 #include "include/OctreeGenerator.h"
 #include "include/dbScan.h"
-#include <boost/algorithm/algorithm.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/thread/thread.hpp>
-#include <math.h> /* log */
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/visualization/pcl_plotter.h>
-#include <pcl/filters/statistical_outlier_removal.h>
-#include <pcl/filters/radius_outlier_removal.h>
-#include <pcl/common/centroid.h>
 
-//tryf ro filter
-#include "pcl/point_types.h"
-#include "pcl/point_cloud.h"
+// tryf ro filter
 #include <pcl/common/common.h>
 
 #include <cxxopts.hpp>
 
-//for PCA of class
+#include "pcl/point_cloud.h"
+#include "pcl/point_types.h"
+
+// for PCA of class
 #include <pcl/common/pca.h>
-#include "keypointcluster.h"
+
 #include <queue>
 
+#include "keypointcluster.h"
 
 /*
 void calc_descriptor(KeypointCluster Cluster){
@@ -66,40 +70,39 @@ void calc_descriptor(KeypointCluster Cluster){
 
     std::cout << std::endl << "EigenVectors: " << pca.getEigenVectors() << std::endl;
     std::cout << std::endl << "EigenValues: " << pca.getEigenValues() << std::endl;
-    Cluster.set_values(Cluster.key_cloud.size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y, minPt.z,maxPt.x, maxPt.y, maxPt.z);
+    Cluster.set_values(Cluster.key_cloud.size(),pca.getEigenVectors(),pca.getEigenValues(),minPt.x, minPt.y,
+minPt.z,maxPt.x, maxPt.y, maxPt.z);
 
 }*/
 
 // Colors to display the generated clusters
 float colors[] = {
-    255, 0,   0,   // red 		1
-    0,   255, 0,   // green		2
-    0,   0,   255, // blue		3
-    255, 255, 0,   // yellow		4
-    0,   255, 255, // light blue	5
-    255, 0,   255, // magenta     6
-    255, 255, 255, // white		7
-    255, 128, 0,   // orange		8
-    255, 153, 255, // pink		9
-    51,  153, 255, //			10
-    153, 102, 51,  //			11
-    128, 51,  153, //			12
-    153, 153, 51,  //			13
-    163, 38,  51,  //			14
-    204, 153, 102, //		15
-    204, 224, 255, //		16
-    128, 179, 255, //		17
-    206, 255, 0,   //			18
-    255, 204, 204, //			19
-    204, 255, 153, //			20
+    255, 0,   0,    // red 		1
+    0,   255, 0,    // green		2
+    0,   0,   255,  // blue		3
+    255, 255, 0,    // yellow		4
+    0,   255, 255,  // light blue	5
+    255, 0,   255,  // magenta     6
+    255, 255, 255,  // white		7
+    255, 128, 0,    // orange		8
+    255, 153, 255,  // pink		9
+    51,  153, 255,  //			10
+    153, 102, 51,   //			11
+    128, 51,  153,  //			12
+    153, 153, 51,   //			13
+    163, 38,  51,   //			14
+    204, 153, 102,  //		15
+    204, 224, 255,  //		16
+    128, 179, 255,  //		17
+    206, 255, 0,    //			18
+    255, 204, 204,  //			19
+    204, 255, 153,  //			20
 
-}; // 20x3=60 color elements
+};  // 20x3=60 color elements
 
 bool is_number(const std::string &s) {
-
   std::string::const_iterator it = s.begin();
-  while (it != s.end() && std::isdigit(*it))
-    ++it;
+  while (it != s.end() && std::isdigit(*it)) ++it;
   return !s.empty() && it == s.end();
   /*
     return !s.empty() && std::find_if(s.begin(),
@@ -108,7 +111,6 @@ bool is_number(const std::string &s) {
 }
 
 void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
-
   pcl::PolygonMesh cl;
   std::vector<int> filenames;
   bool file_is_pcd = false;
@@ -145,11 +147,11 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
   } else if (filenames.size() == 1) {
     file_is_ply = true;
   } else {
-  std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                       "<output dir> output extension = pcd(default)"
-                       "or ./dbscan <input pointcloud>     <-- fast test"
-                    << std::endl;
-          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
+    std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
+                 "<output dir> output extension = pcd(default)"
+                 "or ./dbscan <input pointcloud>     <-- fast test"
+              << std::endl;
+    std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
     return std::exit(-1);
   }
 
@@ -157,10 +159,10 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     if (pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0) {
       std::cout << "Error loading point cloud " << argv[filenames[0]] << std::endl;
       std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                       "<output dir> output extension = pcd(default)"
-                       "or ./dbscan <input pointcloud>     <-- fast test"
-                    << std::endl;
-          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
+                   "<output dir> output extension = pcd(default)"
+                   "or ./dbscan <input pointcloud>     <-- fast test"
+                << std::endl;
+      std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
       return std::exit(-1);
     }
     pcl::console::print_info("\nFound pcd file.\n");
@@ -171,7 +173,8 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     pcl::console::print_info(" points]\n");
   } else if (file_is_ply) {
     pcl::io::loadPLYFile(argv[filenames[0]], *cloud);
-    if (cloud->points.size() <= 0 or cloud->points[0].x <= 0 and cloud->points[0].y <= 0 and cloud->points[0].z <= 0) {
+    if (cloud->points.size() <= 0 or
+        cloud->points[0].x <= 0 and cloud->points[0].y <= 0 and cloud->points[0].z <= 0) {
       pcl::console::print_warn("\nloadPLYFile could not read the cloud, attempting to loadPolygonFile...\n");
       pcl::io::loadPolygonFile(argv[filenames[0]], cl);
       pcl::fromPCLPointCloud2(cl.cloud, *cloud);
@@ -196,7 +199,6 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     pcl::console::print_info(" points]\n");
 
   } else if (file_is_txt) {
-
     std::ifstream file(argv[filenames[0]], std::ifstream::in);
     if (!file.is_open()) {
       std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
@@ -208,7 +210,6 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     unsigned int r, g, b;
 
     while (file >> x_ >> y_ >> z_ >> r >> g >> b) {
-
       pcl::PointXYZRGB pt;
       pt.x = x_;
       pt.y = y_;
@@ -236,7 +237,6 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     file.close();
 
   } else if (file_is_xyz) {
-
     std::ifstream file(argv[filenames[0]]);
     if (!file.is_open()) {
       std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
@@ -247,7 +247,6 @@ void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>:
     double x_, y_, z_;
 
     while (file >> x_ >> y_ >> z_) {
-
       pcl::PointXYZRGB pt;
       pt.x = x_;
       pt.y = y_;
@@ -315,27 +314,23 @@ void init(int argc, char **argv, bool show, std::string extension) {
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   readCloudFromFile(argc, argv, cloud);
 
-
-
-//do some filtering on the cloud to remove outliers
-  if(1){
+  // do some filtering on the cloud to remove outliers
+  if (1) {
     // Create the filtering object for RadiusOutlierRemoval
-    //PointCloudT::Ptr cloud_ptr (new PointCloudT);
+    // PointCloudT::Ptr cloud_ptr (new PointCloudT);
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;
-        
-    //pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
-    //std::cerr << "setRadiusSearch: " <<test_double1<< std::endl;
-    //std::cerr << "setMinNeighborsInRadius: " <<test_double2<< std::endl;
-    outrem.setRadiusSearch(5.);//good 5 and r = 3//0.8
-    outrem.setMinNeighborsInRadius (4);//2
-    std::cerr << "Cloud after StatisticalOutlierRemoval: " <<cloud->size()<< std::endl;
+
+    // pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
+    // std::cerr << "setRadiusSearch: " <<test_double1<< std::endl;
+    // std::cerr << "setMinNeighborsInRadius: " <<test_double2<< std::endl;
+    outrem.setRadiusSearch(5.);         // good 5 and r = 3//0.8
+    outrem.setMinNeighborsInRadius(4);  // 2
+    std::cerr << "Cloud after StatisticalOutlierRemoval: " << cloud->size() << std::endl;
     outrem.setInputCloud(cloud);
-    outrem.filter (*cloud);
-    std::cerr << "Cloud after RadiusOutlierRemoval: " <<cloud->size()<< std::endl;
-    //cloud = *cloud_ptr;
+    outrem.filter(*cloud);
+    std::cerr << "Cloud after RadiusOutlierRemoval: " << cloud->size() << std::endl;
+    // cloud = *cloud_ptr;
   }
-
-
 
   /*************************************************************************************************/
   // K nearest neighbor search
@@ -361,7 +356,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
   if (kdtree.nearestKSearch(searchPoint, K, pointsIdx, pointsSquaredDist) > 0) {
     for (std::size_t i = 0; i < pointsIdx.size(); ++i)
       std::cout << "    " << cloud->points[pointsIdx[i]].x << " " << cloud->points[pointsIdx[i]].y << " "
-                << cloud->points[pointsIdx[i]].z << " (squared distance: " << pointsSquaredDist[i] << ")" << std::endl;
+                << cloud->points[pointsIdx[i]].z << " (squared distance: " << pointsSquaredDist[i] << ")"
+                << std::endl;
   }
 
   std::vector<double> doubleVec(pointsSquaredDist.begin(), pointsSquaredDist.end());
@@ -379,8 +375,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
   std::partial_sort(doubleVec_normalized.begin(), doubleVec_normalized.begin() + 2, doubleVec_normalized.end());
   std::cout << "Sorted squared distances (normalized): \n";
 
-  for (auto x : doubleVec_normalized)
-    std::cout << x << std::endl;
+  for (auto x : doubleVec_normalized) std::cout << x << std::endl;
 
   std::vector<double> doubleVec_X;
   double cont_x = 0;
@@ -394,7 +389,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
   // defining a plotter
   pcl::visualization::PCLPlotter *plotter = new pcl::visualization::PCLPlotter;
   // adding the polynomial func1 to the plotter with [-10, 10] as the range in X axis and "y = x^2" as title
-  plotter->addPlotData(doubleVec_normalized, doubleVec_X, "k square distance", vtkChart::LINE, std::vector<char>());
+  plotter->addPlotData(doubleVec_normalized, doubleVec_X, "k square distance", vtkChart::LINE,
+                       std::vector<char>());
 
   // display the plot, DONE!
   // plotter->plot();
@@ -404,7 +400,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
   /************************************************************************************************/
   if (argc == 2) {
-
     boost::filesystem::path dirPath(boost::filesystem::current_path());
     output_dir = dirPath.string();
     output_dir += "/clusters";
@@ -421,13 +416,12 @@ void init(int argc, char **argv, bool show, std::string extension) {
     pcl::console::print_value("%d", 100);
     dbscan.init(groupA, cloud, cloud->points.size() * 0.001, doubleVec_normalized[2], 5, 100); /*RUN DBSCAN*/
   } else {
-
     //----------------------------------------------------------------
     std::string octreeResolution_str = argv[2];
-    std::string eps_str = argv[3];       // 40.0f
-    std::string minPtsAux_str = argv[4]; //>=3    /*INPUT PARAMETERS*/
-    std::string minPts_str = argv[5];    //>=3
-    output_dir = argv[6];                // 10
+    std::string eps_str = argv[3];        // 40.0f
+    std::string minPtsAux_str = argv[4];  //>=3    /*INPUT PARAMETERS*/
+    std::string minPts_str = argv[5];     //>=3
+    output_dir = argv[6];                 // 10
     //----------------------------------------------------------------
     //----------------------------------------------------------------
 
@@ -477,10 +471,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
 
     // groupA.size()*0.001 -> eps (you can set this param for epsilon)
     // dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
-	std::cerr << "octreeResolution: " <<octreeResolution<< std::endl;
-	std::cerr << "eps: " <<eps<< std::endl;
-	std::cerr << "minPtsAux_: " <<minPtsAux_<< std::endl;
-	std::cerr << "minPts: " <<minPts<< std::endl;
+    std::cerr << "octreeResolution: " << octreeResolution << std::endl;
+    std::cerr << "eps: " << eps << std::endl;
+    std::cerr << "minPtsAux_: " << minPtsAux_ << std::endl;
+    std::cerr << "minPts: " << minPts << std::endl;
     //----------------------------------------------------------------
     dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux_, minPts); /*RUN DBSCAN*/
     //----------------------------------------------------------------
@@ -496,17 +490,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
   int cont = 0;
 
   if (dbscan.getClusters().size() <= 0) {
-
     pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
     std::exit(-1);
   }
-    std::cout << "num of clusters:"<<  dbscan.getClusters().size()  <<"\n";
-
+  std::cout << "num of clusters:" << dbscan.getClusters().size() << "\n";
 
   //-----------------Save cloud_cluster_#.txt:-------------------------//
 
   if (extension == "txt") {
-
     for (auto &cluster : dbscan.getClusters()) {
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
@@ -516,7 +507,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
       fout.open(str1.c_str());
 
       for (auto &point : cluster.clusterPoints) {
-
         uint32_t rgb_ = *reinterpret_cast<int *>(&point.rgb);
         uint8_t r_, g_, b_;
 
@@ -544,7 +534,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
     fout2.close();*/
 
   } else if (extension == "pcd") {
-    int cluster_cnt =1;
+    int cluster_cnt = 1;
 
     for (auto &cluster : dbscan.getClusters()) {
       cluster_cnt++;
@@ -558,16 +548,14 @@ void init(int argc, char **argv, bool show, std::string extension) {
       // std::cout << "\nPrinting clusters..." << std::endl;
       std::cout << "cluster " << cluster_cnt << ":" << cluster.clusterPoints.size() << std::endl;
       std::cout << "cluster clustersCentroids" << cluster_cnt << ":" << cluster.centroid << std::endl;
-      //std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid.x << std::endl;
+      // std::cout << "cluster clustersCentroids" << cluster_cnt << "x :" << cluster.centroid.x << std::endl;
       pcl::PointXYZ centroit_point;
-        centroit_point.x=cluster.centroid.x;
-        centroit_point.y=cluster.centroid.y;
-        centroit_point.z=cluster.centroid.z;
-        //std::cout << "cluster clustersCentroids" << cluster_cnt << "point.x :" << point.x << std::endl;
+      centroit_point.x = cluster.centroid.x;
+      centroit_point.y = cluster.centroid.y;
+      centroit_point.z = cluster.centroid.z;
+      // std::cout << "cluster clustersCentroids" << cluster_cnt << "point.x :" << point.x << std::endl;
 
-
-        for (auto &point : cluster.clusterPoints) {
-
+      for (auto &point : cluster.clusterPoints) {
         pcl::PointXYZRGB pt;
 
         pt.x = point.x;
@@ -581,21 +569,18 @@ void init(int argc, char **argv, bool show, std::string extension) {
         cloud_cluster_pcd->points.push_back(pt);
       }
 
-      //save the information in the ClusterDescriptor
+      // save the information in the ClusterDescriptor
       KeypointCluster Cluster1;
-      Cluster1=calculate_cluster_descriptor(cloud_cluster_pcd, Cluster1);
+      Cluster1 = calculate_cluster_descriptor(cloud_cluster_pcd, Cluster1);
       Cluster1.set_cloud(cluster_cnt, *cloud_cluster_pcd, centroit_point);
-      Keypoint_Cluster_Queue.push( Cluster1 );
-
+      Keypoint_Cluster_Queue.push(Cluster1);
 
       pcl::io::savePCDFileBinary(str1.c_str(), *cloud_cluster_pcd);
       cont += 1;
     }
     cout << "Size of queue = " << Keypoint_Cluster_Queue.size() << endl;
   } else if (extension == "ply") {
-
     for (auto &cluster : dbscan.getClusters()) {
-
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
@@ -604,7 +589,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_ply(new pcl::PointCloud<pcl::PointXYZRGB>());
 
       for (auto &point : cluster.clusterPoints) {
-
         pcl::PointXYZRGB pt;
 
         pt.x = point.x;
@@ -624,9 +608,7 @@ void init(int argc, char **argv, bool show, std::string extension) {
     }
 
   } else if (extension == "xyz") {
-
     for (auto &cluster : dbscan.getClusters()) {
-
       std::string str1 = output_dir;
       str1 += "/cloud_cluster_";
       str1 += std::to_string(cont);
@@ -635,7 +617,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
       fout.open(str1.c_str());
 
       for (auto &point : cluster.clusterPoints) {
-
         fout << point.x << " " << point.y << " " << point.z << std::endl;
       }
 
@@ -655,9 +636,8 @@ void init(int argc, char **argv, bool show, std::string extension) {
   //-----------------Visualize clusters pcl-visualizer-----------------//
 
   if (show) {
-
     // std::cout << "\nPrinting clusters..." << std::endl;
-    vtkObject::GlobalWarningDisplayOff(); // Disable vtk render warning
+    vtkObject::GlobalWarningDisplayOff();  // Disable vtk render warning
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(
         new pcl::visualization::PCLVisualizer("DBSCAN CLUSTERS"));
@@ -673,13 +653,13 @@ void init(int argc, char **argv, bool show, std::string extension) {
     viewer->addText("CLUSTERS", 10, 10, "PORT2", PORT2);
 
     viewer->setPosition(0, 0);
-    viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0); // Setting background to a dark
+    viewer->setBackgroundColor(0.0, 0.0, 0.0, 0.0);  // Setting background to a dark
 
-    //add teh scalled center visualization for each cluster
-    int tmp_thresh=Keypoint_Cluster_Queue.size();
-    for (int counter=0;counter < tmp_thresh;counter++){
-        add_cluster_visu(viewer,  Keypoint_Cluster_Queue.front());
-        Keypoint_Cluster_Queue.pop();
+    // add teh scalled center visualization for each cluster
+    int tmp_thresh = Keypoint_Cluster_Queue.size();
+    for (int counter = 0; counter < tmp_thresh; counter++) {
+      add_cluster_visu(viewer, Keypoint_Cluster_Queue.front());
+      Keypoint_Cluster_Queue.pop();
     }
 
     int numClust = 0;
@@ -690,7 +670,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
     int j = 0;
 
     for (auto &cluster : dbscan.getClusters()) {
-
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cluster_rgb(new pcl::PointCloud<pcl::PointXYZRGB>());
       // uint8_t r(255), g(15), b(15);
 
@@ -699,13 +678,11 @@ void init(int argc, char **argv, bool show, std::string extension) {
       uint8_t b;
 
       if (j < 60) {
-
         r = (uint8_t)colors[j];
         g = (uint8_t)colors[j + 1];
         b = (uint8_t)colors[j + 2];
 
       } else {
-
         r = (uint8_t)uniform_0_255(gen);
         g = (uint8_t)uniform_0_255(gen);
         b = (uint8_t)uniform_0_255(gen);
@@ -714,7 +691,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
       // Adding different color to each cluster
 
       for (auto &pointCluster : cluster.clusterPoints) {
-
         pcl::PointXYZRGB point;
         point.x = pointCluster.x;
         point.y = pointCluster.y;
@@ -771,7 +747,6 @@ void init(int argc, char **argv, bool show, std::string extension) {
 }
 
 int main(int argc, char **argv) {
-
   std::string extension;
 
   if (argc == 2) {
@@ -796,12 +771,11 @@ int main(int argc, char **argv) {
     }
 
   } else if (argc < 7 or argc > 8) {
-
     std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                       "<output dir> output extension = pcd(default)"
-                       "or ./dbscan <input pointcloud>     <-- fast test"
-                    << std::endl;
-          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
+                 "<output dir> output extension = pcd(default)"
+                 "or ./dbscan <input pointcloud>     <-- fast test"
+              << std::endl;
+    std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
     return -1;
   } else {
     return 0;
