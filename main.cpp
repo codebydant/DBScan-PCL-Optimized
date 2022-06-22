@@ -38,14 +38,14 @@ ignored. That is to say, they aren’t part of any cluster.
 #include <boost/thread/thread.hpp>
 #include <iostream>
 
-#include "include/HTRBasicDataStructures.h"
-#include "include/OctreeGenerator.h"
-#include "include/dbScan.h"
+#include "dbscan/HTRBasicDataStructures.h"
+#include "dbscan/OctreeGenerator.h"
+#include "dbscan/dbScan.h"
 
 // tryf ro filter
 #include <pcl/common/common.h>
 
-#include <cxxopts.hpp>
+#include <dbscan/cxxopts.hpp>
 
 #include "pcl/point_cloud.h"
 #include "pcl/point_types.h"
@@ -53,9 +53,10 @@ ignored. That is to say, they aren’t part of any cluster.
 // for PCA of class
 #include <pcl/common/pca.h>
 
+#include <modern/parser.hpp>
 #include <queue>
 
-#include "keypointcluster.h"
+#include "dbscan/keypointcluster.h"
 
 /*
 void calc_descriptor(KeypointCluster Cluster){
@@ -110,201 +111,6 @@ bool is_number(const std::string &s) {
         */
 }
 
-void readCloudFromFile(int argc, char **argv, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
-  pcl::PolygonMesh cl;
-  std::vector<int> filenames;
-  bool file_is_pcd = false;
-  bool file_is_ply = false;
-  bool file_is_txt = false;
-  bool file_is_xyz = false;
-
-  pcl::console::TicToc tt;
-  pcl::console::print_highlight("Loading ");
-
-  filenames = pcl::console::parse_file_extension_argument(argc, argv, ".ply");
-  if (filenames.size() <= 0) {
-    filenames = pcl::console::parse_file_extension_argument(argc, argv, ".pcd");
-    if (filenames.size() <= 0) {
-      filenames = pcl::console::parse_file_extension_argument(argc, argv, ".txt");
-      if (filenames.size() <= 0) {
-        filenames = pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
-        if (filenames.size() <= 0) {
-          std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                       "<output dir> output extension = pcd(default)"
-                       "or ./dbscan <input pointcloud>     <-- fast test"
-                    << std::endl;
-          std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
-          return std::exit(-1);
-        } else if (filenames.size() == 1) {
-          file_is_xyz = true;
-        }
-      } else if (filenames.size() == 1) {
-        file_is_txt = true;
-      }
-    } else if (filenames.size() == 1) {
-      file_is_pcd = true;
-    }
-  } else if (filenames.size() == 1) {
-    file_is_ply = true;
-  } else {
-    std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                 "<output dir> output extension = pcd(default)"
-                 "or ./dbscan <input pointcloud>     <-- fast test"
-              << std::endl;
-    std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
-    return std::exit(-1);
-  }
-
-  if (file_is_pcd) {
-    if (pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0) {
-      std::cout << "Error loading point cloud " << argv[filenames[0]] << std::endl;
-      std::cout << "Usage: ./dbscan <input pointcloud> <octree resolution> <eps> <minPtsAux> <minPts> "
-                   "<output dir> output extension = pcd(default)"
-                   "or ./dbscan <input pointcloud>     <-- fast test"
-                << std::endl;
-      std::cerr << "Support: ply - pcd - txt - xyz" << std::endl;
-      return std::exit(-1);
-    }
-    pcl::console::print_info("\nFound pcd file.\n");
-    pcl::console::print_info("[done, ");
-    pcl::console::print_value("%g", tt.toc());
-    pcl::console::print_info(" ms : ");
-    pcl::console::print_value("%d", cloud->size());
-    pcl::console::print_info(" points]\n");
-  } else if (file_is_ply) {
-    pcl::io::loadPLYFile(argv[filenames[0]], *cloud);
-    if (cloud->points.size() <= 0 or
-        cloud->points[0].x <= 0 and cloud->points[0].y <= 0 and cloud->points[0].z <= 0) {
-      pcl::console::print_warn("\nloadPLYFile could not read the cloud, attempting to loadPolygonFile...\n");
-      pcl::io::loadPolygonFile(argv[filenames[0]], cl);
-      pcl::fromPCLPointCloud2(cl.cloud, *cloud);
-      if (cloud->points.size() <= 0 or
-          cloud->points[0].x <= 0 and cloud->points[0].y <= 0 and cloud->points[0].z <= 0) {
-        pcl::console::print_warn("\nloadPolygonFile could not read the cloud, attempting to PLYReader...\n");
-        pcl::PLYReader plyRead;
-        plyRead.read(argv[filenames[0]], *cloud);
-        if (cloud->points.size() <= 0 or
-            cloud->points[0].x <= 0 and cloud->points[0].y <= 0 and cloud->points[0].z <= 0) {
-          pcl::console::print_error("\nError. ply file is not compatible.\n");
-          return std::exit(-1);
-        }
-      }
-    }
-
-    pcl::console::print_info("\nFound ply file.\n");
-    pcl::console::print_info("[done, ");
-    pcl::console::print_value("%g", tt.toc());
-    pcl::console::print_info(" ms : ");
-    pcl::console::print_value("%d", cloud->size());
-    pcl::console::print_info(" points]\n");
-
-  } else if (file_is_txt) {
-    std::ifstream file(argv[filenames[0]], std::ifstream::in);
-    if (!file.is_open()) {
-      std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
-      return std::exit(-1);
-    }
-
-    std::cout << "file opened." << std::endl;
-    double x_, y_, z_;
-    unsigned int r, g, b;
-
-    while (file >> x_ >> y_ >> z_ >> r >> g >> b) {
-      pcl::PointXYZRGB pt;
-      pt.x = x_;
-      pt.y = y_;
-      pt.z = z_;
-
-      uint8_t r_, g_, b_;
-      r_ = uint8_t(r);
-      g_ = uint8_t(g);
-      b_ = uint8_t(b);
-
-      uint32_t rgb_ = ((uint32_t)r_ << 16 | (uint32_t)g_ << 8 | (uint32_t)b_);
-      pt.rgb = *reinterpret_cast<float *>(&rgb_);
-
-      cloud->points.push_back(pt);
-      // std::cout << "pointXYZRGB:" <<  pt << std::endl;
-    }
-
-    pcl::console::print_info("\nFound txt file.\n");
-    pcl::console::print_info("[done, ");
-    pcl::console::print_value("%g", tt.toc());
-    pcl::console::print_info(" ms : ");
-    pcl::console::print_value("%d", cloud->points.size());
-    pcl::console::print_info(" points]\n");
-
-    file.close();
-
-  } else if (file_is_xyz) {
-    std::ifstream file(argv[filenames[0]]);
-    if (!file.is_open()) {
-      std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
-      return std::exit(-1);
-    }
-
-    std::cout << "file opened." << std::endl;
-    double x_, y_, z_;
-
-    while (file >> x_ >> y_ >> z_) {
-      pcl::PointXYZRGB pt;
-      pt.x = x_;
-      pt.y = y_;
-      pt.z = z_;
-
-      cloud->points.push_back(pt);
-      // std::cout << "pointXYZRGB:" <<  pt << std::endl;
-    }
-
-    pcl::console::print_info("\nFound xyz file.\n");
-    pcl::console::print_info("[done, ");
-    pcl::console::print_value("%g", tt.toc());
-    pcl::console::print_info(" ms : ");
-    pcl::console::print_value("%d", cloud->points.size());
-    pcl::console::print_info(" points]\n");
-    file.close();
-  }
-
-  cloud->width = (int)cloud->points.size();
-  cloud->height = 1;
-  cloud->is_dense = true;
-
-  if ((int)cloud->points.size() <= 0) {
-    pcl::console::print_error("\nCouldn't read file.");
-    pcl::console::print_info("[");
-    pcl::console::print_value("%d", cloud->points.size());
-    pcl::console::print_info(" points]\n");
-    return std::exit(-1);
-  }
-  /*
-    for (int i = 0; i < cloud->points.size(); i++) {
-      htr::Point3D aux;
-      aux.x = cloud->points[i].x;
-      aux.y = cloud->points[i].y;
-      aux.z = cloud->points[i].z;
-
-      uint32_t rgb_ = *reinterpret_cast<int *>(&cloud->points[i].rgb);
-      uint8_t r_, g_, b_;
-
-      r_ = (rgb_ >> 16) & 0x0000ff;
-      g_ = (rgb_ >> 8) & 0x0000ff;
-      b_ = (rgb_)&0x0000ff;
-
-      unsigned int r, g, b;
-      r = *((uint8_t *)&r_);
-      g = *((uint8_t *)&g_);
-      b = *((uint8_t *)&b_);
-
-      aux.r = r;
-      aux.g = g;
-      aux.b = b;
-
-      points.push_back(aux);
-    }*/
-
-  // calculateCentroid(points);
-}
-
 void init(int argc, char **argv, bool show, std::string extension) {
   queue<KeypointCluster> Keypoint_Cluster_Queue;
   std::vector<htr::Point3D> groupA;
@@ -312,7 +118,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
   std::string output_dir;
 
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  readCloudFromFile(argc, argv, cloud);
+
+  // cloud parser object
+  CloudParserLibrary::ParserCloudFile parser;
+  parser.load_cloudfile(argv[1], cloud);
 
   // do some filtering on the cloud to remove outliers
   if (1) {
@@ -639,8 +448,10 @@ void init(int argc, char **argv, bool show, std::string extension) {
     // std::cout << "\nPrinting clusters..." << std::endl;
     vtkObject::GlobalWarningDisplayOff();  // Disable vtk render warning
 
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(
-        new pcl::visualization::PCLVisualizer("DBSCAN CLUSTERS"));
+    // boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(
+    //     new pcl::visualization::PCLVisualizer("DBSCAN CLUSTERS"));
+    // pcl visualizer object
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("PCL VISUALIZER"));
 
     int PORT1 = 0;
     viewer->createViewPort(0.0, 0.0, 0.5, 1.0, PORT1);
