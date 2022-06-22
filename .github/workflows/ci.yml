@@ -1,0 +1,41 @@
+name: Continuous integration
+
+on:
+  push:
+    branches-ignore:
+      - documentation
+  pull_request:
+    branches-ignore:
+      - documentation
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Building Check
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v3
+
+      - name: Build, Test and Coverage
+        uses: danielTobon43/PCL-Build-Action@testing
+        with:
+          build_tests: true
+          build_coverage: true
+
+      - name: LCOV Minimum Coverage Checker
+        uses: terencetcf/github-actions-lcov-minimum-coverage-checker@v1
+        with:
+          coverage-file: coverage.info
+
+  lint:
+    name: Formatting Check
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run clang-format style check for C/C++/Protobuf programs.
+        uses: jidicula/clang-format-action@v4.5.0
+        with:
+          clang-format-version: "10"
+          check-path: "."
+          exclude-regex: "external"
