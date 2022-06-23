@@ -73,8 +73,7 @@ class OctreeGenerator {
   void initRandomCloud(const float width, const float height, const float depth, const int numOfPoints);
 
   template <typename T>
-  void initCloudFromVector(const std::vector<T> &points,
-                           const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud);
+  void initCloudFromVector(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud);
 
   void initOctree(const int resolution);
 
@@ -98,8 +97,7 @@ class OctreeGenerator {
 /// variables.
 ///@param[in] points The input data vector.
 template <typename T>
-void OctreeGenerator::initCloudFromVector(const std::vector<T> &points,
-                                          const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud) {
+void OctreeGenerator::initCloudFromVector(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud) {
   // Note: Width and Height are only used to store the cloud as an image.
   // Source width and height can be used instead of a linear representation.
   // pcl::copyPointCloud<pcl::PointXYZRGB, pcl::PointXYZRGB>(*input_cloud, *cloud);

@@ -82,8 +82,7 @@ void calculate_epsilon(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
   std::cout << "distance points: " << doubleVec_normalized.size() << std::endl;
   // https://pointclouds.org/documentation/classpcl_1_1visualization_1_1_p_c_l_plotter.html#ad38634e017541eb0df59bfc122cc9c3d
   pcl::visualization::PCLPlotter* plotter = new pcl::visualization::PCLPlotter;
-  plotter->addPlotData(doubleVec_X, doubleVec_normalized, "k square distance", vtkChart::POINTS,
-                       std::vector<char>());
+  plotter->addPlotData(doubleVec_X, doubleVec_normalized, "k square distance", vtkChart::POINTS, std::vector<char>());
   plotter->spinOnce(300);
 
   // -----------------------------------------------------------------------------------------

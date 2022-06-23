@@ -39,8 +39,8 @@ class dbscan {
   ~dbscan();
 
   template <typename T>
-  void init(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud,
-            const int octreeResolution_, const float eps_, const int minPtsAux_, const int minPts_);
+  void init(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud, const int octreeResolution_, const float eps_, const int minPtsAux_,
+            const int minPts_);
 
   inline std::vector<cluster> &getClusters() { return clusters; }
   inline htr::OctreeGenerator::CloudXYZ::Ptr getCloudPoints() { return octreeGenIn->getCloud(); }
@@ -63,8 +63,7 @@ class dbscan {
   pcl::mod_pointXYZ centroid;
 
   void calculateCentroid(std::vector<pcl::mod_pointXYZ> group);
-  void octreeRegionQuery(htr::OctreeGenerator *octreeGen, pcl::mod_pointXYZ &searchPoint, double eps,
-                         std::vector<int> *retKeys);
+  void octreeRegionQuery(htr::OctreeGenerator *octreeGen, pcl::mod_pointXYZ &searchPoint, double eps, std::vector<int> *retKeys);
   void DBSCAN_Octree_merge(htr::OctreeGenerator *octreeGen, float eps, int minPts);
   void DBSCAN_Octree(htr::OctreeGenerator *octreeGen, float eps, int minPts);
   void DBSCAN_Octree_fast(htr::OctreeGenerator *octreeGen, float eps, int minPts);
@@ -79,8 +78,8 @@ class dbscan {
 ///@param[in] minPtsAux_        Minimum points for the initial clusters.
 ///@param[in] minPts_           Minimum points for the final clusters.
 template <typename T>
-void dbscan::init(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud,
-                  const int octreeResolution_, const float eps_, const int minPtsAux_, const int minPts_) {
+void dbscan::init(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud, const int octreeResolution_, const float eps_, const int minPtsAux_,
+                  const int minPts_) {
   eps = eps_;
   minPts = minPts_;
   minPtsAux = minPtsAux_;

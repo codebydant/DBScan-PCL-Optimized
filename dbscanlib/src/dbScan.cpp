@@ -41,8 +41,7 @@ void dbscan::generateClusters_one_step() {
   for (int i = 0; i < clusters.size(); i++) clusters[i].toPoint3D();
 }
 
-void CloudToVector(const std::vector<pcl::mod_pointXYZ> &inPointVector,
-                   pcl::PointCloud<pcl::PointXYZRGB>::Ptr &outPointCloud) {
+void CloudToVector(const std::vector<pcl::mod_pointXYZ> &inPointVector, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &outPointCloud) {
   for (const pcl::mod_pointXYZ &point : inPointVector) {
     outPointCloud->points.push_back(point);
   }
@@ -116,8 +115,7 @@ void dbscan::calculateCentroid(std::vector<pcl::mod_pointXYZ> group) {
 ///@param[in] searchPoint       The point around which the search will be conducted.
 ///@param[in] eps_              The search radius for the octree.
 ///@param[in] retKeys_          Vector that stores the indices of the nearest points.
-void dbscan::octreeRegionQuery(htr::OctreeGenerator *octreeGen, pcl::mod_pointXYZ &searchPoint, double eps,
-                               std::vector<int> *retKeys) {
+void dbscan::octreeRegionQuery(htr::OctreeGenerator *octreeGen, pcl::mod_pointXYZ &searchPoint, double eps, std::vector<int> *retKeys) {
   retKeys->clear();
   std::vector<int> pointIdxRadiusSearch;
   std::vector<float> pointRadiusSquaredDistance;
@@ -146,8 +144,7 @@ void dbscan::DBSCAN_Octree_merge(htr::OctreeGenerator *octreeGen, float eps, int
     if (!visited[i]) {
       clusterPoints.push_back(clustersAux.at(i).centroid);
 
-      pointQueue.clusterPoints.insert(pointQueue.clusterPoints.end(), clustersAux.at(i).clusterPoints.begin(),
-                                      clustersAux.at(i).clusterPoints.end());
+      pointQueue.clusterPoints.insert(pointQueue.clusterPoints.end(), clustersAux.at(i).clusterPoints.begin(), clustersAux.at(i).clusterPoints.end());
 
       visited[i] = true;
 
@@ -160,8 +157,7 @@ void dbscan::DBSCAN_Octree_merge(htr::OctreeGenerator *octreeGen, float eps, int
 
             clusterPoints.push_back(clustersAux.at(neighborPts[k]).centroid);
 
-            pointQueue.clusterPoints.insert(pointQueue.clusterPoints.end(),
-                                            clustersAux.at(neighborPts[k]).clusterPoints.begin(),
+            pointQueue.clusterPoints.insert(pointQueue.clusterPoints.end(), clustersAux.at(neighborPts[k]).clusterPoints.begin(),
                                             clustersAux.at(neighborPts[k]).clusterPoints.end());
           }
         }
@@ -312,8 +308,7 @@ void dbscan::DBSCAN_Octree_fast_one_step(htr::OctreeGenerator *octreeGen, float 
             visited[neighborPts[j]] = true;
             octreeRegionQuery(octreeGen, octreeGen->getCloud()->points.at(neighborPts[j]), eps, &neighborPts_);
             //
-            if (neighborPts_.size() >= minPts)
-              neighborPts.insert(neighborPts.end(), neighborPts_.begin(), neighborPts_.end());
+            if (neighborPts_.size() >= minPts) neighborPts.insert(neighborPts.end(), neighborPts_.begin(), neighborPts_.end());
           }
           // if P' is not yet a member of any cluster, add P' to cluster c
           if (!clustered[neighborPts[j]]) {
