@@ -3,27 +3,25 @@
 # https://discourse.vtk.org/t/two-questions-about-new-module-system/2864/16
 
 # Build stage
-FROM danieltobon43/pcl-docker:1.12.1-alpine3.15 as build_dbscan
- 
+FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as build_dbscan
+
 # ======== Compile dbscan project ========
 RUN apk --no-cache add cmake make g++
 
-WORKDIR /usr/src
+COPY . /tmp
 
-COPY app/ /usr/src
+WORKDIR /tmp
 
-RUN mkdir -p /usr/src/install
-
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/src/install \
-		  -S . -Bbuild && make -C /usr/src/build -Wno-cpp -j$(nproc) && make -C /usr/src/build install
+RUN cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
+	-S . -Bbuild && make -C build/ -j$(nproc) --no-print-directory && \
+	make -C build/ install --no-print-directory
 
 # Runtime
-FROM danieltobon43/pcl-docker:1.12.1-alpine3.15 as runtime
+FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
 ENV MESA_LOADER_DRIVER_OVERRIDE i965
-RUN apk --no-cache add mesa-dri-swrast
 
-COPY --from=build_dbscan /usr/src/install/bin /usr/bin
+COPY --from=build_dbscan /tmp/install /usr
 
 # ======== Run binary file ========
-ENTRYPOINT ["dbscan"]
+ENTRYPOINT ["app"]
 
