@@ -26,6 +26,8 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 # #############################################################################
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
+    ${PCL_INCLUDE_DIRS}
+    ${VTK_INCLUDE_DIRS}
 )
 
 # #############################################################################
@@ -37,7 +39,7 @@ target_link_libraries(${LIBRARY_NAME} ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
-target_compile_options(${LIBRARY_NAME} PRIVATE -Wno-cpp -Wall -Wextra)
+target_compile_options(${LIBRARY_NAME} PRIVATE -Wno-cpp)
 
 # #############################################################################
 # INSTALL DIRECTORY

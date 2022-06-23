@@ -74,18 +74,8 @@ else()
     message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
 endif()
 
-# #############################################################################
-# HEADERS
-# #############################################################################
-include_directories(${PCL_INCLUDE_DIRS})
-
 # Use the compile definitions defined in PCL
 add_definitions(${PCL_DEFINITIONS})
-
-# #############################################################################
-# LIBRARIES PATH
-# #############################################################################
-link_directories(${PCL_LIBRARY_DIRS})
 
 # #############################################################################
 # ADD LIBRARIES FOLDER
@@ -107,14 +97,9 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # #############################################################################
 # TARGET LIBRARIES
 # #############################################################################
-# target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${FLANN_LIBRARY})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
-target_include_directories(dbscan PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
-target_include_directories(cloud_parser PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
-
-# target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -Wall -Wextra)
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -Wall -Wextra -Wstrict-aliasing)
 
 message("${BoldCyan}=========================================")
 message("${BoldCyan}Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
