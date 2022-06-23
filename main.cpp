@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
   pcl::console::print_value("%d\n", dbscan.getClusters().size());
 
   if (arg_parser["--cal-eps"] == true) {
-    std::cout << "- calculating epsilone..." << std::endl;
+    std::cout << "- calculating epsilon..." << std::endl;
     calculate_epsilon(cloud);
   }
 
