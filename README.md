@@ -20,37 +20,75 @@ It was modified with:
 * .txt
 * .xyz
 
-## Output file structure (default = .pcd)
-* cloud_cluster_#.txt: 
+## Command line
+```
+➜ ./app --help                                                                                  
 
-        x y z r g b
+*************************************
+*** DBSCAN Cluster Segmentation *** 
+*************************************
+Usage: ./app [options] 
+
+Optional arguments:
+-h --help       	shows help message and exits [default: false]
+-v --version    	prints version information and exits [default: false]
+--cloudfile     	input cloud file [required]
+--octree-res    	octree resolution [default: 120]
+--eps           	epsilon value [default: 40]
+--minPtsAux     	minimum auxiliar points [default: 5]
+--minPts        	minimum points [default: 5]
+-o --output-dir 	output dir to save clusters [default: "-"]
+--ext           	cluster output extension [pcd, ply, txt, xyz] [default: "pcd"]
+-d --display    	display clusters in the pcl visualizer [default: false]
+--cal-eps       	calculate the value of epsilon with the distance to the nearest n points [default: false]
+```
 
 ## Example
+![Screenshot from 2022-06-23 10-21-38](https://user-images.githubusercontent.com/35694200/175337968-275c9420-85b7-4f89-a626-4d1eefd06499.png)
 <img src="./example/scan1.png" align="center" height="400" width="720"><br>
 <img src="./example/example2.png" align="center" height="400" width="720"><br>
 
 -------------------
 
-## Docker image
-There is a docker image for this project stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/dbscan-octrees). This image is compiled with [pcl-docker-1.12.1](https://hub.docker.com/r/danieltobon43/pcl-docker), Alpine linux 3.15 and the DBscan project (`1.32GB`).
+## Compilation
+You can build the project from source or download a docker image stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/dbscan-octrees). This image is compiled with [pcl-docker-1.12.1](https://hub.docker.com/r/danieltobon43/pcl-docker), Alpine linux 3.15 and the DBscan project (`1.32GB`).
 
+### Compile from source
+* Create a "build" folder
+
+in the main folder:
+```
+cd build/
+cmake ../
+make
+```
+
+#### Test
+```
+cd build/
+./app --cloudfile Tree2.pcd
+ 
+
+¡You can modify the parameters to obtain better results!
+I recommend modifying only the eps value, between 40 - 60 you can get better clusters. There is a flag to calculate epsilone using 100 points using the flag --cal-eps
+```
+
+### Download docker image
 To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
 
 Docker multi-stage graph generated with: [dockerfilegraph](https://github.com/patrickhoefler/dockerfilegraph)
 <img src="./example/Dockerfile2.png" align="center"><br>
 
-## Download the docker image
-
 ```
 docker pull danieltobon43/dbscan-octrees:1.0-alpine3.15
 ```
 
-## Check downloaded image
+#### Check downloaded image
 ```
 docker images
 ```
 
-## Run a docker container
+#### Run a docker container
 ```
 docker run --rm -it \
            --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
@@ -64,7 +102,7 @@ docker run --rm -it \
            --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
            -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME]
 ```
-## example:
+#### example:
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
 ```
 /home/user/Downloads/pcd/Tree2.pcd
@@ -86,47 +124,20 @@ docker run --rm -it \
 
 The previous command will run a docker container with the `danieltobon43/dbscan-octrees:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
 
-## Note
+#### Note
 Be aware that mounted directory in the host machine will copy all the files in the target directory in the container. That's why I recommend to create a folder to store just .pcd/.ply/etc files that will be use with the container.
 
 More information about this docker image can be found in the docker hub repository.
 
-## Compilation
-* Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: **/opt/pcl-1.8.1/build** and save it.
-* Create a "build" folder
-
-in the main folder:
-
-    - cd build/  
-    - cmake ../
-    - make
-       
-        	 
-### Test
-
-    cd build/bin
-    ./dbscan <input file>       <-- This will run a fast testing with default parameters
-    ./dbscan <input file> <octree resolution> <eps> <min Aux Pts> <min Pts> <output dir> <output extension (optional)>
     
-    input file = path to input point_cloud (.pcd .txt .ply .xyz)
-    octree resolution = 124
-    eps = 40
-    min Pts = 4
-    max Pts = 5
-    output dir = path to output clusters
-    output extension (optional) = pcd, ply, txt or xyz
-    
-    Example:
-    ./dbscan /home/xXx/Downloads/point_cloud.pcd 124 40 5 5 /home/xXx/Downloads/clusters ply     
-    
-    ¡You can modify the parameters to obtain better results!
-    I recommend modifying only the eps value, with 40 - 60 you can get better clusters.
-    
-## Note
+## Epsilon calculation (experimental)
+How to choose eps valu:
 
-If you do not want to see the output clusters on PCL Viewer, set: 
+<img src="./example/4-Figure2-1.png" align="center"><br>
 
-    bool showClusters = False; //Main function
+Enable `--cal-eps` flag:
+
+![Screenshot from 2022-06-23 10-24-01](https://user-images.githubusercontent.com/35694200/175337506-711c168d-833c-4449-9589-294e9a56776d.png)
     
 ## Troubleshoot PCL-1.9.1
 if compiling the project with PCL-1.9.1 this occurs:
