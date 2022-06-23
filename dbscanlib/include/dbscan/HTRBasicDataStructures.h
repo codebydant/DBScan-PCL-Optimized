@@ -1,8 +1,8 @@
 /**
-*@file HTRBasicDataStructures.h
-*Data structures that do not depend on external classes.
-*
-*/
+ *@file HTRBasicDataStructures.h
+ *Data structures that do not depend on external classes.
+ *
+ */
 #include <pcl/pcl_macros.h>
 #include <pcl/point_types.h>
 #define PCL_NO_PRECOMPILE
@@ -14,8 +14,7 @@
 namespace pcl {
 
 class mod_pointXYZ : public PointXYZRGB {
-
-public:
+ public:
   mod_pointXYZ() {
     x = y = z = 0;
     id = 0;
@@ -29,7 +28,7 @@ public:
    */
   int id;
 };
-}
+}  // namespace pcl
 
 namespace htr {
 struct Index2D {
@@ -79,6 +78,6 @@ struct LinearBoundary {
   float start;
   float end;
 };
-}
+}  // namespace htr
 
 #endif

@@ -1,4 +1,4 @@
-#include "include/cluster.h"
+#include <dbscan/cluster.h>
 
 namespace dbScanSpace {
 cluster::cluster() { visited = false; }
@@ -28,4 +28,4 @@ void cluster::toPoint3D() {
     }
   }
 }
-}
+}  // namespace dbScanSpace

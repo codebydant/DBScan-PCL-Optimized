@@ -1,4 +1,5 @@
-#include "include/OctreeGenerator.h"
+#include <dbscan/OctreeGenerator.h>
+
 #include <ctime>
 #include <fstream>
 
@@ -9,7 +10,8 @@ namespace htr {
 
 /// The default constructor.
 OctreeGenerator::OctreeGenerator()
-    : cloud(new CloudXYZ), octree_p(new OctreeXYZSearch(20)),
+    : cloud(new CloudXYZ),
+      octree_p(new OctreeXYZSearch(20)),
       // octree(56),
       currentExtractionLevel(0) {}
 
@@ -21,7 +23,8 @@ OctreeGenerator::~OctreeGenerator() {}
 ///@param[in] height The height of the point cloud.
 ///@param[in] depth The depth of the point cloud.
 ///@param[in] numOfPoints The num of points in the point cloud.
-void OctreeGenerator::initRandomCloud(const float width, const float height, const float depth, const int numOfPoints) {
+void OctreeGenerator::initRandomCloud(const float width, const float height, const float depth,
+                                      const int numOfPoints) {
   srand((unsigned int)time(NULL));
   // Generate pointcloud data
 
@@ -38,7 +41,6 @@ void OctreeGenerator::initRandomCloud(const float width, const float height, con
 
 /// Calculates the entire cloud centroid
 void OctreeGenerator::calculateCloudCentroid() {
-
   Eigen::Matrix<float, 4, 1> centroid_original;
 
   pcl::compute3DCentroid(*cloud, centroid_original);
@@ -50,7 +52,6 @@ void OctreeGenerator::calculateCloudCentroid() {
 /// Initializes the octree from the cloud data provided at the specified resolution.
 ///@param[in] resolution The voxel edge size at the minimum subdivision level.
 void OctreeGenerator::initOctree(const int resolution) {
-
   //************************************
   // octree_p.reset(new OctreeXYZSearch(resolution));
   octree_p->deleteTree();
@@ -74,7 +75,6 @@ void OctreeGenerator::initOctree(const int resolution) {
 ///@param[in] depth The selected tree depth in the octree.
 void OctreeGenerator::extractPointsAtLevel(const int depth) {
   if (depth >= 0 && depth <= octree_p->getTreeDepth()) {
-
     currentExtractionLevel = depth;
 
     OctreeXYZSearch::Iterator tree_it;
@@ -117,4 +117,4 @@ void OctreeGenerator::stepExtractionLevel(const int step) {
   std::cout << "Stepping level" << std::endl;
   extractPointsAtLevel(currentExtractionLevel + step);
 }
-}
+}  // namespace htr

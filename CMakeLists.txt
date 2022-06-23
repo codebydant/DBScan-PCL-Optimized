@@ -1,17 +1,19 @@
-##############################################################################
+# #############################################################################
 # CMAKE CONFIGURATION
-##############################################################################
+# #############################################################################
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 # set project name
-project(dbscan VERSION 1.0.3)
+project(app VERSION 1.0.3)
 
 # set build type = Debug mode
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
-message("\n" "=========================================")
-message("Project: ${PROJECT_NAME} ")
-message("=========================================")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/color.cmake")
+
+message("\n" "${BoldCyan}=========================================")
+message("${BoldCyan}Project: ${PROJECT_NAME} ")
+message("${BoldCyan}=========================================")
 
 # set the include directive in the same project folder
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -23,12 +25,10 @@ set(PCL_DIR /opt/pcl-1.9.0/build)
 set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
 
 # set cmake for use std c++11 and output executable folder to bin
-#set(CMAKE_CXX_STANDARD 11)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_STANDARD 11)
 
 # set turn off the output rule messages of cmake
-##set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
-
+# #set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
 find_package(PkgConfig)
 pkg_check_modules(PC_FLANN flann)
 set(FLANN_DEFINITIONS ${PC_FLANN_CFLAGS_OTHER})
@@ -42,74 +42,80 @@ find_library(FLANN_LIBRARY flann
 set(FLANN_INCLUDE_DIRS ${FLANN_INCLUDE_DIR})
 set(FLANN_LIBRARIES ${FLANN_LIBRARY})
 
-
-##############################################################################
+# #############################################################################
 # PACKAGES
-##############################################################################
+# #############################################################################
 message("***********************")
 message("PCL PACKAGE")
 message("***********************")
 
-##find_package(PCL 1.8 PATHS ${PCL_DIR} QUIET COMPONENTS common io visualization CONFIG) ##REQUIRED COMPONENTS common io visualization)
-find_package(PCL 1.9 PATHS ${PCL_DIR} QUIET)
+# #find_package(PCL 1.8 PATHS ${PCL_DIR} QUIET COMPONENTS common io visualization CONFIG) ##REQUIRED COMPONENTS common io visualization)
+find_package(PCL 1.8 REQUIRED QUIET)
+
 if(PCL_FOUND)
-    message(STATUS "PCL status:")
+    message(STATUS "${BoldGreen}PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
     message(STATUS "    directory: ${PCL_DIR}")
 else()
-    message(WARNING "   PCL 1.9 not found, attempting 1.8...")
-    find_package(PCL 1.8 QUIET)
-    if(PCL_FOUND)
-        message(STATUS "PCL status:")
-        message(STATUS "    version: ${PCL_VERSION}")
-        message(STATUS "    directory: ${PCL_DIR}")
-    else()
-    	message(WARNING "   PCL 1.8 not found, attempting 1.7...")     
-        find_package(PCL 1.7 REQUIRED QUIET)
-    	if(PCL_FOUND)
-        	message(STATUS "PCL status:")
-        	message(STATUS "    version: ${PCL_VERSION}")
-        	message(STATUS "    directory: ${PCL_DIR}")
-    	else()
-        	message(FATAL_ERROR "    ERROR: PCL minimum required version 1.7. Not found")
-    	endif()
-    endif()
+    message(FATAL_ERROR "${BoldRed}    ERROR: PCL minimum required version 1.8. Not found")
 endif()
 
-##############################################################################
+message("${BoldYellow}***********************")
+message("${BoldYellow}VTK PACKAGE")
+message("${BoldYellow}***********************")
+
+find_package(VTK 8.1 REQUIRED QUIET)
+
+if(VTK_FOUND)
+    message(STATUS "${BoldGreen}VTK status:")
+    message(STATUS "    version: ${VTK_VERSION}")
+    message(STATUS "    directory: ${VTK_DIR}")
+else()
+    message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
+endif()
+
+# #############################################################################
 # HEADERS
-##############################################################################
+# #############################################################################
 include_directories(${PCL_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
-include(CheckFunctionExists)
 
 # Use the compile definitions defined in PCL
 add_definitions(${PCL_DEFINITIONS})
 
-##############################################################################
+# #############################################################################
 # LIBRARIES PATH
-##############################################################################
+# #############################################################################
 link_directories(${PCL_LIBRARY_DIRS})
 
-##############################################################################
+# #############################################################################
+# ADD LIBRARIES FOLDER
+# #############################################################################
+add_subdirectory(dbscanlib)
+add_subdirectory(parser)
+add_subdirectory(external/argparse)
+
+# #############################################################################
 # SOURCE CODE
-##############################################################################
-list(APPEND SOURCE_FILES "main.cpp"	
-						 "src/dbScan.cpp"
-						 "src/OctreeGenerator.cpp"
-						 "src/cluster.cpp"
-)
-include_directories(include)
-##############################################################################
+# #############################################################################
+set(MAIN_SOURCE "main.cpp")
+
+# #############################################################################
 # EXECUTABLES
-##############################################################################
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} include/keypointcluster.h src/keypointcluster.cpp)
+# #############################################################################
+add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 
-##############################################################################
+# #############################################################################
 # TARGET LIBRARIES
-##############################################################################
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${FLANN_LIBRARY})
+# #############################################################################
+# target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${FLANN_LIBRARY})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
+target_include_directories(dbscan PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
+target_include_directories(cloud_parser PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 
-message("=========================================")
-message("Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
-message("=========================================")
+# target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -Wall -Wextra)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
+
+message("${BoldCyan}=========================================")
+message("${BoldCyan}Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
+message("${BoldCyan}=========================================")

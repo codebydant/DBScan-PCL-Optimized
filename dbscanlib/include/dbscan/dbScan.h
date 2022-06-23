@@ -1,14 +1,11 @@
 #ifndef DBSCAN
 #define DBSCAN
 
-#include <algorithm>
-#include <chrono>
-#include <cmath>
 #include <omp.h>
-#include <random>
-#include <stdio.h>
-#include <vector>
-
+#include <pcl/common/centroid.h>
+#include <pcl/common/common.h>
+#include <pcl/common/geometry.h>
+#include <pcl/common/transforms.h>
 #include <pcl/console/parse.h>
 #include <pcl/console/print.h>
 #include <pcl/console/time.h>
@@ -22,13 +19,14 @@
 #include <pcl/io/vtk_lib_io.h>
 #include <pcl/pcl_macros.h>
 #include <pcl/point_types.h>
-
-#include <pcl/common/centroid.h>
-#include <pcl/common/common.h>
-#include <pcl/common/geometry.h>
-#include <pcl/common/transforms.h>
-
 #include <pcl/visualization/pcl_visualizer.h>
+#include <stdio.h>
+
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <random>
+#include <vector>
 
 #include "HTRBasicDataStructures.h"
 #include "OctreeGenerator.h"
@@ -36,7 +34,7 @@
 
 namespace dbScanSpace {
 class dbscan {
-public:
+ public:
   dbscan();
   ~dbscan();
 
@@ -48,13 +46,14 @@ public:
   inline htr::OctreeGenerator::CloudXYZ::Ptr getCloudPoints() { return octreeGenIn->getCloud(); }
   inline pcl::mod_pointXYZ getCentroid() { return centroid; }
 
-  template <typename T> void generateClusters(std::vector<std::vector<T>> *clusters);
+  template <typename T>
+  void generateClusters(std::vector<std::vector<T>> *clusters);
 
   void generateClusters_one_step();
   void generateClusters();
   void generateClusters_fast();
 
-private:
+ private:
   float eps;
   int minPtsAux, minPts, octreeResolution;
 
@@ -93,13 +92,13 @@ void dbscan::init(const std::vector<T> &points, const pcl::PointCloud<pcl::Point
   // centroid = octreeGenIn->getCloudCentroid();
 }
 
-template <typename T> void dbscan::generateClusters(std::vector<std::vector<T>> *clustersOut) {
+template <typename T>
+void dbscan::generateClusters(std::vector<std::vector<T>> *clustersOut) {
   // A first set of clusters is generated. This first set has a large number of small clusters.
   DBSCAN_Octree(octreeGenIn, eps, minPtsAux);
 
   // The clusters centroids are calculated and used to generate a second octree.
-  for (dbScanSpace::cluster cluster : clustersAux)
-    clustersCentroids.push_back(cluster.centroid);
+  for (dbScanSpace::cluster cluster : clustersAux) clustersCentroids.push_back(cluster.centroid);
 
   // octreeGen->initCloudFromVector<pcl::mod_pointXYZ>(clustersCentroids);
   octreeGen->initOctree(octreeResolution);
@@ -111,6 +110,6 @@ template <typename T> void dbscan::generateClusters(std::vector<std::vector<T>> 
   //       for(int i = 0; i<clusters.size(); i++)
   //           clusters[i].toPoint3D();
 }
-}
+}  // namespace dbScanSpace
 
 #endif

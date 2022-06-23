@@ -1,7 +1,7 @@
 /**
-*@file cluster.h
-*Cluster for 3d points.
-*/
+ *@file cluster.h
+ *Cluster for 3d points.
+ */
 
 #ifndef CLUSTER
 #define CLUSTER
@@ -11,7 +11,7 @@
 
 namespace dbScanSpace {
 class cluster {
-public:
+ public:
   std::vector<pcl::mod_pointXYZ> clusterPoints;
   std::vector<htr::Point3D> clusterPoints3D;
 
@@ -23,8 +23,8 @@ public:
   void calculateCentroid();
   void toPoint3D();
 
-private:
+ private:
 };
-}
+}  // namespace dbScanSpace
 
-#endif // CLUSTER
+#endif  // CLUSTER

@@ -1,8 +1,8 @@
 /**
-*@class OctreeGenerator
-*Creates an octree from the point cloud data provided.
-*
-*/
+ *@class OctreeGenerator
+ *Creates an octree from the point cloud data provided.
+ *
+ */
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -10,31 +10,31 @@
 #define OCTREE_GENERATOR_H
 
 //#include <pcl/point_cloud.h>
-//#include <pcl/octree/octree.h>
-#include <pcl/octree/octree_impl.h>
+#include <pcl/octree/octree.h>
+// #include <pcl/octree/octree_impl.h>
+
+#include <pcl/common/centroid.h>
+#include <pcl/common/concatenate.h>
+#include <pcl/common/copy_point.h>
+#include <pcl/common/io.h>
+#include <pcl/pcl_macros.h>
+#include <pcl/point_types.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <locale> // std::locale, std::isdigit
-#include <pcl/common/centroid.h>
-#include <pcl/common/concatenate.h>
-#include <pcl/common/copy_point.h>
-#include <pcl/common/io.h>
+#include <locale>  // std::locale, std::isdigit
 #include <pcl/impl/point_types.hpp>
 #include <string>
 #include <vector>
 
 #include "HTRBasicDataStructures.h"
-#include <pcl/pcl_macros.h>
-#include <pcl/point_types.h>
 
 namespace htr {
 
 class OctreeGenerator {
-
-public:
+ public:
   typedef pcl::PointCloud<pcl::mod_pointXYZ> CloudXYZ;
   typedef pcl::octree::OctreePointCloudSearch<pcl::mod_pointXYZ> OctreeXYZSearch;
   typedef pcl::octree::OctreePointCloudSearch<pcl::mod_pointXYZ>::LeafNode LeafNode;
@@ -55,8 +55,7 @@ public:
 #ifdef _MSC_VER
   void *operator new(size_t size) {
     void *p = _aligned_malloc(size, 16);
-    if (!p)
-      throw std::bad_alloc();
+    if (!p) throw std::bad_alloc();
     return p;
   }
 
@@ -74,14 +73,15 @@ public:
   void initRandomCloud(const float width, const float height, const float depth, const int numOfPoints);
 
   template <typename T>
-  void initCloudFromVector(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud);
+  void initCloudFromVector(const std::vector<T> &points,
+                           const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud);
 
   void initOctree(const int resolution);
 
   void extractPointsAtLevel(const int depth);
   void stepExtractionLevel(const int step);
 
-private:
+ private:
   unsigned int currentExtractionLevel;
   pcl::PointCloud<pcl::mod_pointXYZ>::Ptr cloud;
   OctreeXYZSearch::Ptr octree_p;
@@ -137,6 +137,6 @@ void OctreeGenerator::initCloudFromVector(const std::vector<T> &points,
   }
   calculateCloudCentroid();
 }
-}
+}  // namespace htr
 
 #endif
