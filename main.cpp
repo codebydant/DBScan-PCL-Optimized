@@ -31,6 +31,7 @@ ignored. That is to say, they aren’t part of any cluster.
 #include "clusters_color.hpp"
 #include "dbscan/dbScan.h"
 #include "modern/parser.hpp"
+#include "save_cluster.hpp"
 
 int main(int argc, char **argv) {
   std::cout << "\n*************************************" << std::endl;
@@ -46,7 +47,7 @@ int main(int argc, char **argv) {
   arg_parser.add_argument("--minPts").default_value(int(5)).scan<'i', int>().help("minimum points");
 
   arg_parser.add_argument("-o", "--output-dir")
-      .default_value(std::string("pwd"))
+      .default_value(std::string("-"))
       .help("output dir to save clusters");
 
   arg_parser.add_argument("--ext")
@@ -119,9 +120,9 @@ int main(int argc, char **argv) {
   // dbscan.generateClusters_one_step();
 
   end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds = end - start;
+  auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   pcl::console::print_info("\n- elapsed time: ");
-  pcl::console::print_value("%d", elapsed_seconds.count());
+  pcl::console::print_value("%d ms", elapsed_ms);
 
   if (dbscan.getClusters().size() <= 0) {
     pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
@@ -225,6 +226,13 @@ int main(int argc, char **argv) {
     while (!viewer->wasStopped()) {
       viewer->spin();
     }
+  }
+
+  // true, if user provided output_dir
+  if (arg_parser.is_used("--output-dir")) {
+    std::string output_dir = arg_parser.get<std::string>("--output-dir");
+    std::string format = arg_parser.get<std::string>("--ext");
+    save_clusters(dbscan.getClusters(), format, output_dir);
   }
 
   return 0;
