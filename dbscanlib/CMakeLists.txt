@@ -9,7 +9,6 @@ set(LIBRARY_NAME dbscan)
 add_library(${LIBRARY_NAME} SHARED
     src/cluster.cpp
     src/dbScan.cpp
-    src/keypointcluster.cpp
     src/OctreeGenerator.cpp
 )
 
