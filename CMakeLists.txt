@@ -25,8 +25,7 @@ set(PCL_DIR /opt/pcl-1.9.0/build)
 set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
 
 # set cmake for use std c++11 and output executable folder to bin
-# set(CMAKE_CXX_STANDARD 11)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_STANDARD 11)
 
 # set turn off the output rule messages of cmake
 # #set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
@@ -93,6 +92,7 @@ link_directories(${PCL_LIBRARY_DIRS})
 # #############################################################################
 add_subdirectory(dbscanlib)
 add_subdirectory(parser)
+add_subdirectory(external/argparse)
 
 # #############################################################################
 # SOURCE CODE
@@ -108,10 +108,10 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # TARGET LIBRARIES
 # #############################################################################
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${FLANN_LIBRARY})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
 target_include_directories(dbscan PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
 target_include_directories(cloud_parser PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan)
+target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -Wall -Wextra)
 
 message("${BoldCyan}=========================================")
