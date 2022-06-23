@@ -18,7 +18,6 @@ std::string set_output_dir() {
 }
 
 void _to_pcd(std::vector<dbScanSpace::cluster>& clusters, std::string& output_dir) {
-  int cluster_cnt = 1;
   int cont = 0;
   for (auto& cluster : clusters) {
     std::string str1 = output_dir;

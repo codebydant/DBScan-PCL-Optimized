@@ -31,7 +31,7 @@ void calculate_epsilon(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
   int K = 10;
   int cont = 0;
   std::vector<std::vector<float>> distances;
-  for (int nIndex = 0; nIndex < cloud_xyz->points.size(); nIndex++) {
+  for (size_t nIndex = 0; nIndex < cloud_xyz->points.size(); nIndex++) {
     pcl::PointXYZ searchPoint = cloud_xyz->points[nIndex];
     std::vector<int> pointsIdx(K);
     std::vector<float> pointsSquaredDist(K);
@@ -50,7 +50,7 @@ void calculate_epsilon(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
   }
 
   std::vector<double> doubleVec_Y;
-  for (int x = 0; x < distances.size(); x++) {
+  for (size_t x = 0; x < distances.size(); x++) {
     for (double dist : distances[x]) {
       // for (int y = 0; y < distances[x]; y++) {
       doubleVec_Y.push_back((double)dist);
@@ -74,15 +74,15 @@ void calculate_epsilon(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
 
   std::vector<double> doubleVec_X;
   double cont_x = 0;
-  for (int x = 0; x < doubleVec_normalized.size(); x++) {
+  for (size_t x = 0; x < doubleVec_normalized.size(); x++) {
     doubleVec_X.push_back(cont_x);
     cont_x += 1;
   }
 
   std::cout << "distance points: " << doubleVec_normalized.size() << std::endl;
-
+  // https://pointclouds.org/documentation/classpcl_1_1visualization_1_1_p_c_l_plotter.html#ad38634e017541eb0df59bfc122cc9c3d
   pcl::visualization::PCLPlotter* plotter = new pcl::visualization::PCLPlotter;
-  plotter->addPlotData(doubleVec_X, doubleVec_normalized, "k square distance", vtkChart::LINE,
+  plotter->addPlotData(doubleVec_X, doubleVec_normalized, "k square distance", vtkChart::POINTS,
                        std::vector<char>());
   plotter->spinOnce(300);
 
