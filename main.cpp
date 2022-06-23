@@ -28,6 +28,7 @@ ignored. That is to say, they aren’t part of any cluster.
 #include <iostream>
 
 #include "argparse/argparse.hpp"
+#include "cal_epsilon.hpp"
 #include "clusters_color.hpp"
 #include "dbscan/dbScan.h"
 #include "modern/parser.hpp"
@@ -58,6 +59,11 @@ int main(int argc, char **argv) {
       .default_value(false)
       .implicit_value(true)
       .help("display clusters in the pcl visualizer");
+
+  arg_parser.add_argument("--cal-eps")
+      .default_value(false)
+      .implicit_value(true)
+      .help("calculate the value of epsilon with the distance to the nearest n points");
 
   try {
     arg_parser.parse_args(argc, argv);
@@ -131,6 +137,11 @@ int main(int argc, char **argv) {
 
   pcl::console::print_info("\n- clusters: ");
   pcl::console::print_value("%d\n", dbscan.getClusters().size());
+
+  if (arg_parser["--cal-eps"] == true) {
+    std::cout << "- calculating epsilone..." << std::endl;
+    calculate_epsilon(cloud);
+  }
 
   // -----------------Visualize clusters -----------------
   if (arg_parser["--display"] == true) {
