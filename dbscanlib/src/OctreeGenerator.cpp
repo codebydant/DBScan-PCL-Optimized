@@ -23,8 +23,7 @@ OctreeGenerator::~OctreeGenerator() {}
 ///@param[in] height The height of the point cloud.
 ///@param[in] depth The depth of the point cloud.
 ///@param[in] numOfPoints The num of points in the point cloud.
-void OctreeGenerator::initRandomCloud(const float width, const float height, const float depth,
-                                      const int numOfPoints) {
+void OctreeGenerator::initRandomCloud(const float width, const float height, const float depth, const int numOfPoints) {
   srand((unsigned int)time(NULL));
   // Generate pointcloud data
 
@@ -97,8 +96,7 @@ void OctreeGenerator::extractPointsAtLevel(const int depth) {
         octree_p->getVoxelBounds(tree_it, voxel_min, voxel_max);
 
         // Get voxel center point
-        Point3D p = {(voxel_min.x() + voxel_max.x()) / 2.0f, (voxel_min.y() + voxel_max.y()) / 2.0f,
-                     (voxel_min.z() + voxel_max.z()) / 2.0f};
+        Point3D p = {(voxel_min.x() + voxel_max.x()) / 2.0f, (voxel_min.y() + voxel_max.y()) / 2.0f, (voxel_min.z() + voxel_max.z()) / 2.0f};
         Voxel v = {p, voxel_max.x() - voxel_min.x()};
         // TODO: remove redundant info
         octreeVoxels.push_back(v);
