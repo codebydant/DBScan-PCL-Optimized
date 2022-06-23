@@ -47,8 +47,8 @@ Optional arguments:
 
 ## Example
 ![Screenshot from 2022-06-23 10-21-38](https://user-images.githubusercontent.com/35694200/175337968-275c9420-85b7-4f89-a626-4d1eefd06499.png)
-<img src="./example/scan1.png" align="center" height="400" width="720"><br>
-<img src="./example/example2.png" align="center" height="400" width="720"><br>
+<img src="./example/scan1.png" align="center"><br>
+<img src="./example/example2.png" align="center"><br>
 
 -------------------
 
@@ -135,7 +135,7 @@ More information about this docker image can be found in the docker hub reposito
 ## Epsilon calculation (experimental)
 How to choose epsilon value:
 
-<img src="./example/4-Figure2-1.png" align="center"><br>
+<img src="./example/epsilon.png" align="center"><br>
 
 Where **K-distance** is the distance from each point to its closest neighbour using the K-NearestNeighbors. The point itself is included in n_neighbors. The kneighbors method returns two arrays, one which contains the distance to the closest n_neighbors points and the other which contains the index for each of those points.
 
