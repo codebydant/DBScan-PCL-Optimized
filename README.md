@@ -13,12 +13,14 @@ It was modified with:
 * It was replaced the input file from CSV to PCD 
 * It was added a cluster coloring method for original color of the point cloud
 
-## Input file structure support
+## Input file extension supported
 
-* .pcd 
-* .ply
-* .txt
-* .xyz
+| Format      | Description |
+| ----------- | ----------- |
+| .pcd      | Point Cloud Data file format       |
+| .ply   | Polygon file format        |
+| .txt   | Text file format        |
+| .xyz      | X Y Z Text file format       |
 
 ## Command line
 ```
@@ -131,14 +133,33 @@ More information about this docker image can be found in the docker hub reposito
 
     
 ## Epsilon calculation (experimental)
-How to choose eps valu:
+How to choose epsilon value:
 
 <img src="./example/4-Figure2-1.png" align="center"><br>
+
+Where **K-distance** is the distance from each point to its closest neighbour using the K-NearestNeighbors. The point itself is included in n_neighbors. The kneighbors method returns two arrays, one which contains the distance to the closest n_neighbors points and the other which contains the index for each of those points.
+
+The graph is built with:
+
+```
+X_array = [0,1,2,3,4, ...1000]
+Y_array = [0.0,0.1,0.2,...1.0]
+X_array.size() = Y_array.size()
+```
 
 Enable `--cal-eps` flag:
 
 ![Screenshot from 2022-06-23 10-24-01](https://user-images.githubusercontent.com/35694200/175337506-711c168d-833c-4449-9589-294e9a56776d.png)
-    
+
+## Exporting clusters
+You can export the generated clusters by providing the `--output-dir` flag. This will save the clusters in the specified directoy. The default format is `pcd`, but you can choose from: `ply`, `txt`, `xyz` using the `--ext` flag.
+
+**Note:**
+There is a bug with the PCL visualizer using VTK 9.1 which causes a segmentation default core dumped after the visualizer is closed. This might cause crash the program before exporting the clusters. I recommend enable the `--output-dir` flag without the `-d` or `--display` flag for visualization.
+
+## Display clusters
+To display the generated clusters enable the `-d` or `--display` flag in the command line.
+
 ## Troubleshoot PCL-1.9.1
 if compiling the project with PCL-1.9.1 this occurs:
 
