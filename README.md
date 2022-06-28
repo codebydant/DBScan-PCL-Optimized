@@ -100,7 +100,7 @@ Docker multi-stage graph generated with: [dockerfilegraph](https://github.com/pa
 <img src="./example/Dockerfile2.png" align="center"><br>
 
 ```
-docker pull danieltobon43/dbscan-octrees:1.0-alpine3.15
+docker pull danieltobon43/dbscan-octrees:1.1-alpine3.15
 ```
 
 #### Check downloaded image
@@ -119,15 +119,15 @@ docker run --rm -it \
            --cap-add sys_ptrace \
            -p 127.0.0.1:2222:22 \
            --user=pcl \
-           --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
-           -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME]
+           --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
+           -t dbscan-octrees:1.1-alpine3.15 --cloudfile /tmp/[YOUR PCD FILENAME]
 ```
 #### example:
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
 ```
 /home/user/Downloads/pcd/Tree2.pcd
 ```
-To run a docker container with the previous `.pcd` file I will use `pwd` from ubuntu to get my current directory path in the terminal and then:
+To run a docker container with the previous `.pcd` file I will open a terminal in "Downloads folder" and use `pwd` from ubuntu to get my current directory path in the terminal and then:
 ```
 docker run --rm -it \
            --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
@@ -138,14 +138,14 @@ docker run --rm -it \
            --cap-add sys_ptrace \
            -p 127.0.0.1:2222:22 \
            --user=pcl \
-           --volume=`pwd`/pcd:/home/pcl/project/pcd \
-           -t danieltobon43/dbscan-octrees:1.0-ubuntu-20-04 pcd/Tree2.pcd
+           --volume=`pwd`/pcd:/tmp \
+           -t dbscan-octrees:1.1-alpine3.15 --cloudfile /tmp/Tree2.pcd
 ```
 
-The previous command will run a docker container with the `danieltobon43/dbscan-octrees:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
+The previous command will run a docker container with the `dbscan-octrees:1.1-alpine3.15` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
 
 #### Note
-Be aware that mounted directory in the host machine will copy all the files in the target directory in the container. That's why I recommend to create a folder to store just .pcd/.ply/etc files that will be use with the container.
+Be aware that, the mounted directory in the host machine will copy all the files in the target directory in the container. That's why I recommend to create a folder to store just .pcd/.ply/etc files that will be use with the container.
 
 More information about this docker image can be found in the docker hub repository.
 
