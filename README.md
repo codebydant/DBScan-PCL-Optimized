@@ -48,7 +48,9 @@ Optional arguments:
 
 ## Example
 ![Screenshot from 2022-06-23 10-21-38](https://user-images.githubusercontent.com/35694200/175337968-275c9420-85b7-4f89-a626-4d1eefd06499.png)
-<img src="./example/scan1.png" align="center"><br>
+
+<img src="./example/scan1.png" align="center">
+
 <img src="./example/example2.png" align="center"><br>
 
 -------------------
