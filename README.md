@@ -52,6 +52,21 @@ Optional arguments:
 
 -------------------
 
+## Dependencies
+This projects depends on the Point Cloud Library (it works with version `1.8...1.12.1`) and its dependencies.
+|     Package      |   Version      |                             Description                                                                                                                  |
+|     -----------       |   -----------      |                                  -----------                                                                                                                     |
+|        VTK           |    9.0.0          |   Visualization toolkit                                                           |
+|        PCL           |     1.12.1       |                    The Point Cloud Library (PCL)                                            |
+|        Eigen        |     3.7.7         |  Eigen is a library of template headers for linear algebra                                 |
+|        Flann        |     1.9.1         |      Fast Library for Approximate Nearest Neighbors                                  |
+|       Boost         |    1.77.0        | Provides support for linear algebra, pseudorandom number generation, multithreading      |
+|       OpenGL      |     21.2.6       | Programming interface for rendering 2D and 3D vector graphics.                    |
+
+
+This project has been tested with VTK `8.1...9.1` and CMake from `3.5...3.21`
+
+
 ## Compilation
 You can build the project from source or download a docker image stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/dbscan-octrees). This image is compiled with [pcl-docker-1.12.1](https://hub.docker.com/r/danieltobon43/pcl-docker), Alpine linux 3.15 and the DBscan project (`1.32GB`).
 
