@@ -49,7 +49,7 @@ jobs:
       #     labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build image
-        run: docker build . --file Dockerfile --tag dbscan-octrees --label "runnumber=${GITHUB_RUN_ID}"
+        run: docker build . --file Dockerfile --target build_dbscan --tag dbscan-octrees --label "runnumber=${GITHUB_RUN_ID}"
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
@@ -57,7 +57,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/dbscan-octrees
+          IMAGE_ID=ghcr.io/${{ github.repository }}/dbscan-octrees
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
