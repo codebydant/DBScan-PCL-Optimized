@@ -66,18 +66,18 @@ int main(int argc, char **argv) {
 
   // -----------------Read input cloud file -----------------
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  std::cout << "yeah" << std::endl;
-  // cloud parser object
-  CloudParserLibrary::ParserCloudFile cloud_parser;
-  std::cout << "yeah" << std::endl;
-  cloud_parser.load_cloudfile(arg_parser.get<std::string>("--cloudfile"), cloud);
-  std::cout << "cloud file" << std::endl;
+  std::cout << "yeah latest" << std::endl;
+  // // cloud parser object
+  // CloudParserLibrary::ParserCloudFile cloud_parser;
+  // std::cout << "yeah" << std::endl;
+  // cloud_parser.load_cloudfile(arg_parser.get<std::string>("--cloudfile"), cloud);
+  // std::cout << "cloud file" << std::endl;
 
-  // set cloud metadata
-  cloud->width = (int)cloud->points.size();
-  cloud->height = 1;
-  cloud->is_dense = true;
-  std::cout << "done baby" << std::endl;
+  // // set cloud metadata
+  // cloud->width = (int)cloud->points.size();
+  // cloud->height = 1;
+  // cloud->is_dense = true;
+  // std::cout << "done baby" << std::endl;
 
   // // -----------------RUN DBSCAN -----------------
   // /*DBSCAN algorithm requires 3 parameters:

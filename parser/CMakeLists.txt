@@ -31,7 +31,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${LIBRARY_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES} ${VTK_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS
