@@ -34,3 +34,6 @@
 # Folders
 build/
 .vscode
+
+# nektos/act secrets
+.secrets
