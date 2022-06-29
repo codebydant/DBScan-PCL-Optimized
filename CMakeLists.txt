@@ -25,7 +25,8 @@ set(PCL_DIR /opt/pcl-1.9.0/build)
 set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
 
 # set cmake for use std c++11 and output executable folder to bin
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set turn off the output rule messages of cmake
 # #set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)

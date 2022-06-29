@@ -2,7 +2,7 @@ name: Demo push 2
 
 on:
   push:
-    branches: ["test-github-packages"]
+    branches: ["empty"]
 
 jobs:
   docker:
