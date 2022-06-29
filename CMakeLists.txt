@@ -82,7 +82,7 @@ message("***********************")
 # ADD LIBRARIES FOLDER
 # #############################################################################
 # add_subdirectory(dbscanlib)
-# add_subdirectory(parser)
+add_subdirectory(parser)
 add_subdirectory(external/argparse)
 
 # #############################################################################
