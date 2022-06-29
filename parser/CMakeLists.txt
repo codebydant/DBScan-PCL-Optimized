@@ -3,6 +3,16 @@
 # #############################################################################
 set(LIBRARY_NAME cloud_parser)
 
+find_package(PCL 1.8 REQUIRED QUIET)
+
+if(PCL_FOUND)
+    message(STATUS "PCL status:")
+    message(STATUS "    version: ${PCL_VERSION}")
+    message(STATUS "    directory: ${PCL_DIR}")
+else()
+    message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
+endif()
+
 # #############################################################################
 # COMPILE LIBRARY
 # #############################################################################
@@ -25,13 +35,14 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/parser/include
     ${PCL_INCLUDE_DIRS}
-    ${VTK_INCLUDE_DIRS}
+
+    # ${VTK_INCLUDE_DIRS}
 )
 
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS

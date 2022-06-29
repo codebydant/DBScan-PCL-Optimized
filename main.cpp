@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
   std::cout << "yeah" << std::endl;
 
   // -----------------Read input cloud file -----------------
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  std::cout << "yeah latest" << std::endl;
+  // pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+  // std::cout << "yeah latest" << std::endl;
   // // cloud parser object
   // CloudParserLibrary::ParserCloudFile cloud_parser;
   // std::cout << "yeah" << std::endl;
