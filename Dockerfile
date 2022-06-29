@@ -12,6 +12,7 @@ RUN cd /tmp && cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
 	-S . -Bbuild && make -C build/ -j$(nproc) --no-print-directory && \
 	make -C build/ install --no-print-directory
 
+ENTRYPOINT ["/tmp/build/app"]
 # # Runtime
 # FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
 # # ENV MESA_LOADER_DRIVER_OVERRIDE i965
