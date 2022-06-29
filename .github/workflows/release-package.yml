@@ -3,8 +3,7 @@ name: Demo Push
 on:
   push:
     # Publish `master` as Docker `latest` image.
-    branches:
-      - master
+    branches: ["test-github-packages"]
 
     # Publish `v1.2.3` tags as releases.
     tags:
