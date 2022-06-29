@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   } catch (const std::runtime_error &err) {
     std::cerr << err.what() << std::endl;
     std::cerr << arg_parser;
-    std::exit(0);
+    // std::exit(0);
   }
   std::cout << "yeah" << std::endl;
 
