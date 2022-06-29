@@ -38,7 +38,7 @@ jobs:
           --env="DISPLAY" \
           --env="QT_X11_NO_MITSHM=1" \
           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-          $IMAGE_NAME
+          dbscan-octrees:latest
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
