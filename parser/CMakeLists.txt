@@ -3,7 +3,7 @@
 # #############################################################################
 set(LIBRARY_NAME cloud_parser)
 
-find_package(PCL 1.8 REQUIRED QUIET)
+find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
 if(PCL_FOUND)
     message(STATUS "PCL status:")
@@ -17,24 +17,24 @@ endif()
 # #############################################################################
 # COMPILE LIBRARY
 # #############################################################################
-add_library(${LIBRARY_NAME} STATIC
+add_library(${LIBRARY_NAME} SHARED
     parser.cpp
 )
 
 # #############################################################################
 # LIBRARY PROPERTIES
 # #############################################################################
-set_target_properties(${LIBRARY_NAME} PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1
-    PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/parser/include/modern/parser.hpp
-)
+# set_target_properties(${LIBRARY_NAME} PROPERTIES
+# VERSION ${PROJECT_VERSION}
+# SOVERSION 1
+# PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/parser/include/modern/parser.hpp
+# )
 
 # #############################################################################
 # LIBRARY HEADERS
 # #############################################################################
 target_include_directories(${LIBRARY_NAME} PUBLIC
-    ${CMAKE_SOURCE_DIR}/parser/include
+    ${CMAKE_CURRENT_LIST_DIR}/include
     ${PCL_INCLUDE_DIRS}
 
     # ${VTK_INCLUDE_DIRS}
@@ -48,8 +48,8 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 # #############################################################################
 # COMPILATION FLAGS
 # #############################################################################
-target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
-target_compile_options(${LIBRARY_NAME} PUBLIC -Wno-cpp)
+# target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
+# target_compile_options(${LIBRARY_NAME} PUBLIC -Wno-cpp)
 
 # #############################################################################
 # INSTALL DIRECTORY
