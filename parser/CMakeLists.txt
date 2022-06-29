@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(cloud_parser)
+project(cloud_parser VERSION 1.0.3)
 
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
