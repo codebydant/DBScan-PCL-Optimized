@@ -28,12 +28,12 @@ ignored. That is to say, they aren’t part of any cluster.
 #include <iostream>
 
 #include "argparse/argparse.hpp"
-#include "cal_epsilon.hpp"
-#include "clusters_color.hpp"
-#include "dbscan/dbScan.h"
-#include "modern/parser.hpp"
-#include "save_cluster.hpp"
-#include "visualizer.hpp"
+// #include "cal_epsilon.hpp"
+// #include "clusters_color.hpp"
+// #include "dbscan/dbScan.h"
+// #include "modern/parser.hpp"
+// #include "save_cluster.hpp"
+// #include "visualizer.hpp"
 
 int main(int argc, char **argv) {
   std::cout << "\n*************************************" << std::endl;
