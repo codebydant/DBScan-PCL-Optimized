@@ -45,16 +45,16 @@ int main(int argc, char **argv) {
   std::cout << "yeah" << std::endl;
   std::cout << "probandooo....." << std::endl;
 
-  // arg_parser.add_argument("--cloudfile").required().help("input cloud file");
-  // arg_parser.add_argument("--octree-res").default_value(int(120)).scan<'i', int>().help("octree resolution");
-  // arg_parser.add_argument("--eps").default_value(float(40)).scan<'g', float>().help("epsilon value");
-  // arg_parser.add_argument("--minPtsAux").default_value(int(5)).scan<'i', int>().help("minimum auxiliar points");
-  // arg_parser.add_argument("--minPts").default_value(int(5)).scan<'i', int>().help("minimum points");
-  // arg_parser.add_argument("-o", "--output-dir").default_value(std::string("-")).help("output dir to save clusters");
-  // arg_parser.add_argument("--ext").default_value(std::string("pcd")).help("cluster output extension [pcd, ply, txt, xyz]");
-  // arg_parser.add_argument("-d", "--display").default_value(false).implicit_value(true).help("display clusters in the pcl visualizer");
-  // arg_parser.add_argument("--cal-eps").default_value(false).implicit_value(true).help("calculate the value of epsilon with the distance to the nearest n points");
-  // std::cout << "yeah" << std::endl;
+  arg_parser.add_argument("--cloudfile").required().help("input cloud file");
+  arg_parser.add_argument("--octree-res").default_value(int(120)).scan<'i', int>().help("octree resolution");
+  arg_parser.add_argument("--eps").default_value(float(40)).scan<'g', float>().help("epsilon value");
+  arg_parser.add_argument("--minPtsAux").default_value(int(5)).scan<'i', int>().help("minimum auxiliar points");
+  arg_parser.add_argument("--minPts").default_value(int(5)).scan<'i', int>().help("minimum points");
+  arg_parser.add_argument("-o", "--output-dir").default_value(std::string("-")).help("output dir to save clusters");
+  arg_parser.add_argument("--ext").default_value(std::string("pcd")).help("cluster output extension [pcd, ply, txt, xyz]");
+  arg_parser.add_argument("-d", "--display").default_value(false).implicit_value(true).help("display clusters in the pcl visualizer");
+  arg_parser.add_argument("--cal-eps").default_value(false).implicit_value(true).help("calculate the value of epsilon with the distance to the nearest n points");
+  std::cout << "yeah" << std::endl;
   // try {
   //   arg_parser.parse_args(argc, argv);
   // } catch (const std::runtime_error &err) {
