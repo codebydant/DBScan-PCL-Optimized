@@ -1,7 +1,6 @@
-# #############################################################################
-# LIBRARY NAME
-# #############################################################################
-set(LIBRARY_NAME cloud_parser)
+cmake_minimum_required(VERSION 3.9)
+
+project(cloud_parser)
 
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
@@ -17,23 +16,23 @@ endif()
 # #############################################################################
 # COMPILE LIBRARY
 # #############################################################################
-add_library(${LIBRARY_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
     parser.cpp
 )
 
 # #############################################################################
 # LIBRARY PROPERTIES
 # #############################################################################
-# set_target_properties(${LIBRARY_NAME} PROPERTIES
-# VERSION ${PROJECT_VERSION}
-# SOVERSION 1
-# PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/parser/include/modern/parser.hpp
-# )
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION 1
+    PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/parser/include/modern/parser.hpp
+)
 
 # #############################################################################
 # LIBRARY HEADERS
 # #############################################################################
-target_include_directories(${LIBRARY_NAME} PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${PCL_INCLUDE_DIRS}
 
@@ -43,7 +42,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS
@@ -54,7 +53,7 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 # #############################################################################
 # INSTALL DIRECTORY
 # #############################################################################
-install(TARGETS ${LIBRARY_NAME}
+install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
