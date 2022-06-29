@@ -82,7 +82,7 @@ add_definitions(${PCL_DEFINITIONS})
 # ADD LIBRARIES FOLDER
 # #############################################################################
 # add_subdirectory(dbscanlib)
-# add_subdirectory(parser)
+add_subdirectory(parser)
 add_subdirectory(external/argparse)
 
 # #############################################################################
@@ -101,7 +101,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_link_libraries(${PROJECT_NAME} argparse)
+target_link_libraries(${PROJECT_NAME} argparse cloud_parser)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
 message("${BoldCyan}=========================================")
