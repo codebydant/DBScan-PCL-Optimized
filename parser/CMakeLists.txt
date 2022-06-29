@@ -17,7 +17,7 @@ endif()
 # #############################################################################
 # COMPILE LIBRARY
 # #############################################################################
-add_library(${LIBRARY_NAME} SHARED
+add_library(${LIBRARY_NAME} STATIC
     parser.cpp
 )
 
