@@ -55,14 +55,14 @@ int main(int argc, char **argv) {
   arg_parser.add_argument("-d", "--display").default_value(false).implicit_value(true).help("display clusters in the pcl visualizer");
   arg_parser.add_argument("--cal-eps").default_value(false).implicit_value(true).help("calculate the value of epsilon with the distance to the nearest n points");
   std::cout << "yeah" << std::endl;
-  // try {
-  //   arg_parser.parse_args(argc, argv);
-  // } catch (const std::runtime_error &err) {
-  //   std::cerr << err.what() << std::endl;
-  //   std::cerr << arg_parser;
-  //   std::exit(1);
-  // }
-  // std::cout << "yeah" << std::endl;
+  try {
+    arg_parser.parse_args(argc, argv);
+  } catch (const std::runtime_error &err) {
+    std::cerr << err.what() << std::endl;
+    std::cerr << arg_parser;
+    std::exit(1);
+  }
+  std::cout << "yeah" << std::endl;
 
   // // -----------------Read input cloud file -----------------
   // pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
