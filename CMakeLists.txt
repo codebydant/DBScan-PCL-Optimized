@@ -51,39 +51,40 @@ message("PCL PACKAGE")
 message("***********************")
 
 # #find_package(PCL 1.8 PATHS ${PCL_DIR} QUIET COMPONENTS common io visualization CONFIG) ##REQUIRED COMPONENTS common io visualization)
-find_package(PCL 1.8 REQUIRED QUIET)
+# find_package(PCL 1.8 REQUIRED QUIET)
 
-if(PCL_FOUND)
-    message(STATUS "${BoldGreen}PCL status:")
-    message(STATUS "    version: ${PCL_VERSION}")
-    message(STATUS "    directory: ${PCL_DIR}")
-else()
-    message(FATAL_ERROR "${BoldRed}    ERROR: PCL minimum required version 1.8. Not found")
-endif()
+# if(PCL_FOUND)
+# message(STATUS "${BoldGreen}PCL status:")
+# message(STATUS "    version: ${PCL_VERSION}")
+# message(STATUS "    directory: ${PCL_DIR}")
+# else()
+# message(FATAL_ERROR "${BoldRed}    ERROR: PCL minimum required version 1.8. Not found")
+# endif()
 
-message("${BoldYellow}***********************")
-message("${BoldYellow}VTK PACKAGE")
-message("${BoldYellow}***********************")
+# message("${BoldYellow}***********************")
+# message("${BoldYellow}VTK PACKAGE")
+# message("${BoldYellow}***********************")
 
-find_package(VTK 8.1 REQUIRED QUIET)
+# find_package(VTK 8.1 REQUIRED QUIET)
 
-if(VTK_FOUND)
-    message(STATUS "${BoldGreen}VTK status:")
-    message(STATUS "    version: ${VTK_VERSION}")
-    message(STATUS "    directory: ${VTK_DIR}")
-else()
-    message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
-endif()
+# if(VTK_FOUND)
+# message(STATUS "${BoldGreen}VTK status:")
+# message(STATUS "    version: ${VTK_VERSION}")
+# message(STATUS "    directory: ${VTK_DIR}")
+# else()
+# message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
+# endif()
 
 # Use the compile definitions defined in PCL
-add_definitions(${PCL_DEFINITIONS})
+# add_definitions(${PCL_DEFINITIONS})
 
 # #############################################################################
 # ADD LIBRARIES FOLDER
 # #############################################################################
 # add_subdirectory(dbscanlib)
 add_subdirectory(parser)
-add_subdirectory(external/argparse)
+
+# add_subdirectory(external/argparse)
 
 # #############################################################################
 # SOURCE CODE
@@ -101,7 +102,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_link_libraries(${PROJECT_NAME} argparse cloud_parser)
+target_link_libraries(${PROJECT_NAME} argparse)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
 message("${BoldCyan}=========================================")

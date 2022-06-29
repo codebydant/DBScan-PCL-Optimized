@@ -9,6 +9,7 @@ if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
     message(STATUS "    directory: ${PCL_DIR}")
+    add_definitions(${PCL_DEFINITIONS})
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
 endif()
@@ -48,7 +49,7 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
-target_compile_options(${LIBRARY_NAME} PRIVATE -Wno-cpp -Wstrict-aliasing)
+target_compile_options(${LIBRARY_NAME} PRIVATE -Wno-cpp)
 
 # #############################################################################
 # INSTALL DIRECTORY
