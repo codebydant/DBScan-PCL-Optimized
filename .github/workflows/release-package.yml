@@ -3,7 +3,7 @@ name: Demo Push
 on:
   push:
     # Publish `master` as Docker `latest` image.
-    branches: ["nobranch"]
+    branches: ["test-github-packages"]
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -31,6 +31,14 @@ jobs:
 
       - name: Build image
         run: docker build --file Dockerfile --target runtime --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+
+      - name: Test image
+        run: |
+          docker run -it --rm \
+          --env="DISPLAY" \
+          --env="QT_X11_NO_MITSHM=1" \
+          --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+          $IMAGE_NAME
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
