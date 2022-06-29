@@ -31,4 +31,4 @@ jobs:
           # context: .
           platforms: linux/amd64
           push: true
-          tags: danieltobon43/dbscan-octrees:latest
+          tags: ghcr.io/danieltobon43/dbscan-octrees:latest
