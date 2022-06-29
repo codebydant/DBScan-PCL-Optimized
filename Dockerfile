@@ -6,9 +6,9 @@ RUN apk --no-cache add cmake build-base
 
 COPY . /tmp
 
-WORKDIR /tmp
+# WORKDIR /tmp
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
+RUN cd /tmp && cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
 	-S . -Bbuild && make -C build/ -j$(nproc) --no-print-directory && \
 	make -C build/ install --no-print-directory
 
