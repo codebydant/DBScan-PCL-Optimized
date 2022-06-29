@@ -41,121 +41,121 @@ int main(int argc, char **argv) {
   std::cout << "*************************************" << std::endl;  
 
   // -----------------Command line interface -----------------
-  argparse::ArgumentParser arg_parser("program");
+  // argparse::ArgumentParser arg_parser("program");
   std::cout << "yeah" << std::endl;
 
-  arg_parser.add_argument("--cloudfile").required().help("input cloud file");
-  arg_parser.add_argument("--octree-res").default_value(int(120)).scan<'i', int>().help("octree resolution");
-  arg_parser.add_argument("--eps").default_value(float(40)).scan<'g', float>().help("epsilon value");
-  arg_parser.add_argument("--minPtsAux").default_value(int(5)).scan<'i', int>().help("minimum auxiliar points");
-  arg_parser.add_argument("--minPts").default_value(int(5)).scan<'i', int>().help("minimum points");
-  arg_parser.add_argument("-o", "--output-dir").default_value(std::string("-")).help("output dir to save clusters");
-  arg_parser.add_argument("--ext").default_value(std::string("pcd")).help("cluster output extension [pcd, ply, txt, xyz]");
-  arg_parser.add_argument("-d", "--display").default_value(false).implicit_value(true).help("display clusters in the pcl visualizer");
-  arg_parser.add_argument("--cal-eps").default_value(false).implicit_value(true).help("calculate the value of epsilon with the distance to the nearest n points");
-  std::cout << "yeah" << std::endl;
-  try {
-    arg_parser.parse_args(argc, argv);
-  } catch (const std::runtime_error &err) {
-    std::cerr << err.what() << std::endl;
-    std::cerr << arg_parser;
-    std::exit(1);
-  }
-  std::cout << "yeah" << std::endl;
+  // arg_parser.add_argument("--cloudfile").required().help("input cloud file");
+  // arg_parser.add_argument("--octree-res").default_value(int(120)).scan<'i', int>().help("octree resolution");
+  // arg_parser.add_argument("--eps").default_value(float(40)).scan<'g', float>().help("epsilon value");
+  // arg_parser.add_argument("--minPtsAux").default_value(int(5)).scan<'i', int>().help("minimum auxiliar points");
+  // arg_parser.add_argument("--minPts").default_value(int(5)).scan<'i', int>().help("minimum points");
+  // arg_parser.add_argument("-o", "--output-dir").default_value(std::string("-")).help("output dir to save clusters");
+  // arg_parser.add_argument("--ext").default_value(std::string("pcd")).help("cluster output extension [pcd, ply, txt, xyz]");
+  // arg_parser.add_argument("-d", "--display").default_value(false).implicit_value(true).help("display clusters in the pcl visualizer");
+  // arg_parser.add_argument("--cal-eps").default_value(false).implicit_value(true).help("calculate the value of epsilon with the distance to the nearest n points");
+  // std::cout << "yeah" << std::endl;
+  // try {
+  //   arg_parser.parse_args(argc, argv);
+  // } catch (const std::runtime_error &err) {
+  //   std::cerr << err.what() << std::endl;
+  //   std::cerr << arg_parser;
+  //   std::exit(1);
+  // }
+  // std::cout << "yeah" << std::endl;
 
-  // -----------------Read input cloud file -----------------
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  std::cout << "yeah" << std::endl;
-  // cloud parser object
-  CloudParserLibrary::ParserCloudFile cloud_parser;
-  std::cout << "yeah" << std::endl;
-  cloud_parser.load_cloudfile(arg_parser.get<std::string>("--cloudfile"), cloud);
-  std::cout << "yeah" << std::endl;
+  // // -----------------Read input cloud file -----------------
+  // pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+  // std::cout << "yeah" << std::endl;
+  // // cloud parser object
+  // CloudParserLibrary::ParserCloudFile cloud_parser;
+  // std::cout << "yeah" << std::endl;
+  // cloud_parser.load_cloudfile(arg_parser.get<std::string>("--cloudfile"), cloud);
+  // std::cout << "yeah" << std::endl;
 
-  // set cloud metadata
-  cloud->width = (int)cloud->points.size();
-  cloud->height = 1;
-  cloud->is_dense = true;
-  std::cout << "yeah" << std::endl;
+  // // set cloud metadata
+  // cloud->width = (int)cloud->points.size();
+  // cloud->height = 1;
+  // cloud->is_dense = true;
+  // std::cout << "yeah" << std::endl;
 
-  // -----------------RUN DBSCAN -----------------
-  /*DBSCAN algorithm requires 3 parameters:
+  // // -----------------RUN DBSCAN -----------------
+  // /*DBSCAN algorithm requires 3 parameters:
 
-   - octreeResolution: describes the length of the smallest voxels at lowest octree level.
-   - epsilon: specifies how close points should be to each other to be considered a part of a cluster
-   - minPts: specifies how many neighbors a point should have to be included into a cluster (must be >=3).
+  //  - octreeResolution: describes the length of the smallest voxels at lowest octree level.
+  //  - epsilon: specifies how close points should be to each other to be considered a part of a cluster
+  //  - minPts: specifies how many neighbors a point should have to be included into a cluster (must be >=3).
 
-   Note:
-   epsilone can be set as groupA.size()*0.001
+  //  Note:
+  //  epsilone can be set as groupA.size()*0.001
 
-   e.g.
-   dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
-  */
-  std::cout << "yeah" << std::endl;
-  std::vector<htr::Point3D> groupA;
-  dbScanSpace::dbscan dbscan;
-  std::cout << "yeah" << std::endl;
+  //  e.g.
+  //  dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
+  // */
+  // std::cout << "yeah" << std::endl;
+  // std::vector<htr::Point3D> groupA;
+  // dbScanSpace::dbscan dbscan;
+  // std::cout << "yeah" << std::endl;
 
-  int octreeResolution = arg_parser.get<int>("--octree-res");
-  float eps = arg_parser.get<float>("--eps");
-  int minPtsAux = arg_parser.get<int>("--minPtsAux");
-  int minPts = arg_parser.get<int>("--minPts");
-  std::cout << "yeah" << std::endl;
-  if (minPts < 3) {
-    pcl::console::print_error("\nminPts must be >= 3! \n");
-    std::exit(-1);
-  }
-  std::cout << "yeah" << std::endl;
+  // int octreeResolution = arg_parser.get<int>("--octree-res");
+  // float eps = arg_parser.get<float>("--eps");
+  // int minPtsAux = arg_parser.get<int>("--minPtsAux");
+  // int minPts = arg_parser.get<int>("--minPts");
+  // std::cout << "yeah" << std::endl;
+  // if (minPts < 3) {
+  //   pcl::console::print_error("\nminPts must be >= 3! \n");
+  //   std::exit(-1);
+  // }
+  // std::cout << "yeah" << std::endl;
 
-  pcl::console::print_info("\n- octreeResolution: %i", octreeResolution);
-  pcl::console::print_info("\n- eps: %f ", eps);
-  pcl::console::print_info("\n- minPtsAux: %i", minPtsAux);
-  pcl::console::print_info("\n- minPts: %i\n", minPts);
+  // pcl::console::print_info("\n- octreeResolution: %i", octreeResolution);
+  // pcl::console::print_info("\n- eps: %f ", eps);
+  // pcl::console::print_info("\n- minPtsAux: %i", minPtsAux);
+  // pcl::console::print_info("\n- minPts: %i\n", minPts);
 
-  std::chrono::time_point<std::chrono::system_clock> start, end;
-  start = std::chrono::system_clock::now();
-  std::cout << "yeah" << std::endl;
+  // std::chrono::time_point<std::chrono::system_clock> start, end;
+  // start = std::chrono::system_clock::now();
+  // std::cout << "yeah" << std::endl;
 
-  dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux, minPts);
-  // dbscan.init(groupA, cloud, cloud->points.size() * 0.001, eps, 5, 100);
-  std::cout << "yeah" << std::endl;
-  dbscan.generateClusters();
-  // dbscan.generateClusters_fast();
-  // dbscan.generateClusters_one_step();
-  std::cout << "yeah" << std::endl;
+  // dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux, minPts);
+  // // dbscan.init(groupA, cloud, cloud->points.size() * 0.001, eps, 5, 100);
+  // std::cout << "yeah" << std::endl;
+  // dbscan.generateClusters();
+  // // dbscan.generateClusters_fast();
+  // // dbscan.generateClusters_one_step();
+  // std::cout << "yeah" << std::endl;
 
-  end = std::chrono::system_clock::now();
-  auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  pcl::console::print_info("\n- elapsed time: ");
-  pcl::console::print_value("%d ms", elapsed_ms);
-  std::cout << "yeah" << std::endl;
+  // end = std::chrono::system_clock::now();
+  // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  // pcl::console::print_info("\n- elapsed time: ");
+  // pcl::console::print_value("%d ms", elapsed_ms);
+  // std::cout << "yeah" << std::endl;
 
-  if (dbscan.getClusters().size() <= 0) {
-    pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
-    std::exit(-1);
-  }
+  // if (dbscan.getClusters().size() <= 0) {
+  //   pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
+  //   std::exit(-1);
+  // }
 
-  pcl::console::print_info("\n- clusters: ");
-  pcl::console::print_value("%d\n", dbscan.getClusters().size());
+  // pcl::console::print_info("\n- clusters: ");
+  // pcl::console::print_value("%d\n", dbscan.getClusters().size());
 
-  // -----------------Calculate epsilon -----------------
-  if (arg_parser["--cal-eps"] == true) {
-    std::cout << "- calculating epsilon..." << std::endl;
-    calculate_epsilon(cloud);
-  }
+  // // -----------------Calculate epsilon -----------------
+  // if (arg_parser["--cal-eps"] == true) {
+  //   std::cout << "- calculating epsilon..." << std::endl;
+  //   calculate_epsilon(cloud);
+  // }
 
-  // -----------------Visualize clusters -----------------
-  if (arg_parser["--display"] == true) {
-    display_clusters(cloud, dbscan.getClusters());
-  }
+  // // -----------------Visualize clusters -----------------
+  // if (arg_parser["--display"] == true) {
+  //   display_clusters(cloud, dbscan.getClusters());
+  // }
 
-  // -----------------Export clusters -----------------
-  // true, if user provided output_dir
-  if (arg_parser.is_used("--output-dir")) {
-    std::string output_dir = arg_parser.get<std::string>("--output-dir");
-    std::string format = arg_parser.get<std::string>("--ext");
-    save_clusters(dbscan.getClusters(), format, output_dir);
-  }
+  // // -----------------Export clusters -----------------
+  // // true, if user provided output_dir
+  // if (arg_parser.is_used("--output-dir")) {
+  //   std::string output_dir = arg_parser.get<std::string>("--output-dir");
+  //   std::string format = arg_parser.get<std::string>("--ext");
+  //   save_clusters(dbscan.getClusters(), format, output_dir);
+  // }
 
   return 0;
 }
