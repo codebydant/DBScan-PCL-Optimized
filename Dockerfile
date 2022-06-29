@@ -14,7 +14,7 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
 
 # Runtime
 FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
-ENV MESA_LOADER_DRIVER_OVERRIDE i965
+# ENV MESA_LOADER_DRIVER_OVERRIDE i965
 RUN apk upgrade --no-cache && \
 	apk add --no-cache libgcc libstdc++
 
