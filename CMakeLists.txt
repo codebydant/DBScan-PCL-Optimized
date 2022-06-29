@@ -46,9 +46,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # #############################################################################
 # PACKAGES
 # #############################################################################
-message("***********************")
-message("PCL PACKAGE")
-message("***********************")
+# message("***********************")
+# message("PCL PACKAGE")
+# message("***********************")
 
 # #find_package(PCL 1.8 PATHS ${PCL_DIR} QUIET COMPONENTS common io visualization CONFIG) ##REQUIRED COMPONENTS common io visualization)
 # find_package(PCL 1.8 REQUIRED QUIET)
@@ -101,7 +101,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_link_libraries(${PROJECT_NAME} argparse)
+target_link_libraries(${PROJECT_NAME} argparse cloud_parser)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
 message("${BoldCyan}=========================================")
