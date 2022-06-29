@@ -10,7 +10,7 @@ COPY . /tmp
 
 RUN cd /tmp && cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
 	-S . -Bbuild && make -C build/ -j$(nproc) --no-print-directory && \
-	make -C build/ install --no-print-directory && /tmp/build/app
+	make -C build/ install --no-print-directory
 
 # # Runtime
 # FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
