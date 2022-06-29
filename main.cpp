@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
   // -----------------Command line interface -----------------
   argparse::ArgumentParser arg_parser("program");
   std::cout << "yeah" << std::endl;
+  std::cout << "probandooo....." << std::endl;
 
   // arg_parser.add_argument("--cloudfile").required().help("input cloud file");
   // arg_parser.add_argument("--octree-res").default_value(int(120)).scan<'i', int>().help("octree resolution");

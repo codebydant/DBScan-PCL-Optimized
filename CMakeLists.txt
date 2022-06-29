@@ -81,8 +81,8 @@ add_definitions(${PCL_DEFINITIONS})
 # #############################################################################
 # ADD LIBRARIES FOLDER
 # #############################################################################
-add_subdirectory(dbscanlib)
-add_subdirectory(parser)
+# add_subdirectory(dbscanlib)
+# add_subdirectory(parser)
 add_subdirectory(external/argparse)
 
 # #############################################################################
