@@ -30,7 +30,7 @@ jobs:
           submodules: recursive
 
       - name: Build image
-        run: docker build --file Dockerfile --target runtime --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
       - name: Test image
         run: |
