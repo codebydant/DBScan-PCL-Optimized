@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   std::cout << "*************************************" << std::endl;  
 
   // -----------------Command line interface -----------------
-  // argparse::ArgumentParser arg_parser("program");
+  argparse::ArgumentParser arg_parser("program");
   std::cout << "yeah" << std::endl;
 
   // arg_parser.add_argument("--cloudfile").required().help("input cloud file");
