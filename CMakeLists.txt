@@ -15,14 +15,14 @@ message("\n" "${BoldCyan}=========================================")
 message("${BoldCyan}Project: ${PROJECT_NAME} ")
 message("${BoldCyan}=========================================")
 
-# set the include directive in the same project folder
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# # set the include directive in the same project folder
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# set corresponding package directories
-set(PCL_DIR /opt/pcl-1.9.0/build)
+# # set corresponding package directories
+# set(PCL_DIR /opt/pcl-1.9.0/build)
 
-# Include dependencies from pcl 1.8.0 in project directory
-set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
+# # Include dependencies from pcl 1.8.0 in project directory
+# set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
 
 # set cmake for use std c++11 and output executable folder to bin
 set(CMAKE_CXX_STANDARD 17)
@@ -30,18 +30,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set turn off the output rule messages of cmake
 # #set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
-find_package(PkgConfig)
-pkg_check_modules(PC_FLANN flann)
-set(FLANN_DEFINITIONS ${PC_FLANN_CFLAGS_OTHER})
+# find_package(PkgConfig)
+# pkg_check_modules(PC_FLANN flann)
+# set(FLANN_DEFINITIONS ${PC_FLANN_CFLAGS_OTHER})
 
-find_path(FLANN_INCLUDE_DIR flann/flann.hpp
-    HINTS ${PC_FLANN_INCLUDEDIR} ${PC_FLANN_INCLUDE_DIRS})
+# find_path(FLANN_INCLUDE_DIR flann/flann.hpp
+# HINTS ${PC_FLANN_INCLUDEDIR} ${PC_FLANN_INCLUDE_DIRS})
 
-find_library(FLANN_LIBRARY flann
-    HINTS ${PC_FLANN_LIBDIR} ${PC_FLANN_LIBRARY_DIRS})
+# find_library(FLANN_LIBRARY flann
+# HINTS ${PC_FLANN_LIBDIR} ${PC_FLANN_LIBRARY_DIRS})
 
-set(FLANN_INCLUDE_DIRS ${FLANN_INCLUDE_DIR})
-set(FLANN_LIBRARIES ${FLANN_LIBRARY})
+# set(FLANN_INCLUDE_DIRS ${FLANN_INCLUDE_DIR})
+# set(FLANN_LIBRARIES ${FLANN_LIBRARY})
 
 # #############################################################################
 # PACKAGES
