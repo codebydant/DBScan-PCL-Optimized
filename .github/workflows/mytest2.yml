@@ -1,4 +1,4 @@
-name: Testing Pushed Image
+name: Testing Image
 
 on:
   push:
@@ -9,10 +9,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-#       - name: Check out the repo
-#         uses: actions/checkout@v3
-#         with:
-#           submodules: recursive
       - name: Download Image
         run: |
           docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
