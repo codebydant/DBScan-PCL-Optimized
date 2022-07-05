@@ -49,7 +49,7 @@ jobs:
 
       - name: Push image
         run: |
-          export HOME=/root
+          # export HOME=/root
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
