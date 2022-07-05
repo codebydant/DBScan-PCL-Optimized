@@ -28,20 +28,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-          
-#       - name: USER Permissions
-#         run: |
-#           sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
-#           sudo chmod g+rwx "/home/$USER/.docker" -R
 
       - name: Build image
         run: |
-          # export HOME=/root
           docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
       - name: Test image
         run: |
-          # export HOME=/root
           docker run --rm \
           --env="DISPLAY" \
           --env="QT_X11_NO_MITSHM=1" \
@@ -54,7 +47,6 @@ jobs:
 
       - name: Push image
         run: |
-          # export HOME=/root
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
