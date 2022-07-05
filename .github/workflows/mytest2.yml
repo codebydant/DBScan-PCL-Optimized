@@ -2,7 +2,7 @@ name: Testing Image
 
 on:
   push:
-    branches: ["empty"]
+    branches: ["test-github-packages"]
   workflow_dispatch:
     inputs:
       environment:
