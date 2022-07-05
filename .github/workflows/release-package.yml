@@ -29,19 +29,19 @@ jobs:
         with:
           submodules: recursive
           
-      - name: USER Permissions
-        run: |
-          sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
-          sudo chmod g+rwx "/home/$USER/.docker" -R
+#       - name: USER Permissions
+#         run: |
+#           sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
+#           sudo chmod g+rwx "/home/$USER/.docker" -R
 
       - name: Build image
         run: |
-          export HOME=/root
+          # export HOME=/root
           docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
       - name: Test image
         run: |
-          export HOME=/root
+          # export HOME=/root
           docker run --rm \
           --env="DISPLAY" \
           --env="QT_X11_NO_MITSHM=1" \
