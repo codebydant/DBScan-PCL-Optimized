@@ -1,0 +1,25 @@
+name: Testing Pushed Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+    
+      - name: Download image
+        run: |
+          docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
+    
+      - name: Test image
+        run: |
+          docker run --rm \
+          --env="DISPLAY" \
+          --env="QT_X11_NO_MITSHM=1" \
+          --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+          ghcr.io/danieltobon43/dbscan-octrees:latest
