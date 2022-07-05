@@ -1,7 +1,6 @@
 name: Testing Pushed Image
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   test:
