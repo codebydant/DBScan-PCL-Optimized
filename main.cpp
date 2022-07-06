@@ -115,21 +115,20 @@ int main(int argc, char **argv) {
 
   std::chrono::time_point<std::chrono::system_clock> start, end;
   start = std::chrono::system_clock::now();
-  std::cout << "yeah" << std::endl;
+  std::cout << "yeah before dbscan" << std::endl;
 
   dbscan.init(groupA, cloud, octreeResolution, eps, minPtsAux, minPts);
   // dbscan.init(groupA, cloud, cloud->points.size() * 0.001, eps, 5, 100);
-  std::cout << "yeah" << std::endl;
+  std::cout << "yeah after dbscan" << std::endl;
   dbscan.generateClusters();
   // dbscan.generateClusters_fast();
   // dbscan.generateClusters_one_step();
-  std::cout << "yeah" << std::endl;
+  std::cout << "yeah after generated clusters" << std::endl;
 
   end = std::chrono::system_clock::now();
   auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   pcl::console::print_info("\n- elapsed time: ");
   pcl::console::print_value("%d ms", elapsed_ms);
-  std::cout << "yeah after dbscan" << std::endl;
 
   if (dbscan.getClusters().size() <= 0) {
     pcl::console::print_error("\nCould not generated clusters, bad parameters\n");
