@@ -2,15 +2,6 @@
 # LIBRARY NAME
 # #############################################################################
 set(LIBRARY_NAME dbscan)
-find_package(VTK 8.1 REQUIRED QUIET)
-
-if(VTK_FOUND)
-    message(STATUS "${BoldGreen}VTK status:")
-    message(STATUS "    version: ${VTK_VERSION}")
-    message(STATUS "    directory: ${VTK_DIR}")
-else()
-    message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
-endif()
 
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
@@ -47,14 +38,12 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${PCL_INCLUDE_DIRS}
-
-    ${VTK_INCLUDE_DIRS}
 )
 
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS
