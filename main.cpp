@@ -30,8 +30,8 @@ ignored. That is to say, they aren’t part of any cluster.
 #include "argparse/argparse.hpp"
 // #include "cal_epsilon.hpp"
 // #include "clusters_color.hpp"
-// #include "dbscan/dbScan.h"
-// #include "modern/parser.hpp"
+#include "dbscan/dbScan.h"
+#include "modern/parser.hpp"
 // #include "save_cluster.hpp"
 // #include "visualizer.hpp"
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     std::cerr << arg_parser;
     // std::exit(0);
   }
-  std::cout << "yeah" << std::endl;
+  std::cout << "hasta aqui todo bien" << std::endl;
 
   // -----------------Read input cloud file -----------------
   // pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
