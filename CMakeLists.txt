@@ -104,10 +104,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(${PROJECT_NAME} argparse cloudparse)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_SEARCH_START_STATIC ON)
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_SEARCH_END_STATIC ON)
-
-target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -static)
+target_link_options(${PROJECT_NAME} PRIVATE libgcc libstdc++)
 
 message("${BoldCyan}=========================================")
 message("${BoldCyan}Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
