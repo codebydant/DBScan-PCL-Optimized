@@ -80,7 +80,7 @@ endif()
 # #############################################################################
 # ADD LIBRARIES FOLDER
 # #############################################################################
-add_subdirectory(dbscanlib)
+# add_subdirectory(dbscanlib)
 add_subdirectory(parser)
 add_subdirectory(external/argparse)
 
@@ -100,7 +100,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS} include)
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE ${VTK_INCLUDE_DIRS} include)
-target_link_libraries(${PROJECT_NAME} ${VTK_LIBRARIES} argparse cloudparse dbscan)
+target_link_libraries(${PROJECT_NAME} ${VTK_LIBRARIES} argparse cloudparse)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx)
 
 message("${BoldCyan}=========================================")
