@@ -5,6 +5,8 @@ project(cloudparse
     DESCRIPTION "Cloud parser library"
     LANGUAGES CXX
 )
+set(ENABLE_AVX OFF)
+set(ENABLE_AVX2 OFF)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
