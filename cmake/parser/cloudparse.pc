@@ -1,0 +1,7 @@
+prefix=/usr/local
+includedir=${prefix}/include
+
+Name: cloudparse
+Description: Cloud parser library
+Version: 1.0.3
+Cflags: -I${includedir}

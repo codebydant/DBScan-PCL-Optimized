@@ -27,6 +27,7 @@ endif()
 add_library(${PROJECT_NAME} SHARED
     parser.cpp
 )
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # #############################################################################
 # LIBRARY PROPERTIES
@@ -63,14 +64,14 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 # INSTALL DIRECTORY
 # #############################################################################
 install(TARGETS ${PROJECT_NAME} EXPORT cloudparseConfig)
-install(EXPORT cloudparseConfig
-    NAMESPACE cloudparse::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR_ARCHIND}/cmake/${PROJECT_NAME})
+
+# install(EXPORT cloudparseConfig
+# NAMESPACE cloudparse::
+# DESTINATION ${CMAKE_INSTALL_LIBDIR_ARCHIND}/cmake/${PROJECT_NAME})
 install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
-
 set(CONFIG_FILE_NAME_WITHOUT_EXT "${PROJECT_NAME}Config")
 set(CMAKE_CONFIG_FILE_BASENAME "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_FILE_NAME_WITHOUT_EXT}")
 set(CMAKE_CONFIG_VERSION_FILE_NAME "${CMAKE_CONFIG_FILE_BASENAME}-version.cmake")
@@ -93,11 +94,12 @@ install(FILES "${CMAKE_CONFIG_VERSION_FILE_NAME}"
 
 set(PackagingTemplatesDir "${CMAKE_CURRENT_SOURCE_DIR}/packaging")
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
-set(CPACK_PACKAGE_VENDOR "argparse (C++) developers")
+set(CPACK_PACKAGE_VENDOR "cloudparse (C++) developers")
 set(CPACK_PACKAGE_DESCRIPTION "${PROJECT_DESCRIPTION}")
 set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_RPM_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
-set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
+
+# set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
 set(CPACK_PACKAGE_MAINTAINER "Pranav Srinivas Kumar")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
 
