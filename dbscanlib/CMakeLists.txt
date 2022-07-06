@@ -38,13 +38,14 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${PCL_INCLUDE_DIRS}
-    ${VTK_INCLUDE_DIRS}
+
+    # ${VTK_INCLUDE_DIRS}
 )
 
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${LIBRARY_NAME} ${PCL_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${PCL_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS
