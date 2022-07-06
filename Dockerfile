@@ -2,7 +2,7 @@
 FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as build_dbscan
 
 # ======== Compile dbscan project ========
-RUN apk --no-cache add cmake build-base
+RUN apk --no-cache add cmake build-base libstdc++
 
 COPY . /tmp
 
