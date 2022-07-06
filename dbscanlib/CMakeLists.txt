@@ -55,7 +55,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx -quiet -v -imultiarch x86_64-linux-gnu - -march=haswell)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx -quiet)
 
 # #############################################################################
 # INSTALL DIRECTORY
