@@ -6,6 +6,7 @@ docker run -it --rm \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --entrypoint=/bin/sh \
+    --volume=`pwd`:/tmp/output \
     ghcr.io/danieltobon43/dbscan-octrees:latest
     # --entrypoint=/bin/sh \
     # --volume=`pwd`:/tmp \
