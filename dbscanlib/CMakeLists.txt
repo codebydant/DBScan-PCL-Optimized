@@ -3,6 +3,17 @@
 # #############################################################################
 set(LIBRARY_NAME dbscan)
 
+find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
+
+if(PCL_FOUND)
+    message(STATUS "PCL status:")
+    message(STATUS "    version: ${PCL_VERSION}")
+    message(STATUS "    directory: ${PCL_DIR}")
+    add_definitions(${PCL_DEFINITIONS})
+else()
+    message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
+endif()
+
 # #############################################################################
 # COMPILE LIBRARY
 # #############################################################################
