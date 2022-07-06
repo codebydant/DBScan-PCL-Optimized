@@ -382,3 +382,7 @@ writev(1, [{iov_base="********************************"..., iov_len=37}, {iov_ba
 Illegal instruction (core dumped)
 
 
+execve("./libdbscan.so.1", ["./libdbscan.so.1"], 0x7fff795d3ae0 /* 9 vars */) = 0
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0x8216} ---
++++ killed by SIGSEGV (core dumped) +++
+Segmentation fault (core dumped)
