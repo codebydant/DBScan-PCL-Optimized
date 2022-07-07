@@ -17,7 +17,10 @@ if(PCL_FOUND)
     message(STATUS "    directory: ${PCL_DIR}")
 
     add_definitions(${PCL_DEFINITIONS})
-    add_definitions(-mno-avx -mno-avx2 -msse)
+    add_definitions(-Wall -O3 -DNDEBUG -pipe -ffast-math -funroll-loops -ftree-vectorize -fomit-frame-pointer -pipe -mfpmath=sse -mmmx -msse -mtune=core2 -march=core2 -msse2 -msse3 -mssse3 -msse4)
+
+    # add_definitions(-momit-leaf-frame-pointer -fomit-frame-pointer -floop-block -ftree-loop-distribution -ftree-loop-linear -floop-interchange -floop-strip-mine -fgcse-lm -fgcse-sm -fsched-spec-load)
+    add_definitions(-Wall -O3 -Winvalid-pch -pipe -funroll-loops -fno-strict-aliasing)
     message(STATUS "    PCL_DEFINITIONS: ${PCL_DEFINITIONS}")
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
