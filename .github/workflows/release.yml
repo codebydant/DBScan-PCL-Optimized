@@ -19,8 +19,8 @@ jobs:
           submodules: recursive
 
       - name: Build project
-        # uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
-        uses: ./PCL-Build-Action
+        uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
+        # uses: ./PCL-Build-Action
         with:
           build_flags: >
             -DCMAKE_BUILD_TYPE=Release 
