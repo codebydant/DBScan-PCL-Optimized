@@ -28,12 +28,12 @@ ignored. That is to say, they aren’t part of any cluster.
 #include <iostream>
 
 #include "argparse/argparse.hpp"
-// #include "cal_epsilon.hpp"
+#include "cal_epsilon.hpp"
 #include "clusters_color.hpp"
 #include "dbscan/dbScan.h"
 #include "modern/parser.hpp"
-// #include "save_cluster.hpp"
-// #include "visualizer.hpp"
+#include "save_cluster.hpp"
+#include "visualizer.hpp"
 
 int main(int argc, char **argv) {
   std::cout << "\n*************************************" << std::endl;
@@ -138,24 +138,24 @@ int main(int argc, char **argv) {
   pcl::console::print_info("\n- clusters: ");
   pcl::console::print_value("%d\n", dbscan.getClusters().size());
 
-  // // -----------------Calculate epsilon -----------------
-  // if (arg_parser["--cal-eps"] == true) {
-  //   std::cout << "- calculating epsilon..." << std::endl;
-  //   calculate_epsilon(cloud);
-  // }
+  // -----------------Calculate epsilon -----------------
+  if (arg_parser["--cal-eps"] == true) {
+    std::cout << "- calculating epsilon..." << std::endl;
+    calculate_epsilon(cloud);
+  }
 
-  // // -----------------Visualize clusters -----------------
-  // if (arg_parser["--display"] == true) {
-  //   display_clusters(cloud, dbscan.getClusters());
-  // }
+  // -----------------Visualize clusters -----------------
+  if (arg_parser["--display"] == true) {
+    display_clusters(cloud, dbscan.getClusters());
+  }
 
-  // // -----------------Export clusters -----------------
-  // // true, if user provided output_dir
-  // if (arg_parser.is_used("--output-dir")) {
-  //   std::string output_dir = arg_parser.get<std::string>("--output-dir");
-  //   std::string format = arg_parser.get<std::string>("--ext");
-  //   save_clusters(dbscan.getClusters(), format, output_dir);
-  // }
+  // -----------------Export clusters -----------------
+  // true, if user provided output_dir
+  if (arg_parser.is_used("--output-dir")) {
+    std::string output_dir = arg_parser.get<std::string>("--output-dir");
+    std::string format = arg_parser.get<std::string>("--ext");
+    save_clusters(dbscan.getClusters(), format, output_dir);
+  }
 
   return 0;
 }
