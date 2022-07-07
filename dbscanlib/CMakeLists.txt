@@ -89,6 +89,18 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mmmx -msse -msse2 -msse
     -mno-avx512vnni
     -mno-avx512bitalg
     -mno-avx512vpopcntdq
+    -mno-fma
+    -mno-fma4
+    -mno-f16c
+    -mno-xop
+    -mno-bmi
+    -mno-bmi2
+    -mrdrnd
+    -mno-3dnow
+    -mlzcnt
+    -mfsgsbase
+    -mpclmul
+    -mno-sse4a
 )
 
 # #############################################################################

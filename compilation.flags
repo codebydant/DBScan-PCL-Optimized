@@ -118,19 +118,6 @@ MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64
 -mno-xsavec 
 -mno-xsaves 
 
--mno-avx512f 
--mno-avx512er 
--mno-avx512cd 
--mno-avx512pf 
--mno-avx512dq 
--mno-avx512bw 
--mno-avx512vl 
--mno-avx512ifma 
--mno-avx512vbmi
--mno-avx512vbmi2 
--mno-avx512vnni
--mno-avx512bitalg 
--mno-avx512vpopcntdq 
 
 -mno-clwb 
 -mno-mwaitx 
