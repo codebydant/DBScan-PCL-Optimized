@@ -9,6 +9,7 @@ project(dbscan
 )
 set(ENABLE_AVX OFF)
 set(ENABLE_AVX2 OFF)
+SET(CMAKE_CXX_FLAGS "-march=native -mno-avx")
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
 if(PCL_FOUND)
