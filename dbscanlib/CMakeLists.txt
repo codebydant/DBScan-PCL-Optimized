@@ -70,6 +70,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # #############################################################################
 # COMPILATION FLAGS
 # #############################################################################
+add_definitions(-Wall -O3 -DNDEBUG -pipe -ffast-math -funroll-loops -ftree-vectorize -fomit-frame-pointer -pipe -mfpmath=sse -mmmx -msse -mtune=core2 -march=core2 -msse2 -msse3 -mssse3 -msse4)
+
 # target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx)
 
