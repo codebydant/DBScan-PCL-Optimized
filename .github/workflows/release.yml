@@ -26,8 +26,8 @@ jobs:
         with:
           build_flags: >
             -DCMAKE_BUILD_TYPE=Release 
-            # -DCMAKE_C_COMPILER=clang 
-            # -DCMAKE_CXX_COMPILER=clang++
+            -DCMAKE_C_COMPILER=clang 
+            -DCMAKE_CXX_COMPILER=clang++
             -DCMAKE_INSTALL_PREFIX=install
           make_install: true
       - name: Check files
