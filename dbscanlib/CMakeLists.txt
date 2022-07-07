@@ -70,8 +70,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # #############################################################################
 # COMPILATION FLAGS
 # #############################################################################
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx)
+# target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx)
 
 # #############################################################################
 # INSTALL DIRECTORY

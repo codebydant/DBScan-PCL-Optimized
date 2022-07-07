@@ -6,8 +6,7 @@ docker run -it --rm \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume=/home/danieltc/Downloads/models:/tmp \
-    --entrypoint=/bin/sh \
-    ghcr.io/danieltobon43/dbscan-octrees:latest
+    ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/$1 -d
     # --entrypoint=/bin/sh \
     # --volume=`pwd`:/tmp/output \
         # --volume=/home/danieltc/Downloads/models:/tmp/output \
