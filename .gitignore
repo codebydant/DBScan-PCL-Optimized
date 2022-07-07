@@ -37,3 +37,5 @@ build/
 
 # nektos/act secrets
 .secrets
+
+PCL-Build-Action/
