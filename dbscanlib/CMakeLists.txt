@@ -9,9 +9,7 @@ project(dbscan
 )
 set(ENABLE_AVX OFF)
 set(ENABLE_AVX2 OFF)
-SET(CMAKE_CXX_FLAGS "-mno-avx")
-SET(CMAKE_C_COMPILER "clang")
-SET(CMAKE_CXX_COMPILER "clang++")
+
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
 if(PCL_FOUND)
@@ -75,7 +73,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx -march=haswell -mtune=haswell)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx)
 
 # #############################################################################
 # INSTALL DIRECTORY
