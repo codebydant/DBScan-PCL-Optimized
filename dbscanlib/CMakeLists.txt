@@ -7,8 +7,6 @@ project(dbscan
     DESCRIPTION "dbscan library"
     LANGUAGES CXX
 )
-set(ENABLE_AVX OFF)
-set(ENABLE_AVX2 OFF)
 
 find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
 
@@ -73,7 +71,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx)
 
 # #############################################################################
 # INSTALL DIRECTORY
