@@ -9,6 +9,8 @@ on:
         type: string
         default: DEV
         required: true
+env:
+  IMAGE_NAME: dbscan-octrees
 
 jobs:
   docker:
@@ -31,29 +33,35 @@ jobs:
       - name: Check files
         run: ls -a
 
-      # - name: Build image
-      #   run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+      - name: Build image
+        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
-      # - name: Download bad Image
-      #   run: |
-      #     docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
+      - name: Test image
+        run: |
+          docker run --rm \
+          --env="DISPLAY" \
+          --env="QT_X11_NO_MITSHM=1" \
+          --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+          dbscan-octrees:latest
 
-      # - name: Test bad Image
-      #   run: |
-      #     docker run --rm \
-      #     --env="DISPLAY" \
-      #     --env="QT_X11_NO_MITSHM=1" \
-      #     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      #     ghcr.io/danieltobon43/dbscan-octrees:latest
+      - name: Log in to registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
-      # - name: Download good Image
-      #   run: |
-      #     docker pull ghcr.io/danieltobon43/dbscan-octrees:goodapp
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
 
-      # - name: Test good Image
-      #   run: |
-      #     docker run --rm \
-      #     --env="DISPLAY" \
-      #     --env="QT_X11_NO_MITSHM=1" \
-      #     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      #     ghcr.io/danieltobon43/dbscan-octrees:goodapp
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          # docker push ghcr.io/danieltobon43/dbscan-octrees:latest

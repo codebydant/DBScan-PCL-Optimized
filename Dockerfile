@@ -2,11 +2,11 @@
 FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All AS runtime
 
 # ======== Compile dbscan project ========
-COPY build/install/ /usr
+COPY install/ /usr
 
 # WORKDIR /tmp
 
-ENTRYPOINT ["/bin/app"]
+ENTRYPOINT ["app"]
 # # Runtime
 # FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
 # # ENV MESA_LOADER_DRIVER_OVERRIDE i965
