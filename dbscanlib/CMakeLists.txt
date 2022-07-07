@@ -56,6 +56,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PCL_INCLUDE_DIRS}
 )
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    message(STATUS "    clang compiler enabled")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(STATUS "    gnu compiler enabled")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    message(STATUS "    intel compiler enabled")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    message(STATUS "    msvc compiler enabled")
+endif()
+
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
