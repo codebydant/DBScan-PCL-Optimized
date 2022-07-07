@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 project(app VERSION 1.0.3)
 
 # set build type = Debug mode
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/color.cmake")
 

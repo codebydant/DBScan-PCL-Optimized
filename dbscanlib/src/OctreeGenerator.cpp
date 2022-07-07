@@ -40,12 +40,14 @@ void OctreeGenerator::initRandomCloud(const float width, const float height, con
 
 /// Calculates the entire cloud centroid
 void OctreeGenerator::calculateCloudCentroid() {
+  std::cout << "inside calculate centroid" << std::endl;
   Eigen::Matrix<float, 4, 1> centroid_original;
 
   pcl::compute3DCentroid(*cloud, centroid_original);
   cloudCentroid.x = centroid_original[0];
   cloudCentroid.y = centroid_original[1];
   cloudCentroid.z = centroid_original[2];
+  std::cout << "finished calculate centroid" << std::endl;
 }
 
 /// Initializes the octree from the cloud data provided at the specified resolution.
@@ -53,6 +55,7 @@ void OctreeGenerator::calculateCloudCentroid() {
 void OctreeGenerator::initOctree(const int resolution) {
   //************************************
   // octree_p.reset(new OctreeXYZSearch(resolution));
+  std::cout << "init octree operation" << std::endl;
   octree_p->deleteTree();
   octree_p->setResolution(resolution);
 

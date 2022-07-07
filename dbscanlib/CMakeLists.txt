@@ -17,6 +17,7 @@ if(PCL_FOUND)
     message(STATUS "    directory: ${PCL_DIR}")
 
     add_definitions(${PCL_DEFINITIONS})
+    add_definitions(-mno-avx -mno-avx2 -msse)
     message(STATUS "    PCL_DEFINITIONS: ${PCL_DEFINITIONS}")
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
