@@ -101,7 +101,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} cloud_parser dbscan argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE ${VTK_INCLUDE_DIRS} include)
 target_link_libraries(${PROJECT_NAME} ${VTK_LIBRARIES} argparse dbscan cloudparse)
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
 message("${BoldCyan}=========================================")
 message("${BoldCyan}Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
