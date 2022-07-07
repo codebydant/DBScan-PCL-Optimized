@@ -149,3 +149,19 @@ MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64
     -mfsgsbase
     -mpclmul
     -mno-sse4a
+
+-------------------
+
+-mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mno-avx -mno-avx2
+    -mno-fma
+    -mno-fma4
+    -mno-f16c
+    -mno-xop
+    -mno-bmi
+    -mno-bmi2
+    -mrdrnd
+    -mno-3dnow
+    -mlzcnt
+    -mfsgsbase
+    -mpclmul
+    -mno-sse4a
