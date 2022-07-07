@@ -1,7 +1,7 @@
 #ifndef DBSCAN
 #define DBSCAN
 
-#include <omp.h>
+// #include <omp.h>
 #include <pcl/common/centroid.h>
 #include <pcl/common/common.h>
 #include <pcl/common/geometry.h>
