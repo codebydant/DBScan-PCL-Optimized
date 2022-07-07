@@ -3,7 +3,7 @@ name: Demo Push
 on:
   push:
     # Publish `master` as Docker `latest` image.
-    branches: ["test-github-packages"]
+    branches: ["empty"]
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -14,11 +14,11 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'     
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
       tags:
-        description: 'Test scenario tags'
+        description: "Test scenario tags"
 
 env:
   IMAGE_NAME: dbscan-octrees
@@ -46,8 +46,8 @@ jobs:
           --env="DISPLAY" \
           --env="QT_X11_NO_MITSHM=1" \
           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-          dbscan-octrees:latest        
-      
+          dbscan-octrees:latest
+
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin

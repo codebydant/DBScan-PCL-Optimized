@@ -2,7 +2,7 @@ name: Testing Image
 
 on:
   push:
-    branches: ["test-github-packages"]
+    branches: ["empty"]
   workflow_dispatch:
     inputs:
       environment:
@@ -17,7 +17,7 @@ jobs:
       - name: Download bad Image
         run: |
           docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
-    
+
       - name: Test bad Image
         run: |
           docker run --rm \
@@ -25,11 +25,11 @@ jobs:
           --env="QT_X11_NO_MITSHM=1" \
           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
           ghcr.io/danieltobon43/dbscan-octrees:latest
-          
+
       - name: Download good Image
         run: |
           docker pull ghcr.io/danieltobon43/dbscan-octrees:goodapp
-    
+
       - name: Test good Image
         run: |
           docker run --rm \
@@ -37,4 +37,3 @@ jobs:
           --env="QT_X11_NO_MITSHM=1" \
           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
           ghcr.io/danieltobon43/dbscan-octrees:goodapp
-

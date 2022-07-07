@@ -1,0 +1,47 @@
+name: Testing Image
+
+on:
+  push:
+    branches: ["test-github-packages"]
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        default: DEV
+        required: true
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build project
+        uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
+        with:
+          build_flags: >
+            -DCMAKE_BUILD_TYPE=Release 
+            -DCMAKE_C_COMPILER=clang 
+            -DCMAKE_CXX_COMPILER=clang++
+
+      # - name: Download bad Image
+      #   run: |
+      #     docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
+
+      # - name: Test bad Image
+      #   run: |
+      #     docker run --rm \
+      #     --env="DISPLAY" \
+      #     --env="QT_X11_NO_MITSHM=1" \
+      #     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+      #     ghcr.io/danieltobon43/dbscan-octrees:latest
+
+      # - name: Download good Image
+      #   run: |
+      #     docker pull ghcr.io/danieltobon43/dbscan-octrees:goodapp
+
+      # - name: Test good Image
+      #   run: |
+      #     docker run --rm \
+      #     --env="DISPLAY" \
+      #     --env="QT_X11_NO_MITSHM=1" \
+      #     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+      #     ghcr.io/danieltobon43/dbscan-octrees:goodapp
