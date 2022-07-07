@@ -28,9 +28,12 @@ message("${BoldCyan}=========================================")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-SET(CMAKE_CXX_FLAGS "-mno-avx")
-SET(CMAKE_C_COMPILER "clang")
-SET(CMAKE_CXX_COMPILER "clang++")
+# SET(CMAKE_CXX_FLAGS "-mno-avx")
+# SET(CMAKE_C_COMPILER "clang")
+# SET(CMAKE_CXX_COMPILER "clang++")
+add_definitions(-DCMAKE_CXX_FLAGS="-mno-avx")
+add_definitions(-DCMAKE_C_COMPILER="clang")
+add_definitions(-DCMAKE_CXX_COMPILER="clang++")
 
 # set turn off the output rule messages of cmake
 # #set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
