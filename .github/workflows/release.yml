@@ -27,6 +27,8 @@ jobs:
             -DCMAKE_C_COMPILER=clang 
             -DCMAKE_CXX_COMPILER=clang++
           make_install: true
+      - name: Check files
+        run: ls -a
 
       # - name: Build image
       #   run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
