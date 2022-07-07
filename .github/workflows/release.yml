@@ -1,4 +1,4 @@
-name: Testing Image
+name: Deployment Image
 
 on:
   push:
@@ -19,12 +19,17 @@ jobs:
           submodules: recursive
 
       - name: Build project
-        uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
+        # uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
+        uses: ./PCL-Build-Action
         with:
           build_flags: >
             -DCMAKE_BUILD_TYPE=Release 
             -DCMAKE_C_COMPILER=clang 
             -DCMAKE_CXX_COMPILER=clang++
+          make_install: true
+
+      # - name: Build image
+      #   run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
       # - name: Download bad Image
       #   run: |

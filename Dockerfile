@@ -1,18 +1,12 @@
 # Build stage
-FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as build_dbscan
+FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All AS runtime
 
 # ======== Compile dbscan project ========
-RUN apk --no-cache add cmake build-base libstdc++
-
-COPY . /tmp
+COPY build/install/ /usr
 
 # WORKDIR /tmp
 
-RUN cd /tmp && cmake -DCMAKE_INSTALL_PREFIX=/tmp/install \
-	-S . -Bbuild && make -C build/ -j$(nproc) --no-print-directory && \
-	make -C build/ install --no-print-directory
-
-ENTRYPOINT ["/tmp/build/app"]
+ENTRYPOINT ["/bin/app"]
 # # Runtime
 # FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All as runtime
 # # ENV MESA_LOADER_DRIVER_OVERRIDE i965
