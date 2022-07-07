@@ -79,10 +79,12 @@ void OctreeGenerator::initOctree(const int resolution) {
 void OctreeGenerator::extractPointsAtLevel(const int depth) {
   std::cout << "extractPointsAtLevel operation" << std::endl;
   if (depth >= 0 && depth <= octree_p->getTreeDepth()) {
+    std::cout << "step 1" << std::endl;
     currentExtractionLevel = depth;
 
     OctreeXYZSearch::Iterator tree_it;
     OctreeXYZSearch::Iterator tree_it_end = octree_p->end();
+    std::cout << "step 2" << std::endl;
 
     pcl::PointXYZRGB pt;
     // cout << "===== Extracting data at depth " << depth << "... " << endl;
@@ -90,9 +92,11 @@ void OctreeGenerator::extractPointsAtLevel(const int depth) {
 
     octreeVoxels.clear();
     octreeCentroids.clear();
+    std::cout << "step 3" << std::endl;
 
     // Check if end iterator can be substituted for the corresponding level so
     // further level checking is avoided
+    std::cout << "starting for loop step 4" << std::endl;
     for (tree_it = octree_p->begin(depth); tree_it != tree_it_end; ++tree_it) {
       // Level check, discards all nodes that do not belong to desired level
       if (tree_it.getCurrentOctreeDepth() == depth) {
