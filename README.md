@@ -120,7 +120,7 @@ docker run --rm -it \
            -p 127.0.0.1:2222:22 \
            --user=pcl \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
-           -t dbscan-octrees:1.1-alpine3.15 --cloudfile /tmp/[YOUR PCD FILENAME]
+           -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME]
 ```
 #### example:
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
@@ -139,7 +139,7 @@ docker run --rm -it \
            -p 127.0.0.1:2222:22 \
            --user=pcl \
            --volume=`pwd`/pcd:/tmp \
-           -t dbscan-octrees:1.1-alpine3.15 --cloudfile /tmp/Tree2.pcd
+           -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/Tree2.pcd
 ```
 
 The previous command will run a docker container with the `dbscan-octrees:1.1-alpine3.15` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
