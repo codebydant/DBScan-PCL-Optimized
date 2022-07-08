@@ -2,15 +2,8 @@ name: Continuous integration
 
 on:
   push:
-    branches-ignore:
-      - documentation
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    branches-ignore:
-      - documentation
-    paths-ignore:
-      - '**.md'
+    paths-ignore: ["**.md"]
+    branches-ignore: ["master"]
 
 jobs:
   build:

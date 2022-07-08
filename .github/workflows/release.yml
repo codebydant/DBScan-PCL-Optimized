@@ -1,0 +1,60 @@
+name: Continuous deployment
+
+on:
+  push:
+    tags:
+      - "*"
+
+env:
+  IMAGE_NAME: dbscan-octrees
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Build Project
+        uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
+        with:
+          build_flags: >
+            -DCMAKE_BUILD_TYPE=Release 
+            -DCMAKE_C_COMPILER=clang 
+            -DCMAKE_CXX_COMPILER=clang++
+            -DCMAKE_INSTALL_PREFIX=install
+          make_install: true
+
+      - name: Build Docker Image
+        run: docker build --file Dockerfile.release --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+
+      - name: Test Docker Image
+        run: |
+          docker run --rm \
+          --env="DISPLAY" \
+          --env="QT_X11_NO_MITSHM=1" \
+          --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+          dbscan-octrees:latest
+
+      - name: Log in to registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest

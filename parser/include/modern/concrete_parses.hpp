@@ -64,7 +64,7 @@ class ParserTXT : public InterfaceParser {
   void load_cloudfile(std::string filename, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
     std::ifstream file(filename, std::ifstream::in);
     if (!file.is_open()) {
-      pcl::console::print_error("\nError: Could not find %s\n", filename);
+      pcl::console::print_error("\nError: Could not find %s\n", filename.c_str());
       std::exit(-1);
     }
 
@@ -103,7 +103,7 @@ class ParserXYZ : public InterfaceParser {
   void load_cloudfile(std::string filename, pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) {
     std::ifstream file(filename, std::ifstream::in);
     if (!file.is_open()) {
-      pcl::console::print_error("\nError: Could not find %s\n", filename);
+      pcl::console::print_error("\nError: Could not find %s\n", filename.c_str());
       std::exit(-1);
     }
 

@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
   } catch (const std::runtime_error &err) {
     std::cerr << err.what() << std::endl;
     std::cerr << arg_parser;
-    std::exit(1);
+    std::exit(0);
   }
 
   // -----------------Read input cloud file -----------------
@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
    e.g.
    dbscan.init(groupA, groupA.size()*0.001, groupA.size()*0.001, 10, 100);
   */
+
   std::vector<htr::Point3D> groupA;
   dbScanSpace::dbscan dbscan;
 

@@ -32,9 +32,9 @@ void OctreeGenerator::initRandomCloud(const float width, const float height, con
   cloud->points.resize(cloud->width * cloud->height);
 
   for (size_t i = 0; i < cloud->points.size(); ++i) {
-    cloud->points[i].x = (width * rand() / (RAND_MAX + 1.0f)) - width / 2;
-    cloud->points[i].y = (height * rand() / (RAND_MAX + 1.0f)) - height / 2;
-    cloud->points[i].z = (depth * rand() / (RAND_MAX + 1.0f)) - depth / 2;
+    cloud->points[i].x = (width * rand() / ((float)RAND_MAX + 1.0f)) - width / 2;
+    cloud->points[i].y = (height * rand() / ((float)RAND_MAX + 1.0f)) - height / 2;
+    cloud->points[i].z = (depth * rand() / ((float)RAND_MAX + 1.0f)) - depth / 2;
   }
 }
 
@@ -111,8 +111,5 @@ void OctreeGenerator::extractPointsAtLevel(const int depth) {
 }
 
 ///@deprecated
-void OctreeGenerator::stepExtractionLevel(const int step) {
-  std::cout << "Stepping level" << std::endl;
-  extractPointsAtLevel(currentExtractionLevel + step);
-}
+void OctreeGenerator::stepExtractionLevel(const int step) { extractPointsAtLevel(currentExtractionLevel + step); }
 }  // namespace htr

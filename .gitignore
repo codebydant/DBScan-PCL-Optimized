@@ -33,4 +33,9 @@
 
 # Folders
 build/
+build-vscode/
+PCL-Build-Action/
 .vscode
+
+# nektos/act secrets
+.secrets
