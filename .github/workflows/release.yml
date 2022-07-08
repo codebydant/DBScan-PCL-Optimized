@@ -1,14 +1,10 @@
-name: Deployment Image
+name: Continuous deployment
 
 on:
   push:
-    branches: ["test-github-packages"]
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: string
-        default: DEV
-        required: true
+    tags:
+      - "*"
+
 env:
   IMAGE_NAME: dbscan-octrees
 
@@ -16,13 +12,13 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Clone Repository
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Build project
+      - name: Build Project
         uses: danielTobon43/PCL-Build-Action@feat-cmake-flags
-        # uses: ./PCL-Build-Action
         with:
           build_flags: >
             -DCMAKE_BUILD_TYPE=Release 
@@ -30,13 +26,11 @@ jobs:
             -DCMAKE_CXX_COMPILER=clang++
             -DCMAKE_INSTALL_PREFIX=install
           make_install: true
-      - name: Check files
-        run: ls -a
 
-      - name: Build image
-        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+      - name: Build Docker Image
+        run: docker build --file Dockerfile.release --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
 
-      - name: Test image
+      - name: Test Docker Image
         run: |
           docker run --rm \
           --env="DISPLAY" \
@@ -64,4 +58,3 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
-          # docker push ghcr.io/danieltobon43/dbscan-octrees:latest

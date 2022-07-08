@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.12.4)
 
 project(cloudparse
-    VERSION 1.0.3
+    VERSION 1.0.0
     DESCRIPTION "Cloud parser library"
     LANGUAGES CXX
 )
-set(ENABLE_AVX OFF)
-set(ENABLE_AVX2 OFF)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -46,8 +44,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${PCL_INCLUDE_DIRS}
-
-    # ${VTK_INCLUDE_DIRS}
 )
 
 # #############################################################################
@@ -59,17 +55,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
 # COMPILATION FLAGS
 # #############################################################################
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-
 target_compile_options(${PROJECT_NAME} PUBLIC -Wno-cpp -mno-avx)
 
 # #############################################################################
 # INSTALL DIRECTORY
 # #############################################################################
 install(TARGETS ${PROJECT_NAME} EXPORT cloudparseConfig)
-
-# install(EXPORT cloudparseConfig
-# NAMESPACE cloudparse::
-# DESTINATION ${CMAKE_INSTALL_LIBDIR_ARCHIND}/cmake/${PROJECT_NAME})
 install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -100,26 +91,19 @@ set(CPACK_PACKAGE_VENDOR "cloudparse (C++) developers")
 set(CPACK_PACKAGE_DESCRIPTION "${PROJECT_DESCRIPTION}")
 set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_RPM_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
-
-# set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
 set(CPACK_PACKAGE_MAINTAINER "Pranav Srinivas Kumar")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
-
-# set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-# set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_DEBIAN_PACKAGE_NAME "lib${PROJECT_NAME}-dev")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6-dev")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS "cmake, pkg-config, pkg-conf")
-
 set(CPACK_RPM_PACKAGE_NAME "lib${PROJECT_NAME}-devel")
 set(CPACK_RPM_PACKAGE_SUGGESTS "${CPACK_DEBIAN_PACKAGE_SUGGESTS}")
-
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_NSIS_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
-
 set(PKG_CONFIG_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc")
+
 configure_file("${PackagingTemplatesDir}/pkgconfig.pc.in" "${PKG_CONFIG_FILE_NAME}" @ONLY)
 install(FILES "${PKG_CONFIG_FILE_NAME}"
     DESTINATION "${CMAKE_INSTALL_LIBDIR_ARCHIND}/pkgconfig"

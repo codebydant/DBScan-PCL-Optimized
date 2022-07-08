@@ -40,14 +40,12 @@ void OctreeGenerator::initRandomCloud(const float width, const float height, con
 
 /// Calculates the entire cloud centroid
 void OctreeGenerator::calculateCloudCentroid() {
-  std::cout << "inside calculate centroid" << std::endl;
   Eigen::Matrix<float, 4, 1> centroid_original;
 
   pcl::compute3DCentroid(*cloud, centroid_original);
   cloudCentroid.x = centroid_original[0];
   cloudCentroid.y = centroid_original[1];
   cloudCentroid.z = centroid_original[2];
-  std::cout << "finished calculate centroid" << std::endl;
 }
 
 /// Initializes the octree from the cloud data provided at the specified resolution.
@@ -55,7 +53,6 @@ void OctreeGenerator::calculateCloudCentroid() {
 void OctreeGenerator::initOctree(const int resolution) {
   //************************************
   // octree_p.reset(new OctreeXYZSearch(resolution));
-  std::cout << "init octree operation" << std::endl;
   octree_p->deleteTree();
   octree_p->setResolution(resolution);
 
@@ -65,7 +62,6 @@ void OctreeGenerator::initOctree(const int resolution) {
 
   currentExtractionLevel = octree_p->getTreeDepth();
   extractPointsAtLevel(currentExtractionLevel);
-  std::cout << "finished init octree operation" << std::endl;
   //************************************
   // octree.setInputCloud (cloud);
   // octree.addPointsFromInputCloud ();
@@ -77,14 +73,11 @@ void OctreeGenerator::initOctree(const int resolution) {
 /// Calculates the position of each voxel that exists at a specified tree depth.
 ///@param[in] depth The selected tree depth in the octree.
 void OctreeGenerator::extractPointsAtLevel(const int depth) {
-  std::cout << "extractPointsAtLevel operation" << std::endl;
   if (depth >= 0 && depth <= octree_p->getTreeDepth()) {
-    std::cout << "step 1" << std::endl;
     currentExtractionLevel = depth;
 
     OctreeXYZSearch::Iterator tree_it;
     OctreeXYZSearch::Iterator tree_it_end = octree_p->end();
-    std::cout << "step 2" << std::endl;
 
     pcl::PointXYZRGB pt;
     // cout << "===== Extracting data at depth " << depth << "... " << endl;
@@ -92,11 +85,9 @@ void OctreeGenerator::extractPointsAtLevel(const int depth) {
 
     octreeVoxels.clear();
     octreeCentroids.clear();
-    std::cout << "step 3" << std::endl;
 
     // Check if end iterator can be substituted for the corresponding level so
     // further level checking is avoided
-    std::cout << "starting for loop step 4" << std::endl;
     for (tree_it = octree_p->begin(depth); tree_it != tree_it_end; ++tree_it) {
       // Level check, discards all nodes that do not belong to desired level
       if (tree_it.getCurrentOctreeDepth() == depth) {
@@ -117,12 +108,8 @@ void OctreeGenerator::extractPointsAtLevel(const int depth) {
     // printf("%zu pts, %.4gs. %.4gs./pt. =====\n", displayCloud->points.size (), end - start,
     //(end - start) / static_cast<double> (displayCloud->points.size ()));
   }
-  std::cout << "finished extractPointsAtLevel operation" << std::endl;
 }
 
 ///@deprecated
-void OctreeGenerator::stepExtractionLevel(const int step) {
-  std::cout << "Stepping level" << std::endl;
-  extractPointsAtLevel(currentExtractionLevel + step);
-}
+void OctreeGenerator::stepExtractionLevel(const int step) { extractPointsAtLevel(currentExtractionLevel + step); }
 }  // namespace htr

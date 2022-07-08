@@ -14,14 +14,7 @@ if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
     message(STATUS "    directory: ${PCL_DIR}")
-
     add_definitions(${PCL_DEFINITIONS})
-
-    # add_definitions(-Wall -O3 -DNDEBUG -pipe -ffast-math -funroll-loops -ftree-vectorize -fomit-frame-pointer -pipe -mfpmath=sse -mmmx -msse -mtune=core2 -march=core2 -msse2 -msse3 -mssse3 -msse4)
-
-    # # add_definitions(-momit-leaf-frame-pointer -fomit-frame-pointer -floop-block -ftree-loop-distribution -ftree-loop-linear -floop-interchange -floop-strip-mine -fgcse-lm -fgcse-sm -fsched-spec-load)
-    # add_definitions(-Wall -O3 -Winvalid-pch -pipe -funroll-loops -fno-strict-aliasing)
-    message(STATUS "    PCL_DEFINITIONS: ${PCL_DEFINITIONS}")
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
 endif()
@@ -52,29 +45,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PCL_INCLUDE_DIRS}
 )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    message(STATUS "    clang compiler enabled")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(STATUS "    gnu compiler enabled")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    message(STATUS "    intel compiler enabled")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    message(STATUS "    msvc compiler enabled")
-endif()
-
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
-message(STATUS "    COMPILE_OPTIONS: ${COMPILE_OPTIONS}")
 
 # #############################################################################
-# COMPILATION FLAGS
+# COMPILATION FLAGS: MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64
 # #############################################################################
-# add_definitions(-Wall -O3 -DNDEBUG -pipe -ffast-math -funroll-loops -ftree-vectorize -fomit-frame-pointer -pipe -mfpmath=sse -mmmx -msse -mtune=core2 -march=core2 -msse2 -msse3 -mssse3 -msse4)
-
-# target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-# MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp
     -mmmx
     -msse

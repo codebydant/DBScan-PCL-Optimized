@@ -119,7 +119,6 @@ void OctreeGenerator::initCloudFromVector(const std::vector<T> &points, const pc
   cloud->height = 1;
 
   cloud->points.resize(cloud->width * cloud->height);
-  std::cout << "inside initcloud from vector" << std::endl;
 
   for (size_t i = 0; i < cloud->points.size(); ++i) {
     cloud->points[i].x = input_cloud->points[i].x;
@@ -134,7 +133,6 @@ void OctreeGenerator::initCloudFromVector(const std::vector<T> &points, const pc
     uint32_t rgb_ = ((uint32_t)r_ << 16 | (uint32_t)g_ << 8 | (uint32_t)b_);
     cloud->points[i].rgb = *reinterpret_cast<float *>(&rgb_);
   }
-  std::cout << "after for loop initcloud from vector" << std::endl;
   calculateCloudCentroid();
 }
 }  // namespace htr
