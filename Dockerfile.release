@@ -1,3 +1,4 @@
 FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All AS runtime
 COPY install/ /usr
+LABEL org.opencontainers.image.description DESCRIPTION
 ENTRYPOINT ["app"]
