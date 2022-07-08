@@ -100,7 +100,7 @@ Docker multi-stage graph generated with: [dockerfilegraph](https://github.com/pa
 <img src="./example/Dockerfile2.png" align="center"><br>
 
 ```
-docker pull danieltobon43/dbscan-octrees:1.1-alpine3.15
+docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
 ```
 
 #### Check downloaded image
