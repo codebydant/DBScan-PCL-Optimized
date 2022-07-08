@@ -9,8 +9,9 @@ env:
   IMAGE_NAME: dbscan-octrees
 
 jobs:
-  docker:
+  deploy:
     runs-on: ubuntu-latest
+    name: Build and Deploy
     steps:
       - name: Clone Repository
         uses: actions/checkout@v3
