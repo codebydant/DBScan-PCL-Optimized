@@ -135,7 +135,6 @@ docker run --rm -it \
            --name="dbscan" \
            --cap-add sys_ptrace \
            -p 127.0.0.1:2222:22 \
-           --user=pcl \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
            -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME]
 ```
@@ -156,7 +155,7 @@ docker run -it --rm \
     --name="pcl-container" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume=PATH/TO/YOUR/PCD/PLY/FOLDER:/tmp \
-    danieltobon43/pcl-visualizer:1.0-alpine3.15 /tmp/$1
+    ghcr.io/danieltobon43/dbscan-octrees:latest /tmp/$1
 # Disallow X server connection
 xhost -local:root
 ```
