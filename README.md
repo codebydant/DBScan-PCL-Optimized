@@ -74,24 +74,38 @@ This project has been tested with VTK `8.1...9.1` and CMake from `3.5...3.21`
 You can build the project from source or download a docker image stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/dbscan-octrees). This image is compiled with [pcl-docker-1.12.1](https://hub.docker.com/r/danieltobon43/pcl-docker), Alpine linux 3.15 and the DBscan project (`1.32GB`).
 
 ### Compile from source
-* Create a "build" folder
 
-in the main folder:
+1. Download source code
+
 ```
-cd build/
-cmake ../
-make
+git clone --recursive https://github.com/danielTobon43/DBScan-PCL-Optimized.git
 ```
 
-#### Test
-```
-cd build/
-./app --cloudfile Tree2.pcd
- 
+2. Create a "build" folder at the top level of the DBScan-PCL-Optimized project
 
+```
+cd DBScan-PCL-Optimized/ && mkdir build
+```
+
+3. Compile with CMake
+
+```
+cd build/ && cmake ../ && make
+```
+
+#### How to run project
+In the build folder run the following command:
+
+```
+./app --cloudfile PATH/TO/YOUR/CLOUDFILE
+```
+
+**Note**
 ¡You can modify the parameters to obtain better results!
-I recommend modifying only the eps value, between 40 - 60 you can get better clusters. There is a flag to calculate epsilone using 100 points using the flag --cal-eps
-```
+I recommend modifying only the eps value, between 40 - 60 you can get better clusters, or 0.5 to 10. 
+
+There is a flag to calculate epsilon using 100 points with `--cal-eps`. Please check [Command line](https://github.com/danielTobon43/DBScan-PCL-Optimized/edit/master/README.md#command-line).
+
 
 ### Download docker image
 To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
@@ -109,6 +123,9 @@ docker images
 ```
 
 #### Run a docker container
+You can either run a docker command or create a shell script.
+
+**1. Option 1: Docker command**
 ```
 docker run --rm -it \
            --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
@@ -122,7 +139,34 @@ docker run --rm -it \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
            -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME]
 ```
-#### example:
+
+**2. Option 2: shell script**
+
+- Create a `visualizer.sh` file with executable permissions (check this shell script [dbscan-shell-script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh)).
+
+![Screenshot from 2022-06-03 10-16-13](https://user-images.githubusercontent.com/35694200/171882906-75831bea-64f5-4cd6-9220-2d7a0ef46616.png)
+
+- Copy the next content into the `visualizer.sh` file (remember to update PATH/TO/YOUR/PCD/PLY/FOLDER accordingly):
+```
+# Allow X server connection
+xhost +local:root
+docker run -it --rm \
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --name="pcl-container" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    --volume=PATH/TO/YOUR/PCD/PLY/FOLDER:/tmp \
+    danieltobon43/pcl-visualizer:1.0-alpine3.15 /tmp/$1
+# Disallow X server connection
+xhost -local:root
+```
+
+- Run the docker container
+```
+./visualizer YOUR/CLOUD/FILENAME
+```
+
+**example:**
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
 ```
 /home/user/Downloads/pcd/Tree2.pcd
