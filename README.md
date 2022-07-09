@@ -122,7 +122,7 @@ docker pull ghcr.io/danieltobon43/dbscan-octrees:latest
 docker images
 ```
 
-#### Run a docker container
+#### Run a docker container Linux
 You can either run a docker command or create a shell script.
 
 **1. Option 1: Docker command**
@@ -164,6 +164,15 @@ xhost -local:root
 ```
 ./visualizer YOUR/CLOUD/FILENAME
 ```
+
+#### Run docker container Windows
+1. Install a Xserver on Windows, [XLaunch](https://sourceforge.net/projects/vcxsrv/)
+2. Run the docker container:
+```
+docker run --rm -it -e DISPLAY=host.docker.internal:0.0 --volume //c/Users/YOURUSERNAME/Downloads/pcds:/tmp -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/Tree2.pcd -d
+```
+
+More info about running Docker GUI containers on Windows, check this [video](https://www.youtube.com/watch?v=BDilFZ9C9mw)
 
 **example:**
 I have a `.pcd` file called [Tree2.pcd](https://drive.google.com/file/d/1jyE85Dt51LqQmCdbWaXeE_TGrRCpOgS-/view?usp=sharing) stored in:
