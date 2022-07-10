@@ -167,6 +167,9 @@ xhost -local:root
 
 #### Run docker container Windows
 1. Install a Xserver on Windows, [XLaunch](https://sourceforge.net/projects/vcxsrv/)
+
+![xlaunch](https://user-images.githubusercontent.com/35694200/178142265-9194636c-31a4-451e-b58e-7d13655c3742.png)
+
 2. Run the docker container:
 ```
 docker run --rm -it -e DISPLAY=host.docker.internal:0.0 --volume //c/Users/YOURUSERNAME/Downloads/pcds:/tmp -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/Tree2.pcd -d
