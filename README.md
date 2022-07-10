@@ -170,10 +170,18 @@ xhost -local:root
 
 ![xlaunch](https://user-images.githubusercontent.com/35694200/178142265-9194636c-31a4-451e-b58e-7d13655c3742.png)
 
-2. Run the docker container:
+2. Run the docker container: Open a PowerShell Terminal with Administrator privileges and run the following command
 ```
-docker run --rm -it -e DISPLAY=host.docker.internal:0.0 --volume //c/Users/YOURUSERNAME/Downloads/pcds:/tmp -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/Tree2.pcd -d
+docker run --rm -it `
+           --env DISPLAY=host.docker.internal:0.0 `
+           --volume //c/Users/YOURUSERNAME/Downloads/pcds:/tmp `
+           -t ghcr.io/danieltobon43/dbscan-octrees:latest `
+           --cloudfile /tmp/YOURFILENAME `
+           --display
 ```
+
+![windows-command](https://user-images.githubusercontent.com/35694200/178142667-b3c64d99-ff7b-4057-ae12-0c629a4f0952.png)
+
 
 More info about running Docker GUI containers on Windows, check this [video](https://www.youtube.com/watch?v=BDilFZ9C9mw)
 
