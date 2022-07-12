@@ -8,6 +8,7 @@
 namespace dbScanSpace {
 class dbscan {
  public:
+  dbscan(const char *filename, const int octreeResolution_, const float eps_, const int minPtsAux_, const int minPts_);
   dbscan();
   ~dbscan();
 
