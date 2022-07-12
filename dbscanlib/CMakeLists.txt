@@ -8,7 +8,7 @@ project(dbscan
     LANGUAGES CXX
 )
 
-find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
+find_package(PCL 1.8 REQUIRED QUIET COMPONENTS octree kdtree)
 
 if(PCL_FOUND)
     message(STATUS "PCL status:")
@@ -48,7 +48,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_KDTREE_LIBRARY} ${PCL_OCTREE_LIBRARY})
 
 # #############################################################################
 # COMPILATION FLAGS: MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64
