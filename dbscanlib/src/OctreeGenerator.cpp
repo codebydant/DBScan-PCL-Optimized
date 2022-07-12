@@ -1,11 +1,5 @@
 #include <dbscan/OctreeGenerator.h>
 
-#include <ctime>
-#include <fstream>
-
-using std::ifstream;
-using std::iterator;
-
 namespace htr {
 
 /// The default constructor.
