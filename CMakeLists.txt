@@ -4,10 +4,10 @@
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 # set project name
-project(app VERSION 1.0.3)
+project(app VERSION 1.0.5)
 
 # set build type = Debug mode
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/color.cmake")
 
@@ -22,24 +22,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # #############################################################################
 # PACKAGES
 # #############################################################################
-message("${BoldYellow}***********************")
-message("${BoldYellow}VTK PACKAGE")
-message("${BoldYellow}***********************")
-
 # vtkRenderingContext2D vtkRenderingOpenGL2 vtkRenderingCore
-find_package(VTK 8.1 REQUIRED QUIET COMPONENTS
-    vtkRenderingContextOpenGL2
-)
-
-if(VTK_FOUND)
-    message(STATUS "${BoldGreen}VTK status:")
-    message(STATUS "    version: ${VTK_VERSION}")
-    message(STATUS "    directory: ${VTK_DIR}")
-    message(STATUS "    libraries: ${VTK_LIBRARIES}")
-
-else()
-    message(FATAL_ERROR "${BoldRed} ERROR: VTK minimum required version 8.1. Not found")
-endif()
+find_package(PCL 1.8 REQUIRED QUIET COMPONENTS visualization)
+find_package(VTK 8.1 REQUIRED QUIET COMPONENTS vtkRenderingContextOpenGL2)
 
 # #############################################################################
 # ADD LIBRARIES FOLDER
@@ -62,9 +47,10 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # TARGET LIBRARIES
 # #############################################################################
 target_include_directories(${PROJECT_NAME} PRIVATE ${VTK_INCLUDE_DIRS} include)
-target_link_libraries(${PROJECT_NAME} argparse dbscan cloudparse ${VTK_LIBRARIES} ${PCL_VISUALIZATION_LIBRARY})
+target_link_libraries(${PROJECT_NAME} argparse dbscan cloudparse ${VTK_LIBRARIES} ${PCL_VISUALIZATION_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
 
+# vtk_module_autoinit(TARGETS ${PROJECT_NAME} MODULES VTK::RenderingContextOpenGL2)
 message("${BoldCyan}=========================================")
 message("${BoldCyan}Project: ${PROJECT_NAME} COMPILED WITH CMAKE " ${CMAKE_VERSION})
 message("${BoldCyan}=========================================")
