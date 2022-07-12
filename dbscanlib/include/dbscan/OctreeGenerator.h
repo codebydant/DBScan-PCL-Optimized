@@ -4,29 +4,15 @@
  *
  */
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #ifndef OCTREE_GENERATOR_H
 #define OCTREE_GENERATOR_H
-
-//#include <pcl/point_cloud.h>
-#include <pcl/octree/octree.h>
 // #include <pcl/octree/octree_impl.h>
 
 #include <pcl/common/centroid.h>
-#include <pcl/common/concatenate.h>
-#include <pcl/common/copy_point.h>
-#include <pcl/common/io.h>
-#include <pcl/pcl_macros.h>
-#include <pcl/point_types.h>
+#include <pcl/octree/octree.h>
+#include <pcl/octree/octree_search.h>
+#include <pcl/point_cloud.h>
 
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <locale>  // std::locale, std::isdigit
-#include <pcl/impl/point_types.hpp>
-#include <string>
 #include <vector>
 
 #include "HTRBasicDataStructures.h"
@@ -93,28 +79,12 @@ class OctreeGenerator {
   void calculateCloudCentroid();
 };
 
-/// Initializes pcl's cloud data structure from a vector of any type containing x, y, and z member
-/// variables.
+/// Initializes pcl's cloud data structure from a vector of any type containing x, y, and z member variables.
 ///@param[in] points The input data vector.
 template <typename T>
 void OctreeGenerator::initCloudFromVector(const std::vector<T> &points, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud) {
   // Note: Width and Height are only used to store the cloud as an image.
   // Source width and height can be used instead of a linear representation.
-  // pcl::copyPointCloud<pcl::PointXYZRGB, pcl::PointXYZRGB>(*input_cloud, *cloud);
-  // pcl::PointCloud<pcl::PointXYZRGB>::Ptr new_cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  // pcl::copyPointCloud<pcl::mod_pointXYZ>(*input_cloud, cloud);
-  /*
-    for (const pcl::mod_pointXYZ &point : input_cloud) {
-      point.
-      cloud->points.push_back(point);
-    }
-*/
-  // cloud_xyzrgb.reset(new pcl::PointCloud<pcl::PointXYZRGB>());
-  // pcl::copyPointCloud(*input_cloud, *cloud_xyzrgb);
-
-  // cloud_xyzrgb->width = input_cloud->points.size();
-  // cloud_xyzrgb->height = 1;
-
   cloud->width = input_cloud->points.size();
   cloud->height = 1;
 
