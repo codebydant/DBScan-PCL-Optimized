@@ -1,33 +1,6 @@
 #ifndef DBSCAN
 #define DBSCAN
 
-// #include <omp.h>
-#include <pcl/common/centroid.h>
-#include <pcl/common/common.h>
-#include <pcl/common/geometry.h>
-#include <pcl/common/transforms.h>
-#include <pcl/console/parse.h>
-#include <pcl/console/print.h>
-#include <pcl/console/time.h>
-#include <pcl/io/file_io.h>
-#include <pcl/io/io.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/io/ply/ply.h>
-#include <pcl/io/ply/ply_parser.h>
-#include <pcl/io/ply_io.h>
-#include <pcl/io/vtk_io.h>
-#include <pcl/io/vtk_lib_io.h>
-#include <pcl/pcl_macros.h>
-#include <pcl/point_types.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <stdio.h>
-
-#include <algorithm>
-#include <chrono>
-#include <cmath>
-#include <random>
-#include <vector>
-
 #include "HTRBasicDataStructures.h"
 #include "OctreeGenerator.h"
 #include "cluster.h"
