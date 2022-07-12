@@ -8,13 +8,14 @@ project(dbscan
     LANGUAGES CXX
 )
 
-find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
+set(Eigen3_DIR /usr/share/cmake/Modules)
+find_package(Eigen3 REQUIRED)
+find_package(PCL 1.8 REQUIRED QUIET COMPONENTS octree kdtree)
 
 if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
     message(STATUS "    directory: ${PCL_DIR}")
-    add_definitions(${PCL_DEFINITIONS})
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
 endif()
@@ -48,7 +49,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_KDTREE_LIBRARY} ${PCL_OCTREE_LIBRARY} Eigen3::Eigen)
 
 # #############################################################################
 # COMPILATION FLAGS: MMX, SSE(1, 2, 3, 3S, 4.1, 4.2), CLMUL, RdRand, VT-x, x86-64

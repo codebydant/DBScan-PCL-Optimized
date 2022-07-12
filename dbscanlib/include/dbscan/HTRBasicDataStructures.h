@@ -1,14 +1,14 @@
 /**
  *@file HTRBasicDataStructures.h
  *Data structures that do not depend on external classes.
- *
+ * https://pointclouds.org/documentation/tutorials/adding_custom_ptype.html#adding-your-own-custom-pointt-type
  */
-#include <pcl/pcl_macros.h>
-#include <pcl/point_types.h>
-#define PCL_NO_PRECOMPILE
-#pragma once
+
 #ifndef HTR_BASIC_DATA_STRUCTURES_H
 #define HTR_BASIC_DATA_STRUCTURES_H
+#define PCL_NO_PRECOMPILE
+
+#include <pcl/point_types.h>
 
 /// Modified pcl point to include an id.
 namespace pcl {
