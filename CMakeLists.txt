@@ -48,7 +48,29 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # #############################################################################
 target_include_directories(${PROJECT_NAME} PRIVATE ${VTK_INCLUDE_DIRS} include)
 target_link_libraries(${PROJECT_NAME} argparse dbscan cloudparse ${VTK_LIBRARIES} ${PCL_VISUALIZATION_LIBRARIES})
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp
+    -mmmx
+    -msse
+    -msse2
+    -msse3
+    -mssse3
+    -msse4.2
+    -msse4.1
+    -mno-sse4a
+    -mno-avx
+    -mno-avx2
+    -mno-fma
+    -mno-fma4
+    -mno-f16c
+    -mno-xop
+    -mno-bmi
+    -mno-bmi2
+    -mrdrnd
+    -mno-3dnow
+    -mlzcnt
+    -mfsgsbase
+    -mpclmul
+)
 
 # vtk_module_autoinit(TARGETS ${PROJECT_NAME} MODULES VTK::RenderingContextOpenGL2)
 message("${BoldCyan}=========================================")
