@@ -10,13 +10,17 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 string(REPLACE "/${CMAKE_LIBRARY_ARCHITECTURE}" "" CMAKE_INSTALL_LIBDIR_ARCHIND "${CMAKE_INSTALL_LIBDIR}")
 
-find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
+# find_package(PCL 1.8 REQUIRED QUIET COMPONENTS io common octree visualization kdtree)
+find_package(PCL 1.8 NO_MODULE REQUIRED QUIET COMPONENTS io)
 
 if(PCL_FOUND)
     message(STATUS "PCL status:")
     message(STATUS "    version: ${PCL_VERSION}")
     message(STATUS "    directory: ${PCL_DIR}")
-    add_definitions(${PCL_DEFINITIONS})
+
+# message(STATUS "    libraries: ${PCL_LIBRARIES}")
+# message(STATUS "    libraries IO: ${PCL_IO_LIBRARIES}")
+# add_definitions(${PCL_DEFINITIONS})
 else()
     message(FATAL_ERROR "   ERROR: PCL minimum required version 1.8. Not found")
 endif()
@@ -49,7 +53,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # #############################################################################
 # LIBRARY DEPENDENCIES
 # #############################################################################
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PCL_IO_LIBRARIES})
 
 # #############################################################################
 # COMPILATION FLAGS
