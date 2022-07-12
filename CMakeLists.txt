@@ -60,7 +60,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 
 # #############################################################################
 # TARGET LIBRARIES
-# #############################################################################${VTK_LIBRARIES}VTK::RenderingOpenGL2 VTK::RenderingContext2D VTK::RenderingCore
+# #############################################################################
 target_include_directories(${PROJECT_NAME} PRIVATE ${VTK_INCLUDE_DIRS} include)
 target_link_libraries(${PROJECT_NAME} argparse dbscan cloudparse ${VTK_LIBRARIES} ${PCL_VISUALIZATION_LIBRARY})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp)
