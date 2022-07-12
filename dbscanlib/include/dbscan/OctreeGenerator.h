@@ -12,6 +12,7 @@
 #include <pcl/octree/octree.h>
 #include <pcl/octree/octree_search.h>
 #include <pcl/point_cloud.h>
+#include <Eigen/Core>
 
 #include <vector>
 
