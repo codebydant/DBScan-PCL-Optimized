@@ -26,7 +26,7 @@ find_package(PCL 1.8 REQUIRED QUIET COMPONENTS visualization)
 find_package(VTK 8.1 REQUIRED QUIET COMPONENTS vtkRenderingContextOpenGL2)
 fetch_project(
     NAME cloudparse
-    URL https://github.com/danielTobon43/cloudparse/archive/v0.1.0.tar.gz
+    URL https://github.com/danielTobon43/cloudparse/archive/v0.2.1.tar.gz
 )
 fetch_project(
     NAME argparse
