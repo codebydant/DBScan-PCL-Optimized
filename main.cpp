@@ -29,9 +29,9 @@ ignored. That is to say, they aren’t part of any cluster.
 
 #include "argparse/argparse.hpp"
 #include "cal_epsilon.hpp"
+#include "cloudparse/parser.hpp"
 #include "clusters_color.hpp"
 #include "dbscan/dbScan.h"
-#include "cloudparse/parser.hpp"
 #include "save_cluster.hpp"
 #include "visualizer.hpp"
 
