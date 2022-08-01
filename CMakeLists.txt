@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/color.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake")
 
-set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "Final installation location.")
+# set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "Final installation location.")
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
