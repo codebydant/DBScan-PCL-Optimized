@@ -1,4 +1,4 @@
-name: Continuous deployment
+name: CD (continuous delivery) (alpine)
 
 on:
   push:
