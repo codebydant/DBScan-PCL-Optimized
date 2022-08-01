@@ -1,5 +1,8 @@
 # DBScan-PCL-Optimized
-![example workflow](https://github.com/danielTobon43/DBScan-PCL-Optimized/actions/workflows/ci.yml/badge.svg?branch=master)
+<p align="center">
+  <img src="https://github.com/danielTobon43/cloudparse/actions/workflows/ci.yml/badge.svg?branch=master" alt="travis"/>
+  <img src="https://img.shields.io/badge/version-1.0.8-blue.svg?cacheSeconds=2592000" alt="version"/>
+</p>
 
 This project is taken from: **Navarro-Hinojosa, Octavio, y Moisés Alencastre-Miranda. "DBSCAN modificado con Octrees para agrupar nubes de puntos en tiempo real." Research in Computing Science, Vol. 114: Advances in Image Processing and Computer Vision, pp. 173–186, 2016.** Github: https://github.com/Hagen23/DBScan_Octrees
 
