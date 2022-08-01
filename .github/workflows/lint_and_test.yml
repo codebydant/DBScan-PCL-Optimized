@@ -1,0 +1,60 @@
+name: Lint & Test
+
+on:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    name: Build Check
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install PCL
+        run: sudo apt-get -qq -o=Dpkg::Use-Pty=0 install libpcl-dev
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
+
+      - name: Build app
+        run: cmake --build ${{github.workspace}}/build --config $BUILD_TYPE
+
+      - name: Install app
+        run: cmake --install build
+
+      - name: Test app
+        run: ${{github.workspace}}/build/app
+
+      - name: Store artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: ${{github.workspace}}/install
+
+  lint:
+    needs: [build]
+    name: Formatting Check
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run clang-format style check for C/C++/Protobuf programs.
+        uses: jidicula/clang-format-action@v4.5.0
+        with:
+          clang-format-version: "10"
+          check-path: "."
+          exclude-regex: "external"
+
+  test:
+    needs: [build]
+    name: Tests Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🍏 This job's status is ${{ job.status }}."
