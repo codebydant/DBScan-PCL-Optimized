@@ -20,22 +20,22 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libpcl-dev
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
+        run: cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build app
-        run: cmake --build ${{github.workspace}}/build --config $BUILD_TYPE
+        run: cmake --build build --config $BUILD_TYPE
 
       - name: Install app
         run: cmake --install build
 
       - name: Test app
-        run: ${{github.workspace}}/build/app
+        run: build/app
 
       - name: Store artifact
         uses: actions/upload-artifact@master
         with:
           name: build
-          path: ${{github.workspace}}/install
+          path: install
 
   lint:
     needs: [build]
