@@ -57,5 +57,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/danieltobon43/${{ env.IMAGE_NAME }}:latest
-          cache-to: type=inline
+#           cache-from: type=registry,ref=ghcr.io/danieltobon43/${{ env.IMAGE_NAME }}:latest
+#           cache-to: type=inline
