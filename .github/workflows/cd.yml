@@ -28,7 +28,7 @@ jobs:
           path: ${{github.workspace}}/install
 
       - name: Install PCL
-        run: sudo apt-get -qq -o=Dpkg::Use-Pty=0 install libpcl-dev
+        run: sudo apt-get update && apt-get install libpcl-dev
 
       - name: Docker meta
         id: meta
