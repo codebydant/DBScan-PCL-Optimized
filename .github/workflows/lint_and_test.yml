@@ -17,7 +17,7 @@ jobs:
           submodules: recursive
 
       - name: Install PCL
-        run: sudo apt-get -qq -o=Dpkg::Use-Pty=0 install libpcl-dev
+        run: sudo apt-get update && sudo apt-get install libpcl-dev
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
