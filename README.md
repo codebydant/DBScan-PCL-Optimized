@@ -136,10 +136,24 @@ docker run --rm -it \
            --env="XAUTHORITY=/tmp/.docker.xauth" \
            --env="DISPLAY" \
            --name="dbscan" \
-           --cap-add sys_ptrace \
-           -p 127.0.0.1:2222:22 \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
            -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME]
+```
+
+If you get something like this after setting `--display` flag it might be related to [this](https://stackoverflow.com/questions/48833451/no-protocol-specified-when-running-a-sudo-su-app-on-ubuntu-linux):
+
+```bash
+No protocol specified
+```
+Try running with the following command or use the provided `.sh` [script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
+```
+sudo -sE docker run --rm -it \
+           --env="DISPLAY" \
+           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
+           --name="dbscan" \
+           --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
+           -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME] --display
 ```
 
 **2. Option 2: shell script**

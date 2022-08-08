@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
+
 env:
   IMAGE_NAME: dbscan-octrees
 
@@ -21,14 +23,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Download artifact
-        uses: actions/download-artifact@master
+      - name: Artifact (with permissions)
+        uses: actions/cache@v2
         with:
-          name: build
-          path: install
-
-      - name: Install PCL
-        run: sudo apt-get update && sudo apt-get install libpcl-dev
+          path: ${{github.workspace}}/install
+          key: artifacts-${{ github.run_id }}-${{ github.run_number }}
 
       - name: Docker meta
         id: meta
@@ -49,16 +48,16 @@ jobs:
         # This is where you will update the PAT to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
-      - name: Build and push
+      - name: Build docker image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Dockerfile.release
-          push: true
+          file: Dockerfile.release.ubuntu
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-#           cache-from: type=registry,ref=ghcr.io/danieltobon43/${{ env.IMAGE_NAME }}:latest
-#           cache-to: type=inline
+          cache-from: type=registry,ref=ghcr.io/danieltobon43/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}
+          cache-to: type=inline
 
       - name: Test image
         run: |
@@ -66,4 +65,13 @@ jobs:
           --env="DISPLAY" \
           --env="QT_X11_NO_MITSHM=1" \
           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-          dbscan-octrees:latest
+          ghcr.io/danieltobon43/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}
+
+      - name: Push docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

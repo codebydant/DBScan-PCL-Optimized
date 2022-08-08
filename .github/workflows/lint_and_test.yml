@@ -19,7 +19,8 @@ jobs:
       - name: Install PCL
         run: sudo apt-get update && sudo apt-get install libpcl-dev
 
-      - name: Configure CMake
+      - name: Configure CMake project
+
         run: cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build app
@@ -31,11 +32,12 @@ jobs:
       - name: Test app
         run: build/app
 
-      - name: Store artifact
-        uses: actions/upload-artifact@master
+      - name: Artifact (with permissions)
+        uses: actions/cache@v2
         with:
-          name: build
-          path: install
+          path: ${{github.workspace}}/install
+          key: artifacts-${{ github.run_id }}-${{ github.run_number }}
+
 
   lint:
     needs: [build]

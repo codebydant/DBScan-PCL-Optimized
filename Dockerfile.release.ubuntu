@@ -1,0 +1,7 @@
+FROM ghcr.io/danieltobon43/pcl-docker:latest AS runtime
+COPY install /usr
+# RUN chmod a+x /usr/bin/app
+ENV MESA_LOADER_DRIVER_OVERRIDE i965
+
+# ======== Run binary file ========
+ENTRYPOINT ["app"]

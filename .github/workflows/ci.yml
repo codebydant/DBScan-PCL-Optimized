@@ -3,8 +3,9 @@ name: CI (continuous integration)
 on:
   push:
     paths-ignore: ["**.md"]
-    branches: ["empty"]
-#     branches-ignore: ["master"]
+    branches-ignore: ["master"]
+    tags-ignore:
+      - "**"
   workflow_call:
 
 jobs:
