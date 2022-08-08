@@ -145,7 +145,7 @@ If you get something like this after setting `--display` flag it might be relate
 ```bash
 No protocol specified
 ```
-Try running with the following command or use the provided `.sh` [script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
+Try running with the following command belowe or use the provided `.sh` [script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
 ```
 sudo -sE docker run --rm -it \
            --env="DISPLAY" \
@@ -155,6 +155,8 @@ sudo -sE docker run --rm -it \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
            -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME] --display
 ```
+
+If this still does not work to display, run: `xhost +local:docker` and then run the option 1 command.
 
 **2. Option 2: shell script**
 
