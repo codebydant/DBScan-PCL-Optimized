@@ -71,6 +71,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: Dockerfile.release.ubuntu
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
