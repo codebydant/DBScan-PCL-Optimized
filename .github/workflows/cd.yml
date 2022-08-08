@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - "*"
-    branches: ["test-2"]
+  workflow_dispatch:
 env:
   IMAGE_NAME: dbscan-octrees
 
