@@ -20,6 +20,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libpcl-dev
 
       - name: Configure CMake project
+
         run: cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build app
@@ -36,6 +37,7 @@ jobs:
         with:
           path: ${{github.workspace}}/install
           key: artifacts-${{ github.run_id }}-${{ github.run_number }}
+
 
   lint:
     needs: [build]

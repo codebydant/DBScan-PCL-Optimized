@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker Image
         run: docker build --file Dockerfile.release.alpine --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
-
+        
       - name: Test Docker Image
         run: |
           docker run --rm \
