@@ -1,6 +1,7 @@
 name: Lint & Test
 
 on:
+  workflow_dispatch:
   workflow_call:
 
 env:
@@ -17,10 +18,13 @@ jobs:
           submodules: recursive
 
       - name: Install PCL
-        run: sudo apt-get update && sudo apt-get install libpcl-dev
+#         run: sudo apt-get update && sudo apt-get install libpcl-dev
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libpcl-dev
+          version: 1.0
 
       - name: Configure CMake project
-
         run: cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build app
